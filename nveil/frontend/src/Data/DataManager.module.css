@@ -1,0 +1,1193 @@
+/*
+ * SPDX-FileCopyrightText: 2026 NVEIL SAS
+ * SPDX-FileContributor: Pierre Jacquet
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+/* ─── Data Manager — glassmorphism table ─── */
+
+.page {
+    height: 100vh;
+    width: 100%;
+    padding: 0;
+    overflow-y: auto;
+    background: url(/gradient_bg_light.webp);
+    background-size: cover;
+}
+
+.backdrop {
+    min-height: 100%;
+    -webkit-backdrop-filter: blur(40px);
+    backdrop-filter: blur(40px);
+    padding: 40px 48px;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+}
+
+/* ─── Header ─── */
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 36px;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.headerLeft {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.headerIcon {
+    font-size: 1.5rem;
+    color: #1b90ba;
+}
+
+.title {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #e0e0e0;
+    margin: 0;
+    letter-spacing: -0.02em;
+}
+
+.subtitle {
+    color: #777;
+    font-size: 0.8rem;
+    margin: 3px 0 0 0;
+}
+
+.headerActions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+/* ─── Search ─── */
+
+.searchWrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.searchIcon {
+    position: absolute;
+    left: 10px;
+    color: #666;
+    font-size: 0.95rem;
+    pointer-events: none;
+}
+
+.searchInput {
+    width: 220px;
+    padding: 8px 12px 8px 32px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    color: #ccc;
+    font-size: 0.82rem;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.2s, width 0.25s;
+}
+
+.searchInput:focus {
+    border-color: rgba(27, 144, 186, 0.5);
+    width: 280px;
+}
+
+.searchInput::placeholder {
+    color: #555;
+}
+
+/* ─── Upload / Delete buttons ─── */
+
+.uploadBtn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 24px;
+    background: linear-gradient(135deg, #1b90ba, #a33cb2);
+    color: white;
+    font-size: 0.85rem;
+    font-family: inherit;
+    font-weight: 500;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.15s;
+    outline: none;
+}
+
+.uploadBtn:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+.uploadBtn:active {
+    transform: translateY(0);
+}
+
+.uploadBtn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.deleteBtn {
+    background: linear-gradient(135deg, #c43e3e, #a33c3c);
+}
+
+/* ─── Drop Zone (full-screen overlay) ─── */
+
+.dropOverlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.15s ease-out;
+}
+
+.dropZone {
+    border: 2px dashed rgba(27, 144, 186, 0.4);
+    border-radius: 16px;
+    padding: 3rem 4rem;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    animation: dropPulse 1.5s ease-in-out infinite;
+}
+
+.dropZoneIcon {
+    font-size: 2.5rem;
+    color: #1b90ba;
+    opacity: 0.7;
+}
+
+.dropZoneText {
+    color: #888;
+    font-size: 0.95rem;
+}
+
+/* ─── Table wrapper ─── */
+
+.tableWrap {
+    background: rgba(30, 30, 30, 0.55);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 12px;
+    overflow: hidden;
+    animation: tableIn 0.4s ease-out both;
+}
+
+/* ─── React Aria Table ─── */
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+/* Column headers — target React Aria's rendered elements */
+.table :global(.react-aria-Column) {
+    text-align: left;
+    padding: 0.75rem 1rem;
+    color: #888;
+    font-weight: 600;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    background: rgba(255, 255, 255, 0.02);
+    white-space: nowrap;
+    cursor: default;
+    outline: none;
+    transition: color 0.15s;
+    box-sizing: border-box;
+}
+
+.table :global(.react-aria-Column)[data-sort-direction] {
+    color: #1b90ba;
+}
+
+.table :global(.react-aria-Column)[data-allows-sorting] {
+    cursor: pointer;
+}
+
+.table :global(.react-aria-Column)[data-allows-sorting]:hover {
+    color: #bbb;
+}
+
+.table :global(.react-aria-Column)[data-allows-sorting][data-sort-direction]:hover {
+    color: #1b90ba;
+}
+
+/* Column header inner flex */
+.colHeader {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.colHeaderRight {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 4px;
+}
+
+.sortIndicator {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.8rem;
+    color: #1b90ba;
+}
+
+/* Rows */
+.table :global(.react-aria-Row) {
+    outline: none;
+    transition: background 0.12s;
+}
+
+.table :global(.react-aria-Row):hover,
+.table :global(.react-aria-Row)[data-hovered] {
+    background: rgba(27, 144, 186, 0.04);
+}
+
+.table :global(.react-aria-Row)[data-focused] {
+    background: rgba(27, 144, 186, 0.06);
+}
+
+.table :global(.react-aria-Row)[data-selected] {
+    background: rgba(27, 144, 186, 0.08);
+}
+
+.table :global(.react-aria-Row):not(:last-child) :global(.react-aria-Cell) {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+/* Cells */
+.table :global(.react-aria-Cell) {
+    padding: 0.65rem 1rem;
+    color: #bbb;
+    font-size: 0.84rem;
+    vertical-align: middle;
+    outline: none;
+    box-sizing: border-box;
+}
+
+/* Last column right-aligned (actions) */
+.table :global(.react-aria-Column):last-child,
+.table :global(.react-aria-Cell):last-child {
+    text-align: right;
+}
+
+/* ─── File name cell ─── */
+
+.fileNameCell {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+}
+
+.fileIcon {
+    width: 30px;
+    height: 30px;
+    border-radius: 7px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.6rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    flex-shrink: 0;
+    color: #fff;
+}
+
+.fileIconCsv { background: linear-gradient(135deg, #2d8a56, #1e6b3e); }
+.fileIconXlsx { background: linear-gradient(135deg, #1e7145, #155a35); }
+.fileIconJson { background: linear-gradient(135deg, #6b5ce7, #5346b0); }
+.fileIconMhd { background: linear-gradient(135deg, #c45e2c, #9a4820); }
+.fileIconImage { background: linear-gradient(135deg, #2878c4, #1e5f9e); }
+.fileIconOther { background: linear-gradient(135deg, #555, #3a3a3a); }
+
+.fileNameBlock {
+    flex: 1;
+    min-width: 0;
+}
+
+.fileDisplayName {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: #ddd;
+    font-weight: 450;
+}
+
+.fileOriginalName {
+    display: block;
+    font-size: 0.72rem;
+    color: #555;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-top: 1px;
+}
+
+.collectionBadge {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.65rem;
+    color: #1b90ba;
+    background: rgba(27, 144, 186, 0.1);
+    border: 1px solid rgba(27, 144, 186, 0.2);
+    border-radius: 3px;
+    padding: 0 4px;
+    line-height: 1.5;
+    white-space: nowrap;
+}
+
+.companionNames {
+    display: block;
+    font-size: 0.7rem;
+    color: #666;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-top: 1px;
+    max-width: 280px;
+}
+
+.sourceUrl {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 0.68rem;
+    color: #1b90ba;
+    opacity: 0.7;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-top: 2px;
+    max-width: 300px;
+}
+
+.sourceUrlIcon {
+    flex-shrink: 0;
+    font-size: 0.72rem;
+}
+
+/* ─── Processing / Error badge ─── */
+
+.processingBadge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.65rem;
+    color: #f59e0b;
+    background: rgba(245, 158, 11, 0.08);
+    border: 1px solid rgba(245, 158, 11, 0.2);
+    border-radius: 4px;
+    padding: 1px 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    font-weight: 500;
+    margin-top: 2px;
+}
+
+.processingSpinner {
+    animation: spinAnim 1s linear infinite;
+    font-size: 0.7rem;
+}
+
+@keyframes spinAnim {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.errorBadge {
+    display: inline-flex;
+    font-size: 0.65rem;
+    color: #f87171;
+    background: rgba(248, 113, 113, 0.08);
+    border: 1px solid rgba(248, 113, 113, 0.2);
+    border-radius: 4px;
+    padding: 1px 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    font-weight: 500;
+    margin-top: 2px;
+}
+
+/* ─── Format badge ─── */
+
+.formatBadges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+.formatBadge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    background: rgba(255, 255, 255, 0.06);
+    color: #888;
+}
+
+/* ─── Room count ─── */
+
+.roomCount {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 22px;
+    height: 22px;
+    padding: 0 6px;
+    border-radius: 11px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    background: rgba(27, 144, 186, 0.1);
+    color: #1b90ba;
+}
+
+.roomCountZero {
+    background: rgba(255, 255, 255, 0.04);
+    color: #444;
+}
+
+/* ─── Action buttons ─── */
+
+.actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 4px;
+}
+
+.actionBtn {
+    background: none;
+    border: 1px solid transparent;
+    color: #555;
+    padding: 5px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    transition: color 0.15s, border-color 0.15s, background 0.15s;
+}
+
+.actionBtn:hover {
+    color: #ccc;
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.actionBtnDanger:hover {
+    color: #f87171;
+    border-color: rgba(248, 113, 113, 0.2);
+    background: rgba(248, 113, 113, 0.06);
+}
+
+/* ─── Rename inline input ─── */
+
+.renameInput {
+    width: 100%;
+    padding: 4px 8px;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(27, 144, 186, 0.4);
+    border-radius: 6px;
+    color: #e0e0e0;
+    font-size: 0.84rem;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.renameInput:focus {
+    border-color: #1b90ba;
+}
+
+/* ─── No results ─── */
+
+.noResults {
+    padding: 2rem;
+    text-align: center;
+    color: #9aa8b5;
+    font-size: 0.85rem;
+}
+
+/* ─── Empty state ─── */
+
+.emptyState {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 60px 20px;
+}
+
+.emptyIcon {
+    font-size: 3rem;
+    color: #7a8a9a;
+    margin-bottom: 8px;
+}
+
+.emptyTitle {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #c0cad4;
+    margin: 0;
+}
+
+.emptyHint {
+    font-size: 0.85rem;
+    color: #9aa8b5;
+    margin: 0;
+    text-align: center;
+    max-width: 380px;
+    line-height: 1.5;
+}
+
+.inlineDropZone {
+    border: 2px dashed rgba(27, 144, 186, 0.2);
+    border-radius: 14px;
+    padding: 2rem;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.inlineDropZone:hover {
+    border-color: rgba(27, 144, 186, 0.4);
+    background: rgba(27, 144, 186, 0.03);
+}
+
+/* ─── Loading ─── */
+
+.loading {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.loadingPulse {
+    height: 48px;
+    border-radius: 8px;
+    background: linear-gradient(90deg, rgba(30, 30, 30, 0.5) 25%, rgba(40, 40, 40, 0.5) 50%, rgba(30, 30, 30, 0.5) 75%);
+    background-size: 200% 100%;
+    animation: pulse 1.5s ease infinite;
+}
+
+.spinner {
+    width: 18px;
+    height: 18px;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-top-color: #1b90ba;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    margin-right: 10px;
+}
+
+/* ─── Hidden file input ─── */
+
+.hiddenInput {
+    display: none;
+}
+
+/* ─── Selection clear button ─── */
+
+.clearBtn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.05);
+    color: #aaa;
+    font-size: 0.8rem;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+}
+
+.clearBtn:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.15);
+    color: #ccc;
+}
+
+/* ─── Checkbox column ─── */
+
+.table :global(.react-aria-Column):first-child,
+.table :global(.react-aria-Cell):first-child {
+    width: 40px;
+    min-width: 40px;
+    max-width: 40px;
+    text-align: center;
+    padding-left: 0.5rem;
+    padding-right: 0;
+}
+
+.table :global(.react-aria-Checkbox) {
+    --selected-color: #1b90ba;
+    --selected-color-pressed: #15799e;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.table :global(.react-aria-Checkbox) :global(.checkbox) {
+    width: 16px;
+    height: 16px;
+    border: 1.5px solid rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.03);
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.table :global(.react-aria-Checkbox)[data-selected] :global(.checkbox),
+.table :global(.react-aria-Checkbox)[data-indeterminate] :global(.checkbox) {
+    background: #1b90ba;
+    border-color: #1b90ba;
+}
+
+.table :global(.react-aria-Checkbox) svg {
+    width: 12px;
+    height: 12px;
+}
+
+/* ─── Modal (shared) ─── */
+
+.modalOverlay {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(6px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.15s ease-out;
+}
+
+.modalGlassBg {
+    background: rgba(30, 30, 30, 0.85);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    min-width: 420px;
+    max-width: 620px;
+    width: 90vw;
+    animation: modalIn 0.2s ease-out;
+}
+
+.modal {
+    display: flex;
+    flex-direction: column;
+}
+
+.modalHeader {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 1.1rem 1.25rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.modalWarnIcon {
+    color: #f59e0b;
+    font-size: 1.3rem;
+    flex-shrink: 0;
+}
+
+.modalTitle {
+    flex: 1;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #ddd;
+}
+
+.modalCloseBtn {
+    background: none;
+    border: none;
+    color: #666;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    border-radius: 6px;
+    transition: color 0.15s, background 0.15s;
+}
+
+.modalCloseBtn:hover {
+    color: #ccc;
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.modalBody {
+    padding: 1.25rem;
+}
+
+.modalFooter {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    padding: 1rem 1.25rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.modalCancelBtn {
+    padding: 8px 18px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    background: transparent;
+    color: #999;
+    font-size: 0.82rem;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+}
+
+.modalCancelBtn:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.15);
+    color: #ccc;
+}
+
+.modalDeleteBtn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 18px;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #c43e3e, #a33c3c);
+    color: white;
+    font-size: 0.82rem;
+    font-family: inherit;
+    font-weight: 500;
+    cursor: pointer;
+    transition: opacity 0.15s;
+}
+
+.modalDeleteBtn:hover {
+    opacity: 0.9;
+}
+
+.modalSubmitBtn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 18px;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #1b90ba, #a33cb2);
+    color: white;
+    font-size: 0.82rem;
+    font-family: inherit;
+    font-weight: 500;
+    cursor: pointer;
+    transition: opacity 0.15s;
+}
+
+.modalSubmitBtn:hover {
+    opacity: 0.9;
+}
+
+.modalSubmitBtn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+/* ─── Delete modal file list ─── */
+
+.deleteFileList {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.deleteFileItem {
+    padding: 6px 10px;
+    background: rgba(248, 113, 113, 0.06);
+    border: 1px solid rgba(248, 113, 113, 0.12);
+    border-radius: 8px;
+    color: #ccc;
+    font-size: 0.82rem;
+    font-family: monospace;
+}
+
+/* ─── Upload modal drop zone ─── */
+
+.uploadDropZone {
+    border: 2px dashed rgba(27, 144, 186, 0.25);
+    border-radius: 14px;
+    padding: 2rem;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.uploadDropZone:hover {
+    border-color: rgba(27, 144, 186, 0.45);
+    background: rgba(27, 144, 186, 0.03);
+}
+
+.uploadDropZoneActive {
+    border-color: rgba(27, 144, 186, 0.6);
+    background: rgba(27, 144, 186, 0.06);
+}
+
+.uploadDropIcon {
+    font-size: 2rem;
+    color: #1b90ba;
+    opacity: 0.6;
+}
+
+.uploadDropText {
+    font-size: 0.85rem;
+    color: #777;
+}
+
+/* ─── Pending files badges ─── */
+
+.pendingFiles {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 1rem;
+    max-height: 150px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+}
+
+.pendingFiles::-webkit-scrollbar {
+    width: 4px;
+}
+
+.pendingFiles::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.pendingFiles::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 2px;
+}
+
+.pendingBadge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 10px;
+    background: rgba(27, 144, 186, 0.08);
+    border: 1px solid rgba(27, 144, 186, 0.15);
+    border-radius: 8px;
+    font-size: 0.78rem;
+    color: #bbb;
+}
+
+.pendingName {
+    max-width: 180px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.pendingRemove {
+    background: none;
+    border: none;
+    color: #777;
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+    transition: color 0.15s;
+}
+
+.pendingRemove:hover {
+    color: #f87171;
+}
+
+/* ─── Upload section labels ─── */
+
+.uploadSectionLabel {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #777;
+    margin-bottom: 0.6rem;
+    display: flex;
+    align-items: center;
+}
+
+/* ─── URL inputs ─── */
+
+.urlList {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.urlRow {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.urlInput {
+    flex: 2;
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    color: #ccc;
+    font-size: 0.82rem;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.urlInput:focus {
+    border-color: rgba(27, 144, 186, 0.5);
+}
+
+.urlInput::placeholder {
+    color: #555;
+}
+
+.urlLabelInput {
+    flex: 1;
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    color: #ccc;
+    font-size: 0.82rem;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.urlLabelInput:focus {
+    border-color: rgba(27, 144, 186, 0.5);
+}
+
+.urlLabelInput::placeholder {
+    color: #555;
+}
+
+.urlRemoveBtn {
+    background: none;
+    border: none;
+    color: #666;
+    font-size: 1.1rem;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    border-radius: 6px;
+    transition: color 0.15s, background 0.15s;
+    flex-shrink: 0;
+}
+
+.urlRemoveBtn:hover {
+    color: #f87171;
+    background: rgba(248, 113, 113, 0.06);
+}
+
+.urlAddBtn {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 12px;
+    background: none;
+    border: 1px dashed rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    color: #777;
+    font-size: 0.78rem;
+    font-family: inherit;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+    align-self: flex-start;
+}
+
+.urlAddBtn:hover {
+    border-color: rgba(27, 144, 186, 0.3);
+    color: #1b90ba;
+}
+
+/* ─── Upload progress ─── */
+
+.uploadingBar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0.6rem 1rem;
+    background: rgba(27, 144, 186, 0.06);
+    border: 1px solid rgba(27, 144, 186, 0.12);
+    border-radius: 10px;
+    margin-bottom: 1rem;
+    animation: fadeIn 0.2s ease-out;
+}
+
+.uploadingText {
+    color: #1b90ba;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+/* ─── Connector selector ─── */
+
+.connectorSection {
+    margin-top: 1rem;
+    margin-bottom: 0.25rem;
+}
+
+.connectorOptions {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 0.5rem;
+}
+
+.connectorBtn {
+    padding: 5px 14px;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.04);
+    color: #999;
+    font-size: 0.78rem;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.connectorBtn:hover:not(:disabled) {
+    border-color: rgba(27, 144, 186, 0.3);
+    color: #ccc;
+}
+
+.connectorBtn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+
+.connectorBtnActive {
+    border-color: rgba(27, 144, 186, 0.5);
+    background: rgba(27, 144, 186, 0.12);
+    color: #1b90ba;
+}
+
+.connectorMissing {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.78rem;
+    color: #e0a030;
+    padding: 6px 10px;
+    background: rgba(224, 160, 48, 0.08);
+    border-radius: 6px;
+}
+
+/* ─── Animations ─── */
+
+@keyframes tableIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes modalIn {
+    from { opacity: 0; transform: scale(0.96) translateY(8px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+@keyframes dropPulse {
+    0%, 100% { border-color: rgba(27, 144, 186, 0.25); }
+    50% { border-color: rgba(27, 144, 186, 0.55); }
+}
+
+@keyframes pulse {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* ─── Responsive ─── */
+
+@media (max-width: 900px) {
+    .backdrop {
+        padding: 24px 16px;
+    }
+
+    /* Hide size and date columns on smaller screens (offset +1 for checkbox col) */
+    .table :global(.react-aria-Column):nth-child(5),
+    .table :global(.react-aria-Column):nth-child(6),
+    .table :global(.react-aria-Row) :global(.react-aria-Cell):nth-child(5),
+    .table :global(.react-aria-Row) :global(.react-aria-Cell):nth-child(6) {
+        display: none;
+    }
+
+    .searchInput { width: 160px; }
+    .searchInput:focus { width: 200px; }
+}
+
+@media (max-width: 600px) {
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+    .headerActions { width: 100%; }
+    .searchInput { flex: 1; width: auto; }
+    .searchInput:focus { width: auto; }
+}

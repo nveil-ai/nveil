@@ -1,0 +1,69 @@
+/*
+ * SPDX-FileCopyrightText: 2026 NVEIL SAS
+ * SPDX-FileContributor: Pierre Jacquet
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+.group {
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.group:first-child {
+    border-top: none;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 12px 4px;
+    background: none;
+    border: none;
+    color: #ddd;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-weight: 500;
+    outline: none;
+    transition: color 0.15s ease;
+}
+
+.header:hover {
+    color: #f0f0f0;
+}
+
+.header[data-focus-visible] {
+    outline: 2px solid rgba(27, 144, 186, 0.4);
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+.icon {
+    display: flex;
+    align-items: center;
+    color: #1b90ba;
+    font-size: 20px;
+    flex-shrink: 0;
+    opacity: 0.8;
+}
+
+.label {
+    flex: 1;
+    text-align: left;
+}
+
+.chevron {
+    font-size: 18px;
+    color: #555;
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    flex-shrink: 0;
+}
+
+.chevronOpen {
+    transform: rotate(180deg);
+}
+
+.content {
+    padding: 0 4px 10px 28px;
+}

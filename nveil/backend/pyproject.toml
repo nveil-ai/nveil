@@ -1,0 +1,33 @@
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = [
+    "server_service/tests",
+    "ai_service/tests",
+    "file_service/tests",
+    "viz_service/tests",
+    "shared/tests",
+]
+pythonpath = ["."]
+addopts = "--strict-markers"
+markers = [
+    "unit: pure logic, no I/O",
+    "integration: requires database or external service",
+    "db: requires database connection",
+    "security: security-related test",
+    "slow: takes more than 5 seconds",
+]
+filterwarnings = [
+    "ignore::DeprecationWarning:sqlalchemy.*",
+    "ignore::DeprecationWarning:websockets.*",
+]
+norecursedirs = ["__pycache__", "*.egg-info", ".git"]
+
+[tool.coverage.run]
+source = ["server_service", "ai_service", "file_service", "viz_service"]
+branch = true
+omit = ["*/tests/*", "*/alembic/*", "*/migrations/*"]
+
+[tool.coverage.report]
+show_missing = true
+skip_empty = true
+exclude_lines = ["pragma: no cover", "if TYPE_CHECKING:", "raise NotImplementedError"]

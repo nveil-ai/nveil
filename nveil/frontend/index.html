@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<!--
+SPDX-FileCopyrightText: 2025 NVEIL SAS
+SPDX-FileContributor: Guillaume Franque
+SPDX-FileContributor: Pierre Jacquet
+SPDX-License-Identifier: AGPL-3.0-or-later
+-->
+
+<html lang="en" id="html-tag">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <!-- DNS prefetch for external resources -->
+  <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+  <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
+  <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
+  <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin />
+
+  <!-- Preconnect to external resources -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+  <!-- Import map: heavy viz libs are served from our own /vendor/ directory
+       (pre-bundled by scripts/fetch-vendor-cdn.mjs at build time from
+       locally-installed node_modules). Only libs without a React peer dep
+       are externalized — React + react-plotly stay in Vite's normal bundle
+       so they share one React.
+       __V_X__ placeholders resolved at build time by vendor-version-injector. -->
+  <script type="importmap">
+  {
+    "imports": {
+      "plotly.js-dist-min": "/vendor/plotly-__V_PLOTLY__.mjs"
+    }
+  }
+  </script>
+
+  <!-- GTM Consent Mode v2 — defaults MUST be set BEFORE GTM loads (GDPR) -->
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    // EEA + UK + CH: denied by default (GDPR — opt-in required)
+    gtag('consent', 'default', {
+      ad_storage:         'denied',
+      ad_user_data:       'denied',
+      ad_personalization: 'denied',
+      analytics_storage:  'denied',
+      wait_for_update:    500,
+      region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR',
+               'DE','GR','HU','IE','IT','LV','LT','LU','MT','NL',
+               'PL','PT','RO','SK','SI','ES','SE','IS','LI','NO',
+               'GB','CH']
+    });
+    // Rest of world: granted by default
+    gtag('consent', 'default', {
+      ad_storage:         'granted',
+      ad_user_data:       'granted',
+      ad_personalization: 'granted',
+      analytics_storage:  'granted'
+    });
+    // Restore consent for returning visitors who already accepted
+    (function(){
+      var c = document.cookie.match('(^|;)\\s*cookieConsent=([^;]+)');
+      if (c && c[2] === 'true') {
+        gtag('consent', 'update', {
+          ad_storage:         'granted',
+          ad_user_data:       'granted',
+          ad_personalization: 'granted',
+          analytics_storage:  'granted'
+        });
+      }
+    })();
+  </script>
+
+  <!-- Google Tag Manager — deferred until browser idle.
+       Consent Mode v2 defaults (above) run synchronously so consent state
+       is set before any tag fires. The actual gtm.js + GA + Reddit pixel
+       + other tags are delayed to requestIdleCallback so they don't compete
+       with React mount on the critical path. Saves ~200-300 ms of main-thread
+       CPU during FCP/LCP. Tracking behavior is unchanged — dataLayer queues
+       events while GTM loads, and they flush in order once it's ready. -->
+  <script>
+    (function(w,d,s,l,i){
+      function loadGTM(){
+        w[l]=w[l]||[];
+        w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});
+        var f=d.getElementsByTagName(s)[0],
+            j=d.createElement(s),
+            dl=l!='dataLayer'?'&l='+l:'';
+        j.async=true;
+        j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;
+        f.parentNode.insertBefore(j,f);
+      }
+      if ('requestIdleCallback' in w) {
+        // timeout ensures GTM loads within 4s even if the main thread
+        // never reaches sustained idle (rare but possible with heavy apps).
+        w.requestIdleCallback(loadGTM, { timeout: 4000 });
+      } else {
+        // Safari <18 doesn't have requestIdleCallback — fall back to load
+        // event + small delay to push past the critical rendering window.
+        w.addEventListener('load', function(){ w.setTimeout(loadGTM, 1500); });
+      }
+    })(window,document,'script','dataLayer','GTM-NNZ4RMHN');
+  </script>
+  <!-- End Google Tag Manager -->
+
+  <title>NVEIL</title>
+  <!-- Full SEO meta tags (description, OG, Twitter) are managed by react-helmet-async via SEO.jsx -->
+  <!-- Helmet replaces the <title> above once React hydrates -->
+
+  <meta name="google-site-verification" content="JW5BZAG9i0nl9LX9e2yDCVznn_fhS8hTxcgAcmzsMa8" />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="/icons/nveil-192.png" />
+  <link rel="apple-touch-icon" href="/icons/nveil-192.png" />
+  
+  <!-- Preload LCP font (hero text is the LCP element; font swap causes CLS) -->
+  <link rel="preload" href="/Fonts/InterTight-VariableFont_wght.woff2" as="font" type="font/woff2" crossorigin />
+
+  <!-- Defer non-critical font CSS -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" />
+  <noscript>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" />
+  </noscript>
+
+  <!-- PWA manifest -->
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#1a1a2e" />
+</head>
+
+<body>
+  <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NNZ4RMHN"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
+
+  <div id="root" style="display: flex; width: 100vw; height: 100vh; overflow: hidden;"></div>
+  <script type="module" src="/src/main.jsx"></script>
+</body>
+
+</html>

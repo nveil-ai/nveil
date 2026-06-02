@@ -1,0 +1,25 @@
+# SPDX-FileCopyrightText: 2026 NVEIL SAS
+# SPDX-FileContributor: Guillaume Franque
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+# syntax=docker/dockerfile:1
+FROM python:3.12.13-slim-trixie
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libpq5 \
+    openssl \
+    ca-certificates \
+    curl \
+    libssl3 \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY ./nveil/backend/tools/logger/ /nveil/backend/tools/logger/
+
+RUN mkdir -p /root/DIVE/
+
+RUN python3 -m venv /opt/venv \
+    && /opt/venv/bin/pip install --no-cache-dir --upgrade pip setuptools wheel \
+    && /opt/venv/bin/pip install --no-cache-dir ruamel.yaml
+
+ENV PATH="/opt/venv/bin:$PATH"
+ENV PYTHONUNBUFFERED=1

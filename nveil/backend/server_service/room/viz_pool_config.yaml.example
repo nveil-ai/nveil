@@ -1,0 +1,63 @@
+# Viz Pool Configuration
+#
+# Resolution order (highest priority wins):
+#   1. K8s mounted secret  (/etc/secrets/{KEY})
+#   2. Environment variable
+#   3. This YAML file
+#   4. Code-level default
+#
+# Copy to viz_pool_config.yaml and adjust for your environment.
+# Point VIZ_POOL_CONFIG env var to a custom path if needed.
+
+viz_pool:
+  # Container image for viz pods
+  image: "nveil-viz:latest"              # env: VIZ_IMAGE
+
+  # Pool sizing
+  min_size: 5                            # env: VIZ_POOL_MIN_SIZE
+  burst_size: 30                         # env: VIZ_POOL_BURST_SIZE
+  burst_buffer: 5                        # env: VIZ_POOL_BURST_BUFFER
+
+  # Idle timeouts (minutes)
+  idle_timeout_minutes: 15               # env: VIZ_IDLE_TIMEOUT_MINUTES
+  user_idle_timeout_minutes: 30          # env: VIZ_USER_IDLE_TIMEOUT_MINUTES
+
+  # Pool consolidation
+  consolidation_margin: 2                # env: VIZ_POOL_CONSOLIDATION_MARGIN
+  max_terminating: 3                     # env: VIZ_POOL_MAX_TERMINATING
+
+  # ── Docker mode (ENV=local) ──────────────────────────────────────────
+  docker_network: "app_default"          # env: DOCKER_NETWORK
+  server_host: "server"                  # env: SERVER_INTERNAL_HOST
+  dive_volume: ""                        # env: DIVE_VOLUME  (host path to DIVE data)
+  cert_volume: "app_nveil-certs"         # env: CERT_VOLUME  (Docker named volume)
+  cert_host_dir: ""                      # env: CERT_HOST_DIR (host path, fallback if no named volume)
+  repo_host_dir: ""                      # env: REPO_HOST_DIR (host path to source code)
+
+  # ── K8s mode (ENV!=local) ────────────────────────────────────────────
+  namespace: "viz-service"
+  service_account: "viz-workload"
+  node_selector_role: "viz"              # env: VIZ_NODE_SELECTOR_ROLE
+  pool_tier_affinity: ""                 # env: VIZ_POOL_TIER_AFFINITY
+  gcp: "0"                              # env: GCP
+
+  # Storage
+  volume_type: "pvc"                     # env: VIZ_VOLUME_TYPE ("pvc" or "hostPath")
+  volume_host_path: ""                   # env: VIZ_VOLUME_HOST_PATH (required if hostPath)
+
+  # Node tolerations (leave key empty to disable)
+  tolerations:
+    - key: ""                            # env: VIZ_TOLERATION_KEY
+      value: "viz"                       # env: VIZ_TOLERATION_VALUE
+      effect: "NoSchedule"               # env: VIZ_TOLERATION_EFFECT
+
+  # Pod resource requests and limits (K8s only)
+  resources:
+    requests:
+      cpu: "250m"
+      memory: "1Gi"
+      storage: "1Gi"
+    limits:
+      cpu: "4000m"
+      memory: "8Gi"
+      storage: "4Gi"

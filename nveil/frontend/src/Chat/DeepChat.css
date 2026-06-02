@@ -1,0 +1,372 @@
+/*
+ * SPDX-FileCopyrightText: 2025 NVEIL SAS
+ * SPDX-FileContributor: Pierre Jacquet
+ * SPDX-FileContributor: Clément Baraille
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+
+
+
+::-webkit-scrollbar {
+    width: 4px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #555;
+    border-radius: 4px;
+}
+
+@supports not selector(::-webkit-scrollbar) {
+    * {
+        scrollbar-width: thin;
+        scrollbar-color: #555 transparent;
+    }
+}
+
+.highlighted_word {
+    color: #d5efff;
+}
+
+.highlight_field {
+    color: #d5efff;
+    font-family: 'InterTight';
+}
+
+.highlight_mark {
+    color: #ffe5c8;
+}
+
+.highlight_channels {
+    color: #a8d8ea;
+    font-weight: bold;
+}
+
+blockquote {
+    padding: 8px 12px;
+    border-left: 3px solid rgba(255, 120, 43, 0.918);
+    margin: 8px 0;
+    color: rgba(255, 255, 255, 0.75);
+    background-color: rgba(255, 255, 255, 0.02);
+    border-radius: 0 4px 4px 0;
+}
+.outer-message-container:nth-of-type(1) {
+    margin-top: 40px;
+}
+
+.deep-chat-outer-container-role-ai.deep-chat-top-message .avatar-container {
+    visibility: visible!important;
+}
+.deep-chat-outer-container-role-ai.deep-chat-top-message + .deep-chat-outer-container-role-ai.deep-chat-bottom-message .avatar-container {
+    visibility: hidden!important;
+}
+.deep-chat-top-message.deep-chat-bottom-message .avatar-container {
+    visibility: visible!important;
+}
+
+.deep-chat-middle-message .message-bubble {
+    margin-top: 0px;
+}
+
+.deep-chat-bottom-message .message-bubble {
+    margin-top: 0px;
+}
+.deep-chat-top-message .message-bubble {
+    margin-top: 0px;
+}
+
+.deep-chat-bottom-message {
+    margin-bottom: 40px;
+}
+
+.inner-message-container {
+    word-break: break-word;
+}
+.message-bubble, .message-bubble p{
+    line-height: 26px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+.message-bubble, .message-bubble br{
+    display: none;
+}
+#chat-view{
+    /* height: inherit!important; */
+    /* display: block!important; */
+    /* overflow: auto; */
+        max-width: 800px;
+    width: 100%;
+    place-self: center;
+}
+#messages {
+    display: inherit;
+    overflow-y: auto;
+    overflow-x: hidden;
+    width: 100%;
+}
+
+#messages::-webkit-scrollbar-thumb {
+    visibility: hidden !important;
+}
+
+/* Make the thumb visible when the entire scrollbar track (or the element itself) is hovered */
+#messages:hover::-webkit-scrollbar-track,
+#messages:hover::-webkit-scrollbar-thumb {
+    visibility: visible !important;
+}
+
+#messages>div {
+    /* max-width: 800px; */
+    width: 100%;
+    /* place-self: center; */
+}
+
+.message-bubble{
+    display: grid;
+}
+@keyframes blink {
+    0% { opacity: 0; }
+    50% { opacity: 1; }
+    100% { opacity: 0; }
+}
+.loading-button {
+    display: none !important;
+}
+.deep-chat-loading-message-dots-container{
+        align-self: center;
+}
+
+a{
+  color: aquamarine;
+}
+
+.deep-chat-temporary-message {
+    display: flex;
+    margin-top: 8px;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+/* Style palette de couleurs (Violet/Gradient) - ex: "Customize colors" */
+.deep-chat-suggestion-color-palette {
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.15), rgba(236, 72, 153, 0.15)) !important;
+    border-color: rgba(168, 85, 247, 0.5) !important;
+    color: #e9d5ff !important; /* Violet clair lisible */
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+}
+
+.deep-chat-suggestion-color-palette:hover {
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.3), rgba(236, 72, 153, 0.3)) !important;
+    border-color: #e9d5ff !important;
+}
+
+.deep-chat-suggestion-color-palette svg {
+    width: 16px;
+    height: 16px;
+}
+
+.history-anchor {
+    position: relative;
+    bottom: 0px;
+    right: 0px;
+    display: flex;
+    place-self: self-end;
+    gap: 4px;
+}
+
+.viz-thumbnail-btn {
+    all: unset;
+    display: block;
+    margin: 8px auto 0;
+    max-width: 400px;
+    width: 100%;
+    cursor: pointer;
+    border-radius: 6px;
+    overflow: hidden;
+    transition: opacity 0.15s;
+}
+
+.viz-thumbnail-btn:hover {
+    opacity: 0.8;
+}
+
+.viz-thumbnail {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.history-show-viz,
+.history-export-dashboard {
+    background: #303030;
+    border: 1px solid #424242;
+    cursor: pointer;
+    padding: 0;
+    border-radius: 8px;
+    display: flex;
+    position: relative;
+}
+
+.history-show-viz:hover,
+.history-export-dashboard:hover {
+    background: #3a3a3a;
+    border-color: #555;
+}
+
+/* Tooltip for shadow DOM elements (global [data-tooltip] can't penetrate shadow DOM) */
+.history-show-viz::after,
+.history-export-dashboard::after {
+    content: attr(data-tooltip);
+    display: none;
+    position: absolute;
+    bottom: calc(100% + 6px);
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    background: #1e1e1e;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 0.75rem;
+    color: #e0e0e0;
+    pointer-events: none;
+    z-index: 20;
+}
+
+.history-show-viz:hover::after,
+.history-export-dashboard:hover::after {
+    display: block;
+}
+
+.history-show-viz img{
+    width: 16px;
+    background: none;
+    filter: invert(1);
+    padding: 5px 5px;
+    opacity: 0.8;
+}
+
+.history-export-dashboard svg {
+    padding: 5px 5px;
+}
+
+.message-bubble table{
+    width: 100%;
+    overflow-x: scroll;
+    max-width: 100%;
+    display: inline-block;
+    border-collapse: collapse;
+    white-space: nowrap;
+    text-align: left;
+    overflow: auto;
+    border-radius: 8px;
+    border: 1px solid #484848;
+}
+
+.message-bubble table thead tr {
+background-color: #1a1a1a;
+    color: #cbcbcb;
+        text-align: left;
+        font-weight: 600;
+    }
+    
+    .message-bubble table th, .message-bubble table td {
+        padding: 8px 12px; /* Compact padding */
+        border-bottom: 1px solid #494949;
+    }
+    
+    .message-bubble table tbody tr:nth-of-type(even) {
+        background-color: #2d2d2d; /* Zebra striping for readability */
+    }
+    
+    .message-bubble table tbody tr:hover {
+        background-color: #5f5f5f; /* Hover effect */
+    }
+    
+    .message-bubble table tbody tr:last-of-type td {
+        border-bottom: none;
+    }
+    
+    /* Truncate long text for compactness */
+    .message-bubble table td {
+        white-space: nowrap;
+        max-width: 200px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    #scroll-button{
+    background: rgba(27, 144, 186, 0.15) !important;
+    border: 1px solid rgba(27, 144, 186, 0.3) !important;
+    color: #49fcb3 !important;
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+    }
+
+/* Semantic marker background pills */
+.highlight_field,
+.highlight_mark,
+.highlight_channels {
+    padding: 1px 4px;
+    border-radius: 3px;
+    white-space: nowrap;
+}
+.highlight_field  { background-color: rgba(213, 239, 255, 0.1); }
+.highlight_mark   { background-color: rgba(255, 229, 200, 0.1); }
+.highlight_channels { background-color: rgba(168, 216, 234, 0.1); }
+
+/* List styling */
+.message-bubble ul, .message-bubble ol { margin: 6px 0; padding-left: 20px; }
+.message-bubble ul { list-style-type: disc; }
+.message-bubble ol { list-style-type: decimal; }
+.message-bubble li { margin-bottom: 4px; line-height: 24px; }
+.message-bubble li::marker { color: rgba(255, 255, 255, 0.4); }
+
+/* Horizontal rule */
+.message-bubble hr { border: none; border-top: 1px solid rgba(255, 255, 255, 0.08); margin: 12px 0; width: 100%; }
+
+/* Strong and emphasis */
+.message-bubble strong { color: #ffffff; font-weight: 600; }
+.message-bubble em { color: rgba(255, 255, 255, 0.85); }
+
+/* Inline code */
+.message-bubble code {
+    background-color: rgba(255, 255, 255, 0.08);
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 0.88em;
+}
+
+/* Paragraph spacing */
+.message-bubble p + p { margin-top: 8px; }
+
+@media screen and (max-width: 1000px) {
+    #chat-view {
+        max-width: 100%;
+        padding: 0;
+    }
+    .outer-message-container:nth-of-type(1) {
+        margin-top: 16px;
+    }
+    .deep-chat-bottom-message {
+        margin-bottom: 20px;
+    }
+    .message-bubble table {
+        font-size: 0.8rem;
+    }
+    .message-bubble table td {
+        max-width: 120px;
+        padding: 6px 8px;
+    }
+    .message-bubble table th {
+        padding: 6px 8px;
+    }
+}

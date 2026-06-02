@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<choregraph>
+  <inputs>
+    <input id="1" label="airbnb" location="/root/DIVE/_guest/workspaces/shared/airbnb.csv" format="CSV" header="True" fieldSeparator="," skipLines="0" visibility="false"/>
+  </inputs>
+  <pipeline>
+    <node id="2" label="Filter New York City" type="filter_equal">
+      <inputPort name="df" sourceRef="1" type="DATAFRAME"/>
+      <inputPort name="column" value="city" type="STRING"/>
+      <inputPort name="value" value="New York City" type="STRING"/>
+      <outputPort id="3" name="result" label="NYC listings" type="DATAFRAME" visibility="true"/>
+    </node>
+  </pipeline>
+</choregraph>

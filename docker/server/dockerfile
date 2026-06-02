@@ -1,0 +1,112 @@
+# SPDX-FileCopyrightText: 2025 NVEIL SAS
+# SPDX-FileContributor: Guillaume Franque
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+# syntax=docker/dockerfile:1
+
+# ── Base ────────────────────────────────────────────────────────────────────
+FROM python:3.12.13-slim-trixie AS base
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libpq5 openssl ca-certificates curl libssl3 \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY ./nveil/backend/tools/logger/ /nveil/backend/tools/logger/
+
+RUN mkdir -p /root/DIVE/
+
+RUN python3 -m venv /opt/venv \
+    && /opt/venv/bin/pip install --no-cache-dir --upgrade pip setuptools wheel \
+    && /opt/venv/bin/pip install --no-cache-dir ruamel.yaml
+
+ENV PATH="/opt/venv/bin:$PATH"
+ENV PYTHONUNBUFFERED=1
+
+# ── Node builder ────────────────────────────────────────────────────────────
+FROM debian:13.4-slim AS node-builder
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN curl -fsSL https://deb.nodesource.com/setup_24.x | bash -
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    nodejs \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /build/frontend
+COPY ./nveil/frontend /build/frontend
+
+RUN npm install -g npm@latest
+RUN npm install
+RUN npm run build
+
+# ── Server ──────────────────────────────────────────────────────────────────
+FROM base
+
+WORKDIR /nveil/backend/server_service
+
+RUN curl -fsSL https://deb.nodesource.com/setup_24.x | bash -
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    nodejs \
+    make \
+    libglib2.0-0 \
+    libnss3 \
+    libnspr4 \
+    libatk1.0-0 \
+    libatk-bridge2.0-0 \
+    libcups2 \
+    libdrm2 \
+    libdbus-1-3 \
+    libxkbcommon0 \
+    libatspi2.0-0 \
+    libxcomposite1 \
+    libxdamage1 \
+    libxfixes3 \
+    libxrandr2 \
+    libgbm1 \
+    libasound2 \
+    libpango-1.0-0 \
+    libcairo2 \
+    && rm -rf /var/lib/apt/lists/*
+
+# --- Stable pip deps ---
+RUN npm install -g npm@latest
+
+ARG REQUIREMENTS=requirements.txt
+COPY ./docker/server/${REQUIREMENTS} /tmp/requirements.txt
+RUN --mount=type=cache,target=/root/.cache/pip \
+    pip install -r /tmp/requirements.txt
+
+# --- Volatile local packages ---
+
+COPY ./nveil/backend/tools/ /tmp/tools/
+RUN pip install --no-cache-dir /tmp/tools/
+
+# --- Frontend: node_modules (big, stable) then source (small, volatile) ---
+
+COPY --from=node-builder /build/frontend/dist /nveil/frontend/dist
+COPY --from=node-builder /build/frontend/node_modules /nveil/frontend/node_modules
+COPY ./nveil/frontend/ /nveil/frontend/
+
+# --- Entrypoint + application code (smallest, most volatile) ---
+
+COPY ./docker/server/entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+COPY ./nveil/backend/server_service/ /nveil/backend/server_service/
+COPY ./nveil/backend/shared/ /nveil/backend/shared/
+COPY ./nveil/backend/viz_service/viz_renderer/config/ /nveil/backend/viz_service/viz_renderer/config/
+
+RUN mkdir -p /nveil/guest_data
+COPY ./examples/Miscellaneous/AirbnbGuest/ /nveil/guest_data/AirbnbGuest/
+
+ENV NODE_ENV=production
+ENV PYTHONPATH=/nveil/backend
+
+EXPOSE 8000
+
+ENTRYPOINT ["/entrypoint.sh"]

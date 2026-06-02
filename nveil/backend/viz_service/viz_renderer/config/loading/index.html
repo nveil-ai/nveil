@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" data-app-name="trame" data-launcher-retry="[]" style="overflow: hidden;">
+  <head>
+    <base href="." />
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1"
+    />
+    <meta
+      name="keywords"
+      content=""
+    />
+    <meta
+      http-equiv="Cache-Control"
+      content="no-cache, no-store, must-revalidate"
+    />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <style>
+    html, body {
+        /* background: transparent; */
+        margin: 0;
+        height: 100%;
+      }
+    </style>
+    <title>NVEIL VIEWER</title>
+    <script src="vue.global.js"></script>
+    <script type="module" crossorigin src="index-8fd376af.js"></script>
+    <link rel="stylesheet" href="index-e80c1ba5.css">
+  </head>
+  <body style="overflow: hidden;">
+    <noscript>
+      <strong
+        >We're sorry but NVEIL VIEWER doesn't work properly without
+        JavaScript enabled. Please enable it to continue.</strong
+      >
+    </noscript>
+    <div id="app"></div>
+    <script>
+      fetch("./loading.tpl")
+        .then((r) => r.text())
+        .then((c) => (document.querySelector("#app").innerHTML = c));
+    </script>
+    
+  </body>
+</html>

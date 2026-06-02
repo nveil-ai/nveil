@@ -1,0 +1,286 @@
+{
+  "log_info": "",
+  "datasets": [
+    {
+      "data_id": "1",
+      "name": "airbnb.csv",
+      "rows": "232095",
+      "filename": "choregraph.xml",
+      "fields": [
+        {
+          "field_id": "1",
+          "name": "name",
+          "data_type": "STRING",
+          "unit": "UNITLESS",
+          "field_min": "0",
+          "field_max": "220120",
+          "distinct_count": "220120"
+        },
+        {
+          "field_id": "2",
+          "name": "host_id",
+          "data_type": "INTEGER",
+          "unit": "UNITLESS",
+          "field_min": "23",
+          "field_max": "506938352",
+          "distinct_count": "119560"
+        },
+        {
+          "field_id": "3",
+          "name": "neighbourhood",
+          "data_type": "STRING",
+          "unit": "UNITLESS",
+          "field_min": "0",
+          "field_max": "1412",
+          "distinct_count": "1412"
+        },
+        {
+          "field_id": "4",
+          "name": "latitude",
+          "data_type": "FLOAT",
+          "unit": "UNITLESS",
+          "field_min": "25.957322957283782",
+          "field_max": "47.73401",
+          "distinct_count": "157953"
+        },
+        {
+          "field_id": "5",
+          "name": "longitude",
+          "data_type": "FLOAT",
+          "unit": "UNITLESS",
+          "field_min": "-123.08913",
+          "field_max": "-70.996",
+          "distinct_count": "159965"
+        },
+        {
+          "field_id": "6",
+          "name": "room_type",
+          "data_type": "STRING",
+          "unit": "UNITLESS",
+          "field_min": "0",
+          "field_max": "4",
+          "distinct_count": "4"
+        },
+        {
+          "field_id": "7",
+          "name": "price",
+          "data_type": "INTEGER",
+          "unit": "UNITLESS",
+          "field_min": "0",
+          "field_max": "20000",
+          "distinct_count": "2405"
+        },
+        {
+          "field_id": "8",
+          "name": "minimum_nights",
+          "data_type": "INTEGER",
+          "unit": "UNITLESS",
+          "field_min": "1",
+          "field_max": "1250",
+          "distinct_count": "178"
+        },
+        {
+          "field_id": "9",
+          "name": "number_of_reviews",
+          "data_type": "INTEGER",
+          "unit": "UNITLESS",
+          "field_min": "0",
+          "field_max": "3091",
+          "distinct_count": "861"
+        },
+        {
+          "field_id": "10",
+          "name": "last_review",
+          "data_type": "STRING",
+          "unit": "UNITLESS",
+          "field_min": "0",
+          "field_max": "3147",
+          "distinct_count": "3147"
+        },
+        {
+          "field_id": "11",
+          "name": "reviews_per_month",
+          "data_type": "FLOAT",
+          "unit": "UNITLESS",
+          "field_min": "0.01",
+          "field_max": "101.42",
+          "distinct_count": "1367"
+        },
+        {
+          "field_id": "12",
+          "name": "calculated_host_listings_count",
+          "data_type": "INTEGER",
+          "unit": "UNITLESS",
+          "field_min": "1",
+          "field_max": "1003",
+          "distinct_count": "149"
+        },
+        {
+          "field_id": "13",
+          "name": "availability_365",
+          "data_type": "INTEGER",
+          "unit": "UNITLESS",
+          "field_min": "0",
+          "field_max": "365",
+          "distinct_count": "366"
+        },
+        {
+          "field_id": "14",
+          "name": "number_of_reviews_ltm",
+          "data_type": "INTEGER",
+          "unit": "UNITLESS",
+          "field_min": "0",
+          "field_max": "1314",
+          "distinct_count": "271"
+        },
+        {
+          "field_id": "15",
+          "name": "city",
+          "data_type": "STRING",
+          "unit": "UNITLESS",
+          "field_min": "0",
+          "field_max": "27",
+          "distinct_count": "27"
+        }
+      ]
+    }
+  ],
+  "additional_info": "Uploaded file(s):\n🗋 airbnb.csv",
+  "kedro_viz": {
+    "data": {
+      "nodes": [
+        {
+          "id": "16e8345e",
+          "name": "Filter minimum nights < 300",
+          "tags": [],
+          "pipelines": [
+            "__default__",
+            "choregraph"
+          ],
+          "type": "task",
+          "modular_pipelines": null,
+          "node_extras": null,
+          "parameters": {}
+        },
+        {
+          "id": "82981f48",
+          "name": "airbnb",
+          "tags": [],
+          "pipelines": [
+            "__default__",
+            "choregraph"
+          ],
+          "type": "data",
+          "modular_pipelines": null,
+          "node_extras": {
+            "stats": {
+              "rows": 232095,
+              "columns": 15,
+              "file_size": 32930819
+            },
+            "styles": null
+          },
+          "layer": null,
+          "dataset_type": "pandas.csv_dataset.CSVDataset"
+        },
+        {
+          "id": "e3629d6b",
+          "name": "Filtered minimum nights",
+          "tags": [],
+          "pipelines": [
+            "__default__",
+            "choregraph"
+          ],
+          "type": "data",
+          "modular_pipelines": null,
+          "node_extras": {
+            "stats": {
+              "rows": 231595,
+              "columns": 15,
+              "file_size": 13618065
+            },
+            "styles": null
+          },
+          "layer": null,
+          "dataset_type": "pandas.parquet_dataset.ParquetDataset"
+        }
+      ],
+      "edges": [
+        {
+          "source": "82981f48",
+          "target": "16e8345e"
+        },
+        {
+          "source": "16e8345e",
+          "target": "e3629d6b"
+        }
+      ],
+      "layers": [],
+      "tags": [],
+      "pipelines": [
+        {
+          "id": "__default__",
+          "name": "__default__"
+        },
+        {
+          "id": "choregraph",
+          "name": "choregraph"
+        }
+      ],
+      "modular_pipelines": {
+        "__root__": {
+          "id": "__root__",
+          "name": "__root__",
+          "inputs": [],
+          "outputs": [],
+          "children": [
+            {
+              "id": "16e8345e",
+              "type": "task"
+            },
+            {
+              "id": "82981f48",
+              "type": "data"
+            },
+            {
+              "id": "e3629d6b",
+              "type": "data"
+            }
+          ]
+        }
+      },
+      "selected_pipeline": "__default__"
+    },
+    "runData": {
+      "nodes": {
+        "16e8345e": {
+          "duration": 0.04536779801128432,
+          "status": "success",
+          "error": null
+        }
+      },
+      "datasets": {
+        "82981f48": {
+          "name": "airbnb",
+          "size": 32930819,
+          "status": "success",
+          "error": null
+        },
+        "e3629d6b": {
+          "name": "filter_minimum_nights_less_than_300_out",
+          "size": 13618065,
+          "status": "success",
+          "error": null
+        }
+      },
+      "pipeline": {
+        "run_id": "ac544265-6bf0-4969-bc29-f9047f76b915",
+        "start_time": "2026-01-29T12:39:48.768850+00:00",
+        "end_time": "2026-01-29T12:43:05.582402+00:00",
+        "duration": 196.813552,
+        "status": "success",
+        "error": null
+      }
+    }
+  }
+}

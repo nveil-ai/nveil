@@ -1,0 +1,42 @@
+# SPDX-FileCopyrightText: 2026 NVEIL SAS
+# SPDX-FileContributor: Clément Baraille
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+# Mistral — la Plateforme (`<size>-latest` aliases). Mistral exposes no
+# thinking/reasoning_effort kwarg (reasoning is model-bound, e.g. the
+# magistral family), so per-node tuning is temperature-only — same shape
+# as the OpenAI/Gemini yaml. Temperature range is 0–1; don't pair it with
+# top_p.
+
+defaults:
+  model: mistral-large-latest
+  temperature: 0.3
+
+# Smallest/cheapest viable model for this provider — single source of truth,
+# shared by choregraph CSV characterization and the setup "test connection"
+# ping. Nodes opt in via `inherits: minimal`.
+minimal:
+  model: mistral-small-latest
+
+nodes:
+  entry_classification:
+    temperature: 0
+
+  exclusion_processing:
+    temperature: 0.2
+
+  xml_generation:
+    temperature: 0.1
+
+  keyword_classification:
+    temperature: 0.2
+
+  planning_transformation:
+    temperature: 0.1
+
+  feedback:
+    temperature: 0.7
+
+  csv_characterization:
+    inherits: minimal
+    temperature: 0

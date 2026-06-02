@@ -1,0 +1,60 @@
+# SPDX-FileCopyrightText: 2026 NVEIL SAS
+# SPDX-FileContributor: Clément Baraille
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+# llama.cpp (via llama-server) — the model file and the context window are
+# fixed when launching `llama-server` (-m and -c flags). No runtime knobs to
+# change them per request. The `model` value below must match the
+# `--alias` passed at server startup (or any string if no alias is set; the
+# server only loads one model anyway).
+#
+# JSON-mode is enabled by default (`response_format.type: json_object`).
+# llama.cpp enforces this natively at the sampler level — generally more
+# reliable than Ollama's grammar-constrained sampling on quantized
+# open-weights models. When `_ainvoke_structured` calls
+# `with_structured_output(method="json_schema")`, langchain-openai
+# overrides this default with a stricter `json_schema` response_format
+# at call time, so we get GBNF-strict decoding when the schema works and
+# soft JSON-mode as a safety net when it doesn't (e.g. the function_calling
+# fallback path).
+#
+# Disable JSON-mode on a node by setting `response_format: null` in its
+# override block (used for `xml_generation`, which emits raw XML).
+
+defaults:
+  model: qwen3-27b
+  temperature: 0.3
+  response_format:
+    type: json_object
+
+# Smallest/cheapest viable model for this provider — single source of truth,
+# shared by choregraph CSV characterization and the setup "test connection"
+# ping. llama-server loads a single model, so this mirrors defaults.model.
+# Nodes opt in via `inherits: minimal`.
+minimal:
+  model: qwen3-27b
+
+nodes:
+  entry_classification:
+    temperature: 0
+
+  exclusion_processing:
+    temperature: 0.2
+
+  xml_generation:
+    temperature: 0.1
+    # Raw XML output — JSON-mode would force valid-JSON sampling and break it.
+    response_format: null
+
+  keyword_classification:
+    temperature: 0.2
+
+  planning_transformation:
+    temperature: 0.1
+
+  feedback:
+    temperature: 0.7
+
+  csv_characterization:
+    inherits: minimal
+    temperature: 0

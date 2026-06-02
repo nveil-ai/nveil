@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+Disallow: /viz/
+Disallow: /server/
+Disallow: /cdn-cgi/
+
+User-agent: GPTBot
+User-agent: CCBot
+User-agent: Google-Extended
+Allow: /
+
+Sitemap: https://app.nveil.com/sitemap.xml

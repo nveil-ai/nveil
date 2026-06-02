@@ -1,0 +1,47 @@
+/*
+ * SPDX-FileCopyrightText: 2025 NVEIL SAS
+ * SPDX-FileContributor: Guillaume Franque
+ * SPDX-FileContributor: Pierre Jacquet
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+.resize-handle {
+    width: 4px;
+    transition: background-color .2s;
+    /* background-color: #3c3c3c; */
+    display: flex;
+    justify-content: center;
+    align-self: center;
+    z-index: 5;
+}
+
+/* On mobile (<768px), Home.jsx uses tab switcher instead of panels — no resize handle shown */
+
+/* .resize-handle:hover {
+    width: 6px;
+
+}
+.resize-handle[data-resize-handle-active] {
+  width: 6px;
+} */
+.resize-handle svg{
+width: 14px;
+    overflow: visible;
+    z-index: 1;
+    /* color: #212121; */
+    background-color: #3f3f3f;
+    height: 29px;
+    align-self: center;
+    border-radius: 38px;
+}
+
+
+/* Disable pointer events on ALL iframes while a resize handle is being dragged.
+   This is CSS-only (no React state delay) — the attribute is set synchronously by
+   react-resizable-panels, so iframes never get a chance to capture the mouse. */
+body:has([data-resize-handle-state="drag"]) iframe {
+  pointer-events: none !important;
+}
+
+/* Panel group no longer used on mobile — tab switcher handles layout */
+

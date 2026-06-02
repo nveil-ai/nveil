@@ -1,0 +1,55 @@
+/*
+ * SPDX-FileCopyrightText: 2026 NVEIL SAS
+ * SPDX-FileContributor: Guillaume Franque
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    width: 100%;
+    color: white;
+    text-align: center;
+    padding: 2rem;
+}
+
+.title {
+    font-size: 8rem;
+    font-weight: 800;
+    margin: 0;
+    background: linear-gradient(135deg, #fff 0%, #ffffff80 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+
+    line-height: 1;
+}
+
+.subtitle {
+    font-size: 2rem;
+    font-weight: 400;
+    margin: 1rem 0 2rem 0;
+    opacity: 0.8;
+}
+
+.button {
+    border: 1px solid #ffffff;
+    background-color: transparent;
+    border-radius: 51px;
+    padding: 13px 40px;
+    cursor: pointer;
+    color: #fff;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.button:hover {
+    background-color: #ffffff;
+    color: black;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}

@@ -1,0 +1,581 @@
+/*
+ * SPDX-FileCopyrightText: 2026 NVEIL SAS
+ * SPDX-FileContributor: Pierre Jacquet
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+/* ═══════════════════════════════════════════
+   Landing Page — SEO-Rich Homepage
+   ═══════════════════════════════════════════ */
+
+.page {
+    z-index: 1;
+    scrollbar-width: none;
+    background-color: #09090b;
+    border-radius: 0;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    position: relative;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+/* Aurora background */
+.page::before,
+.page::after {
+    content: '';
+    position: absolute;
+    width: 800px;
+    height: 800px;
+    border-radius: 50%;
+    filter: blur(140px);
+    z-index: -1;
+    pointer-events: none;
+}
+
+.page::before {
+    top: -20%;
+    left: -10%;
+    background: rgba(37, 99, 235, 0.15);
+}
+
+.page::after {
+    top: 40%;
+    right: -10%;
+    background: rgba(147, 51, 234, 0.15);
+}
+
+/* Third aurora blob via inner wrapper */
+.auroraAccent {
+    position: absolute;
+    width: 600px;
+    height: 600px;
+    border-radius: 50%;
+    filter: blur(160px);
+    z-index: -1;
+    pointer-events: none;
+    top: 70%;
+    left: 30%;
+    background: rgba(27, 144, 186, 0.08);
+}
+
+/* ── Hero ──────────────────────────────── */
+
+.hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 100px 24px 60px;
+    max-width: 800px;
+    gap: 24px;
+}
+
+.headline {
+    font-size: 3.2rem;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: -1.5px;
+    line-height: 1.08;
+    margin: 0;
+}
+
+.headlineAccent {
+    background: linear-gradient(135deg, #60a5fa, #a78bfa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.subheadline {
+    font-size: 1.15rem;
+    color: #a1a1aa;
+    line-height: 1.65;
+    max-width: 600px;
+    margin: 0;
+    font-weight: 400;
+}
+
+.heroCtas {
+    display: flex;
+    gap: 14px;
+    margin-top: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.ctaPrimary {
+    background: linear-gradient(135deg, #60a5fa 0%, #1d4ed8 100%);
+    color: #ffffff;
+    padding: 14px 32px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    border: none;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.ctaPrimary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    background: linear-gradient(135deg, #93c5fd 0%, #2563eb 100%);
+}
+
+.ctaGhost {
+    position: relative;
+    background: rgba(255, 255, 255, 0.03);
+    color: #e4e4e7;
+    padding: 14px 32px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: background 0.25s ease, transform 0.25s ease, border-color 0.25s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.ctaGhostPulse {
+    background: rgba(96, 165, 250, 0.08);
+    color: #ffffff;
+    border-color: rgba(147, 197, 253, 0.55);
+    animation: ctaGhostPulse 2.4s ease-in-out infinite;
+}
+
+@keyframes ctaGhostPulse {
+    0%, 100% {
+        box-shadow:
+            0 0 0 0 rgba(96, 165, 250, 0.55),
+            0 0 14px rgba(96, 165, 250, 0.25);
+        border-color: rgba(147, 197, 253, 0.55);
+    }
+    50% {
+        box-shadow:
+            0 0 0 6px rgba(96, 165, 250, 0),
+            0 0 22px rgba(167, 139, 250, 0.55);
+        border-color: rgba(167, 139, 250, 0.95);
+    }
+}
+
+.ctaGhost:hover {
+    background: rgba(96, 165, 250, 0.16);
+    transform: translateY(-2px);
+    border-color: rgba(167, 139, 250, 1);
+}
+
+/* ── Sections (shared) ─────────────────── */
+
+.section {
+    width: 100%;
+    max-width: 1060px;
+    padding: 40px 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 32px;
+}
+
+.sectionTitle {
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: #ffffff;
+    text-align: center;
+    margin: 0;
+    letter-spacing: -0.5px;
+}
+
+.sectionSubtitle {
+    font-size: 0.95rem;
+    color: #a1a1aa;
+    text-align: center;
+    margin: -16px 0 0;
+    max-width: 620px;
+    line-height: 1.6;
+}
+
+.ctaPrimary:disabled,
+.ctaGhost:disabled {
+    opacity: 0.6;
+    cursor: progress;
+    transform: none;
+}
+
+/* ── Feature Cards ─────────────────────── */
+
+.featureGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    width: 100%;
+}
+
+.featureCard {
+    position: relative;
+    border: none;
+    background: transparent;
+    padding: 0;
+    border-radius: 16px;
+    text-align: left;
+    animation: cardIn 0.4s ease both;
+    animation-delay: calc(var(--i) * 0.08s);
+}
+
+@keyframes cardIn {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.featureGlow {
+    position: absolute;
+    inset: 0;
+    border-radius: 16px;
+    padding: 1px;
+    background: linear-gradient(135deg, rgba(27, 144, 186, 0.3), rgba(163, 60, 178, 0.15));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.featureCard:hover .featureGlow {
+    opacity: 1;
+}
+
+.featureInner {
+    background: rgba(20, 20, 25, 0.6);
+    backdrop-filter: blur(40px);
+    -webkit-backdrop-filter: blur(40px);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 16px;
+    padding: 28px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transition: border-color 0.3s ease, background 0.3s ease;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+    height: 100%;
+    box-sizing: border-box;
+}
+
+.featureCard:hover .featureInner {
+    border-color: rgba(255, 255, 255, 0.12);
+    background: rgba(26, 26, 33, 0.8);
+}
+
+.featureLabel {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #ffffff;
+    margin: 0;
+    letter-spacing: -0.2px;
+}
+
+.featureDesc {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.55);
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* ── Steps (vertical with embedded animation) ───── */
+
+.stepsColumn {
+    display: flex;
+    flex-direction: column;
+    gap: 64px;
+    width: 100%;
+    max-width: 960px;
+}
+
+.stepBlock {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    text-align: left;
+    gap: 18px;
+    animation: cardIn 0.4s ease both;
+    animation-delay: calc(var(--i) * 0.08s);
+}
+
+.stepMarker {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.stepMarkerNumber {
+    font-size: clamp(2.4rem, 5vw, 3.6rem);
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -2px;
+    background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 60%, #f472b6 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-feature-settings: "tnum" 1;
+}
+
+.stepMarkerRule {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(
+        90deg,
+        rgba(167, 139, 250, 0.45) 0%,
+        rgba(255, 255, 255, 0.06) 60%,
+        transparent 100%
+    );
+}
+
+.stepAnimationWrap {
+    width: 100%;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid rgba(96, 165, 250, 0.18);
+    background: #ffffff;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+}
+
+/* ── Use Cases ─────────────────────────── */
+
+.useCaseGrid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 16px;
+    width: 100%;
+}
+
+.useCaseCard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 28px 20px;
+    border-radius: 14px;
+    background: rgba(20, 20, 25, 0.6);
+    backdrop-filter: blur(40px);
+    -webkit-backdrop-filter: blur(40px);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    text-align: center;
+    transition: all 0.25s ease;
+    animation: cardIn 0.4s ease both;
+    animation-delay: calc(var(--i) * 0.08s);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.useCaseIcon {
+    width: 72px;
+    height: 72px;
+    margin-bottom: 6px;
+}
+
+.useCaseIcon svg {
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 0 12px rgba(150, 98, 254, 0.18));
+}
+
+.useCaseCard:hover {
+    background: rgba(26, 26, 33, 0.8);
+    border-color: rgba(255, 255, 255, 0.12);
+    transform: translateY(-2px);
+}
+
+.useCaseTitle {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #ffffff;
+    margin: 0;
+    letter-spacing: -0.2px;
+}
+
+.useCaseDesc {
+    font-size: 0.82rem;
+    color: rgba(255, 255, 255, 0.55);
+    line-height: 1.55;
+    margin: 0;
+}
+
+/* ── Explore preview (replaces literal viz-types grid) ── */
+
+.explorePreview {
+    position: relative;
+    display: block;
+    width: 100%;
+    max-width: 1060px;
+    aspect-ratio: 16 / 9;
+    border-radius: 18px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(20, 20, 25, 0.6);
+    cursor: pointer;
+    padding: 0;
+    transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+}
+
+.explorePreview:hover {
+    transform: translateY(-2px);
+    border-color: rgba(96, 165, 250, 0.35);
+    box-shadow: 0 12px 40px rgba(37, 99, 235, 0.25);
+}
+
+.explorePreviewImage {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+}
+
+.explorePreviewFade {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(
+        180deg,
+        rgba(9, 9, 11, 0) 0%,
+        rgba(9, 9, 11, 0) 45%,
+        rgba(9, 9, 11, 0.85) 88%,
+        #09090b 100%
+    );
+}
+
+.explorePreviewCta {
+    position: absolute;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 12px 28px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #60a5fa 0%, #1d4ed8 100%);
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 0.9rem;
+    box-shadow: 0 4px 18px rgba(59, 130, 246, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    white-space: nowrap;
+}
+
+/* ── Video demo ─────────────────────────── */
+
+.videoFrame {
+    width: 100%;
+    max-width: 1060px;
+    aspect-ratio: 16 / 9;
+    border-radius: 18px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: #000;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+}
+
+.videoFrame iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    display: block;
+}
+
+/* ── Bottom CTA ────────────────────────── */
+
+.bottomCta {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    padding: 40px 24px 80px;
+    text-align: center;
+}
+
+.bottomCtaTitle {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: -0.8px;
+    margin: 0;
+}
+
+/* ── Responsive ────────────────────────── */
+
+@media (max-width: 768px) {
+    .hero {
+        padding: 80px 20px 40px;
+    }
+
+    .headline {
+        font-size: 2.2rem;
+        letter-spacing: -1px;
+    }
+
+    .subheadline {
+        font-size: 1rem;
+    }
+
+    .featureGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .stepsColumn {
+        gap: 40px;
+    }
+
+    .stepAnimationWrap {
+        /* Inner stages are 900–960px wide and don't reflow — let users scroll */
+        overflow-x: auto;
+    }
+
+    .useCaseGrid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .explorePreviewCta {
+        bottom: 16px;
+        padding: 10px 20px;
+        font-size: 0.85rem;
+    }
+
+    .section {
+        padding: 28px 20px;
+    }
+
+    .bottomCtaTitle {
+        font-size: 1.4rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero {
+        padding: 70px 16px 32px;
+    }
+
+    .headline {
+        font-size: 1.8rem;
+    }
+
+    .heroCtas {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .ctaPrimary,
+    .ctaGhost {
+        width: 100%;
+        text-align: center;
+    }
+
+    .useCaseGrid {
+        grid-template-columns: 1fr;
+    }
+}

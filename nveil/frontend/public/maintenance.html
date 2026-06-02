@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<!--
+SPDX-FileCopyrightText: 2026 NVEIL SAS
+SPDX-FileContributor: Guillaume Franque
+SPDX-License-Identifier: AGPL-3.0-or-later
+-->
+
+<html lang="fr" id="html-tag">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="page-title">Nveil - Maintenance</title>
+    <!-- Redirection automatique après 10 secondes -->
+    <meta http-equiv="refresh" content="10;url=https://www.nveil.com">
+    <link rel="icon" type="image/png" href="https://www.nveil.com/wp-content/uploads/2024/10/Version-D-3-sans.webp">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;800&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: url(https://www.nveil.com/wp-content/uploads/2024/10/Nveil-Degrade.png);
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            overflow: hidden;
+        }
+
+        .container {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 4rem 3rem;
+            border-radius: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            max-width: 600px;
+            width: 90%;
+            animation: fadeIn 1s ease-out;
+            visibility: hidden;
+            /* Hidden until lang detection */
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo {
+            width: 140px;
+            margin-bottom: 2rem;
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.2));
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            letter-spacing: -1px;
+            background: linear-gradient(135deg, #fff 0%, #ffffff80 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        p {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 2.5rem;
+        }
+
+        .loader-container {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            margin-bottom: 3rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .loader-bar {
+            position: absolute;
+            height: 100%;
+            width: 100%;
+            background: white;
+            animation: shrink 10s linear forwards;
+            transform-origin: left;
+        }
+
+        @keyframes shrink {
+            from {
+                transform: scaleX(1);
+            }
+
+            to {
+                transform: scaleX(0);
+            }
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            background: white;
+            color: #000;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .footer-note {
+            margin-top: 2rem;
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.4);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container" id="main-container">
+        <img src="https://www.nveil.com/wp-content/uploads/2024/10/Version-D-3-sans.webp" alt="Nveil" class="logo">
+        <h1 id="heading">Maintenance en cours</h1>
+        <p id="description">
+            Nous effectuons actuellement des mises à jour sur notre plateforme pour vous offrir une meilleure
+            expérience.
+            Vous allez être redirigé vers notre site principal dans quelques secondes.
+        </p>
+
+        <div class="loader-container">
+            <div class="loader-bar"></div>
+        </div>
+
+        <a href="https://www.nveil.com" class="btn" id="cta-btn">Visiter nveil.com</a>
+
+        <div class="footer-note" id="redirect-note">
+            Redirection automatique vers nveil.com...
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            const translations = {
+                fr: {
+                    title: "Nveil - Maintenance",
+                    heading: "Maintenance en cours",
+                    description: "Nous effectuons actuellement des mises à jour sur notre plateforme pour vous offrir une meilleure expérience. Vous allez être redirigé vers notre site principal dans quelques secondes.",
+                    btn: "Visiter nveil.com",
+                    footer: "Redirection automatique vers nveil.com..."
+                },
+                en: {
+                    title: "Nveil - Maintenance",
+                    heading: "Maintenance in progress",
+                    description: "We are currently performing updates on our platform to provide you with a better experience. You will be redirected to our main site in a few seconds.",
+                    btn: "Visit nveil.com",
+                    footer: "Automatic redirection to nveil.com..."
+                }
+            };
+
+            const lang = (localStorage.getItem('i18nextLng') || 'en').split('-')[0];
+            const content = translations[lang] || translations.en;
+
+            document.getElementById('html-tag').lang = lang;
+            document.getElementById('page-title').innerText = content.title;
+            document.getElementById('heading').innerText = content.heading;
+            document.getElementById('description').innerText = content.description;
+            document.getElementById('cta-btn').innerText = content.btn;
+            document.getElementById('redirect-note').innerText = content.footer;
+
+            // Show container after translations are applied
+            document.getElementById('main-container').style.visibility = 'visible';
+        })();
+    </script>
+</body>
+
+</html>

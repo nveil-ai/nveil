@@ -1,0 +1,166 @@
+/*
+ * SPDX-FileCopyrightText: 2026 NVEIL SAS
+ * SPDX-FileContributor: Pierre Jacquet
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+.wrapper {
+    padding: 8px 0;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.icon {
+    display: flex;
+    align-items: center;
+    color: #888;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.label {
+    font-size: 0.85rem;
+    color: #bbb;
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Editable numeric output */
+.output {
+    font-size: 0.82rem;
+    color: #1b90ba;
+    font-variant-numeric: tabular-nums;
+    min-width: 44px;
+    text-align: right;
+}
+
+.outputValue {
+    cursor: pointer;
+    padding: 1px 4px;
+    border-radius: 4px;
+    transition: background 0.15s ease;
+}
+
+.outputValue:hover {
+    background: rgba(27, 144, 186, 0.12);
+}
+
+/* Digit-by-digit editor */
+.digitEditor {
+    display: inline-flex;
+    align-items: center;
+    gap: 0;
+    padding: 1px 2px;
+    border-radius: 4px;
+    border: 1px solid rgba(27, 144, 186, 0.4);
+    background: rgba(255, 255, 255, 0.06);
+    outline: none;
+    cursor: default;
+}
+
+.digitEditor:focus {
+    border-color: rgba(27, 144, 186, 0.7);
+    box-shadow: 0 0 0 2px rgba(27, 144, 186, 0.15);
+}
+
+.digit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 9px;
+    height: 18px;
+    font-size: 0.82rem;
+    font-variant-numeric: tabular-nums;
+    font-family: inherit;
+    color: #1b90ba;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: background 0.1s ease;
+}
+
+.digitSelected {
+    background: rgba(27, 144, 186, 0.3);
+    outline: 1px solid rgba(27, 144, 186, 0.6);
+}
+
+.digitDot {
+    min-width: 5px;
+    cursor: default;
+}
+
+.track {
+    position: relative;
+    height: 4px;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 2px;
+    cursor: pointer;
+    overflow: visible;
+    margin-bottom: 16px;
+}
+
+/* Invisible extended hitbox */
+.track::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    bottom: -10px;
+    left: 0;
+    right: 0;
+}
+
+.trackFill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background: linear-gradient(90deg, rgba(27, 144, 186, 0.6), rgba(27, 144, 186, 0.9));
+    border-radius: 2px;
+    pointer-events: none;
+}
+
+.tick {
+    position: absolute;
+    top: 12px;
+    width: 6px;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background 0.15s ease;
+    z-index: 1;
+}
+
+.tick:hover {
+    background: rgba(27, 144, 186, 0.9);
+}
+
+.thumb {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #e0e0e0;
+    border: 2px solid #1b90ba;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: grab;
+    transition: box-shadow 0.15s ease, transform 0.1s ease;
+    outline: none;
+}
+
+.thumb[data-dragging] {
+    cursor: grabbing;
+    box-shadow: 0 0 0 4px rgba(27, 144, 186, 0.25);
+    transform: translateY(-50%) scale(1.15);
+}
+
+.thumb[data-focus-visible] {
+    box-shadow: 0 0 0 3px rgba(27, 144, 186, 0.5);
+}

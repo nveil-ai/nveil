@@ -1,0 +1,163 @@
+{
+  "datasets": {
+    "airbnb": {
+      "id": "1",
+      "type": "input",
+      "row_count": 230311,
+      "fields": [
+        {
+          "id": "1",
+          "name": "name",
+          "data_type": "STRING",
+          "min_value": null,
+          "max_value": null,
+          "is_unique": false,
+          "distinct_count": 218562,
+          "uniques": "['Bright, Modern Garden Unit - 1BR/1BTH', 'Creative Sanctuary', 'Friendly Room Apt. Style -UCSF/USF - San Francisco', 'Historic Alamo Square Victorian', 'Mission Sunshine, with Private Bath', 'Elegant & Cozy w/City views. Private room: Purple', 'Stylish, Spacious and Quiet Flat!', 'Mission\\'s \"La Lengua\"', 'Classic Nob Hill Studio - Roof Deck', 'Sunny/Sunset view room UCSF/USF - San Francisco', 'Central San Francisco Urban Dream', 'Sunny/Sunset view room UCSF/USF - San Francisco*', 'Perfectly located Castro', 'Lake Street Single Family Home', 'Loft-like Apt./Garden']"
+        },
+        {
+          "id": "2",
+          "name": "host_id",
+          "data_type": "INTEGER",
+          "min_value": "23",
+          "max_value": "506938352",
+          "is_unique": false,
+          "distinct_count": 119085,
+          "uniques": ""
+        },
+        {
+          "id": "3",
+          "name": "neighbourhood",
+          "data_type": "STRING",
+          "min_value": null,
+          "max_value": null,
+          "is_unique": false,
+          "distinct_count": 1412,
+          "uniques": "['Western Addition', 'Bernal Heights', 'Haight Ashbury', 'Mission', 'Bayview', 'Outer Richmond', 'Nob Hill', 'Castro/Upper Market', 'Inner Richmond', 'Noe Valley', 'Pacific Heights', 'Diamond Heights', 'Outer Mission', 'Marina', 'Twin Peaks']"
+        },
+        {
+          "id": "4",
+          "name": "latitude",
+          "data_type": "FLOAT",
+          "min_value": 25.957322957283782,
+          "max_value": 47.73401,
+          "is_unique": false,
+          "distinct_count": 157228,
+          "uniques": ""
+        },
+        {
+          "id": "5",
+          "name": "longitude",
+          "data_type": "FLOAT",
+          "min_value": -123.08913,
+          "max_value": -70.996,
+          "is_unique": false,
+          "distinct_count": 159128,
+          "uniques": ""
+        },
+        {
+          "id": "6",
+          "name": "room_type",
+          "data_type": "STRING",
+          "min_value": null,
+          "max_value": null,
+          "is_unique": false,
+          "distinct_count": 4,
+          "uniques": "['Entire home/apt', 'Private room', 'Shared room', 'Hotel room']"
+        },
+        {
+          "id": "7",
+          "name": "price",
+          "data_type": "INTEGER",
+          "min_value": "0",
+          "max_value": "2000",
+          "is_unique": false,
+          "distinct_count": 1765,
+          "uniques": ""
+        },
+        {
+          "id": "8",
+          "name": "minimum_nights",
+          "data_type": "INTEGER",
+          "min_value": "1",
+          "max_value": "1250",
+          "is_unique": false,
+          "distinct_count": 178,
+          "uniques": ""
+        },
+        {
+          "id": "9",
+          "name": "number_of_reviews",
+          "data_type": "INTEGER",
+          "min_value": "0",
+          "max_value": "3091",
+          "is_unique": false,
+          "distinct_count": 861,
+          "uniques": ""
+        },
+        {
+          "id": "10",
+          "name": "last_review",
+          "data_type": "STRING",
+          "min_value": null,
+          "max_value": null,
+          "is_unique": false,
+          "distinct_count": 3144,
+          "uniques": "['2023-02-19', '2017-08-06', '2022-10-27', '2019-06-28', '2023-02-25', '2023-01-28', '2023-02-17', '2022-11-26', '2015-05-17', '2022-06-11', '2015-10-18', '2023-02-20', '2022-01-02', '2022-06-19', '2023-02-28']"
+        },
+        {
+          "id": "11",
+          "name": "reviews_per_month",
+          "data_type": "FLOAT",
+          "min_value": 0.01,
+          "max_value": 101.42,
+          "is_unique": false,
+          "distinct_count": 1367,
+          "uniques": ""
+        },
+        {
+          "id": "12",
+          "name": "calculated_host_listings_count",
+          "data_type": "INTEGER",
+          "min_value": "1",
+          "max_value": "1003",
+          "is_unique": false,
+          "distinct_count": 149,
+          "uniques": ""
+        },
+        {
+          "id": "13",
+          "name": "availability_365",
+          "data_type": "INTEGER",
+          "min_value": "0",
+          "max_value": "365",
+          "is_unique": false,
+          "distinct_count": 366,
+          "uniques": ""
+        },
+        {
+          "id": "14",
+          "name": "number_of_reviews_ltm",
+          "data_type": "INTEGER",
+          "min_value": "0",
+          "max_value": "1314",
+          "is_unique": false,
+          "distinct_count": 271,
+          "uniques": ""
+        },
+        {
+          "id": "15",
+          "name": "city",
+          "data_type": "STRING",
+          "min_value": null,
+          "max_value": null,
+          "is_unique": false,
+          "distinct_count": 27,
+          "uniques": "['San Francisco', 'Washington D.C.', 'Oakland', 'Jersey City', 'New Orleans', 'Los Angeles', 'New York City', 'Cambridge', 'Santa Clara County', 'Asheville', 'Salem', 'Columbus', 'Rhode Island', 'San Diego', 'Nashville']"
+        }
+      ],
+      "last_updated": "2026-04-22T14:08:35.017914"
+    }
+  },
+  "last_pipeline_run": "2026-04-22T14:08:35.017914"
+}

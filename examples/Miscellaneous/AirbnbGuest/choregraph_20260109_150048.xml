@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<choregraph>
+  <inputs>
+    <input id="1" label="airbnb" location="/root/DIVE/_guest/workspaces/shared/airbnb.csv" format="CSV" header="True" fieldSeparator="," skipLines="0" visibility="false"/>
+  </inputs>
+  <pipeline>
+    <node id="2" label="Filter New York City" type="filter_equal">
+      <inputPort name="df" sourceRef="1" type="DATAFRAME"/>
+      <inputPort name="column" value="city" type="STRING"/>
+      <inputPort name="value" value="New York City" type="STRING"/>
+      <outputPort id="3" name="result" label="NYC listings" type="DATAFRAME" visibility="false"/>
+    </node>
+    <node id="4" label="Mean price per neighbourhood" type="aggregate_mean">
+      <inputPort name="df" sourceRef="3" type="DATAFRAME"/>
+      <inputPort name="group_columns" value="neighbourhood" type="STRING"/>
+      <outputPort id="5" name="result" label="Mean price by neighbourhood" type="DATAFRAME" visibility="false"/>
+    </node>
+    <node id="6" label="Top 15 most expensive" type="get_top_n">
+      <inputPort name="df" sourceRef="5" type="DATAFRAME"/>
+      <inputPort name="column" value="price" type="STRING"/>
+      <inputPort name="n" value="15" type="INTEGER"/>
+      <outputPort id="7" name="result" label="Top 15 expensive neighbourhoods" type="DATAFRAME" visibility="true"/>
+    </node>
+  </pipeline>
+</choregraph>

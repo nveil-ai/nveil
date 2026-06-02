@@ -1,0 +1,52 @@
+# SPDX-FileCopyrightText: 2026 NVEIL SAS
+# SPDX-FileContributor: Clément Baraille
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+# Anthropic Claude — extended thinking uses budget_tokens (min 1024).
+# Set thinking: null on a node to disable thinking for that call.
+
+defaults:
+  model: claude-sonnet-4-6
+  temperature: 1
+  thinking:
+    type: enabled
+    budget_tokens: 1024
+
+# Smallest/cheapest viable model for this provider — single source of truth,
+# shared by choregraph CSV characterization and the setup "test connection"
+# ping. Nodes opt in via `inherits: minimal`. thinking is disabled so a low
+# token budget never collides with the thinking budget (Anthropic requires
+# max_tokens > budget_tokens).
+minimal:
+  model: claude-haiku-4-5-20251001
+  thinking: null
+
+nodes:
+  entry_classification:
+    temperature: 1
+
+  exclusion_processing:
+    temperature: 1
+
+  xml_generation:
+    temperature: 1
+
+  keyword_classification:
+    temperature: 0.2
+    thinking: null
+
+  planning_transformation:
+    temperature: 1
+    thinking:
+      type: enabled
+      budget_tokens: 2048
+
+  feedback:
+    temperature: 1
+    thinking:
+      type: enabled
+      budget_tokens: 1024
+
+  csv_characterization:
+    inherits: minimal
+    temperature: 0

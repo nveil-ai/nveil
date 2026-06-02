@@ -1,0 +1,330 @@
+/*
+ * SPDX-FileCopyrightText: 2026 NVEIL SAS
+ * SPDX-FileContributor: Pierre Jacquet
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+/* ===================================================================
+   Widget Panel
+   - Pinned: hoverable rail (48px → 300px) over viz, glass morphism
+   - Floating: draggable/resizable window (like chat)
+   - Hidden: small re-open button
+   =================================================================== */
+
+/* ── Pinned rail (collapsed) ── */
+.pinned {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 48px;
+    height: 100%;
+    z-index: 20;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+                border-radius 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    background: var(--panel-bg, #1a1a1e3d);
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+    border-left: 1px solid var(--panel-border, rgba(255, 255, 255, 0.04));
+}
+
+/* Expanded on hover */
+.pinnedExpanded {
+    width: 300px;
+    background: var(--panel-bg, #1a1a1e3d);
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+    border-left: 1px solid var(--panel-border, rgba(255, 255, 255, 0.06));
+    box-shadow: -8px 0 32px rgba(0, 0, 0, 0.35);
+    border-radius: 16px 0 0 16px;
+}
+
+/* Rail icons — vertical list in the narrow bar */
+.railIcons {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 8px 0;
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    scrollbar-width: none;
+}
+
+.railIcons::-webkit-scrollbar {
+    display: none;
+}
+
+.railIcon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
+    color: rgba(255, 255, 255, 0.45);
+    flex-shrink: 0;
+    transition: all 0.15s ease;
+}
+
+.railIcon:first-child {
+    color: #1b90ba;
+    opacity: 0.85;
+    margin-bottom: 4px;
+}
+
+.railSpacer {
+    flex: 1;
+}
+
+.pinnedExpanded .railIcons {
+    display: none;
+}
+
+/* Expanded content — hidden when collapsed, shown on hover */
+.pinnedContent {
+    display: none;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+}
+
+.pinnedExpanded .pinnedContent {
+    display: flex;
+}
+
+.pinnedHeader {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 14px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    flex-shrink: 0;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+/* ── Floating panel (like chat) ── */
+.floating {
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    background: #08080ca3;
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.04);
+    z-index: 1000;
+    overflow: hidden;
+    animation: floatIn 0.3s ease-out;
+    will-change: transform;
+}
+
+@keyframes floatIn {
+    from { opacity: 0; transform: translateY(20px) scale(0.95); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.floatingHeader {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    flex-shrink: 0;
+    user-select: none;
+    -webkit-user-select: none;
+    cursor: grab;
+}
+
+.floatingHeader:active {
+    cursor: grabbing;
+}
+
+/* ── Hidden mode: re-open button ── */
+.showBtn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: rgba(8, 8, 12, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: #888;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.showBtn:hover {
+    background: rgba(27, 144, 186, 0.15);
+    border-color: rgba(27, 144, 186, 0.3);
+    color: #ccc;
+}
+
+/* ── Shared header elements ── */
+.headerIcon {
+    color: #1b90ba;
+    opacity: 0.8;
+    flex-shrink: 0;
+}
+
+.headerTitle {
+    flex: 1;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.5);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.headerActions {
+    display: flex;
+    gap: 2px;
+}
+
+.actionBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 7px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    color: rgba(255, 255, 255, 0.45);
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.actionBtn:hover {
+    background: rgba(27, 144, 186, 0.12);
+    border-color: rgba(27, 144, 186, 0.25);
+    color: #ccc;
+}
+
+.actionBtn:focus-visible {
+    outline: 2px solid rgba(27, 144, 186, 0.5);
+    outline-offset: 1px;
+}
+
+/* ── Scrollable body ── */
+.body {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 10px 14px 20px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.08) transparent;
+}
+
+.body::-webkit-scrollbar {
+    width: 4px;
+}
+
+.body::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.body::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+}
+
+.body::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.18);
+}
+
+/* ── Resize handles (invisible hit zones, matching chat) ── */
+.resizeN  { position: absolute; z-index: 10; top: 0; left: 12px; right: 12px; height: 5px; cursor: ns-resize; }
+.resizeS  { position: absolute; z-index: 10; bottom: 0; left: 12px; right: 12px; height: 5px; cursor: ns-resize; }
+.resizeE  { position: absolute; z-index: 10; top: 12px; right: 0; bottom: 12px; width: 5px; cursor: ew-resize; }
+.resizeW  { position: absolute; z-index: 10; top: 12px; left: 0; bottom: 12px; width: 5px; cursor: ew-resize; }
+.resizeNe { position: absolute; z-index: 11; top: 0; right: 0; width: 12px; height: 12px; cursor: nesw-resize; }
+.resizeNw { position: absolute; z-index: 11; top: 0; left: 0; width: 12px; height: 12px; cursor: nwse-resize; }
+.resizeSe { position: absolute; z-index: 11; bottom: 0; right: 0; width: 12px; height: 12px; cursor: nwse-resize; }
+.resizeSw { position: absolute; z-index: 11; bottom: 0; left: 0; width: 12px; height: 12px; cursor: nesw-resize; }
+
+/* ── Bottom actions (theme + export) ── */
+.bottomActions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 0 14px 14px;
+    flex-shrink: 0;
+}
+
+.themeSelect {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: rgba(255, 255, 255, 0.55);
+}
+
+.themeSelect select {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 8px;
+    color: rgba(255, 255, 255, 0.7);
+    font-family: inherit;
+    font-size: 0.82rem;
+    padding: 6px 10px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='rgba(255,255,255,0.4)'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 28px;
+}
+
+.themeSelect select:hover {
+    border-color: rgba(27, 144, 186, 0.25);
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.themeSelect select option {
+    background: #1a1a2e;
+    color: #ccc;
+}
+
+/* ── Export button ── */
+.exportBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 0;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.03);
+    color: rgba(255, 255, 255, 0.55);
+    font-family: inherit;
+    font-size: 0.82rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    flex-shrink: 0;
+}
+
+.exportBtn:hover {
+    background: rgba(27, 144, 186, 0.1);
+    border-color: rgba(27, 144, 186, 0.25);
+    color: #ccc;
+}
+
+.exportBtn:active {
+    transform: scale(0.98);
+}

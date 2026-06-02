@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<choregraph>
+  <inputs>
+    <input id="1" label="airbnb" location="/root/DIVE/_guest/workspaces/shared/airbnb.csv" format="CSV" header="True" fieldSeparator="," skipLines="0" visibility="false"/>
+  </inputs>
+  <pipeline>
+    <node id="2" label="Filter New York City" type="filter_equal">
+      <inputPort name="df" sourceRef="1" type="DATAFRAME"/>
+      <inputPort name="column" value="city" type="STRING"/>
+      <inputPort name="value" value="New York City" type="STRING"/>
+      <outputPort id="3" name="result" label="NYC listings" type="DATAFRAME" visibility="false"/>
+    </node>
+    <node id="4" label="Remove zero-price listings" type="filter_greater_than">
+      <inputPort name="df" sourceRef="3" type="DATAFRAME"/>
+      <inputPort name="column" value="price" type="STRING"/>
+      <inputPort name="value" value="0" type="FLOAT"/>
+      <outputPort id="5" name="result" label="NYC listings with price" type="DATAFRAME" visibility="false"/>
+    </node>
+    <node id="6" label="Compute value score" type="execute_code">
+      <inputPort name="df" sourceRef="5" type="DATAFRAME"/>
+      <inputPort name="code" value="df = df.copy()&#10;df['value_score'] = (df['reviews_per_month'].fillna(0) * df['availability_365']) / df['price']&#10;df['price_tier'] = pd.cut(df['price'], bins=[0,75,200,500,20000], labels=['Budget','Mid-Range','Premium','Luxury'])&#10;result = df" type="STRING"/>
+      <outputPort id="7" name="result" label="NYC with value score" type="DATAFRAME" visibility="false"/>
+    </node>
+    <node id="8" label="Sort by value score" type="sort_values">
+      <inputPort name="df" sourceRef="7" type="DATAFRAME"/>
+      <inputPort name="columns" value="value_score" type="STRING"/>
+      <inputPort name="ascending" value="false" type="BOOLEAN"/>
+      <outputPort id="9" name="result" label="Sorted by value score" type="DATAFRAME" visibility="true"/>
+    </node>
+  </pipeline>
+</choregraph>

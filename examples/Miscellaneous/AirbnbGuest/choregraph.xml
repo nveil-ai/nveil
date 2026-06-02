@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<choregraph>
+  <inputs>
+    <input id="1" label="airbnb" location="/root/DIVE/_guest/workspaces/shared/airbnb.csv" format="CSV" header="True" fieldSeparator="," skipLines="0" visibility="false"/>
+  </inputs>
+  <pipeline>
+    <node id="2" label="Filter minimum nights less than 300" type="filter_less_than">
+      <inputPort name="df" sourceRef="1" type="DATAFRAME"/>
+      <inputPort name="column" value="minimum_nights" type="STRING"/>
+      <inputPort name="value" value="300" type="FLOAT"/>
+      <outputPort id="3" name="result" label="Filtered minimum nights" type="DATAFRAME" visibility="true"/>
+    </node>
+  </pipeline>
+</choregraph>

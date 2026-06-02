@@ -1,0 +1,190 @@
+/*
+ * SPDX-FileCopyrightText: 2025 NVEIL SAS
+ * SPDX-FileContributor: Guillaume Franque
+ * SPDX-FileContributor: Pierre Jacquet
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+.popupOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+}
+
+.modalGlassBg {
+  background: linear-gradient(233deg, #F7DD58, #F59E48, #ED7358, #EA4C6A, #E61E80, #AA4E93, #754992, #47469F, #0D4FB0, #0863B8, #1783C4);
+  padding: 2px;
+  border-radius: 8px;
+}
+.popupContent {
+    background: rgb(5 5 5 / 85%);
+    color: #fff;
+    padding: 2rem;
+    border-radius: 8px;
+    width: 400px;
+    max-width: 90vw;
+    box-shadow: 0 4px 20px #0000004d;
+    display: flex;
+    flex-direction: column;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    will-change: transform;
+}
+
+.closeButton {
+    position: absolute;
+    align-self: self-end;
+    padding: 13px;
+    border-radius: 10px;
+    line-height: 0.7;
+    background-color: #c3c3c3;
+    border: 0px;
+    color: #4a4a4a;
+    font-size: 15px;
+    cursor: pointer;
+    /* position: absolute;
+    top: 10px;
+    right: 10px;
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer; */
+}
+
+.translucentInputField {
+    border-radius: 7px;
+    padding: 10px 11px;
+    background-color: #f9f9f912 !important;
+    color: #ffffff !important;
+    border: 1px solid transparent;
+}
+
+.inputField {
+border-radius: 7px;
+    padding: 10px 11px;
+    background-color: #4d4d4d !important;
+    color: #ffffff !important;
+    border: 1px solid transparent;
+}
+
+.loginButton{
+    border: 0px solid #b0b0b0;
+    background-color: #a2a2a263;
+    border-radius: 11px;
+    padding: 13px 0;
+    cursor: pointer;
+    color: #fff;
+    width: 150px;
+    align-self: center;
+    font-size: medium;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.loginButton:hover{
+    background-color: #ffffff;
+    color: black;
+}
+.borderlessButton{
+    border: none;
+    background: transparent;
+    color: white;
+    cursor: pointer;
+    font-size: medium;
+    padding: 0px 10px;
+    text-decoration: underline;
+}
+
+.inputArea{
+    display: flex;
+    flex-direction: column;
+    /* gap: 10px; */
+}
+.loginForm{
+    display: flex;
+    flex-direction: column;
+    row-gap: 20px;
+}
+.loginForm .fieldError{
+    color: #ff4949;
+    font-size: smaller;
+}
+.loginForm .fieldLabel{
+    margin-bottom: 5px;
+}
+.loginForm [role=alert]{
+    border: 2px solid red;
+    background: #47474733;
+    border-radius: 6px;
+    padding: 12px;
+    outline: none;
+}
+
+.stepNavigation{
+    flex-wrap: wrap;
+    display: flex;
+    place-content: space-between;
+}
+
+.accountTypeContainer {
+    display: flex;
+    justify-content: center;
+    gap: 60px;
+    margin: 30px 0px;
+}
+
+.accountTypeButton {
+display: flex
+;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 150px;
+    height: 150px;
+    padding: 20px;
+    border: 0 solid #4a4a4a;
+    border-radius: 8px;
+    background-color: #0000004a;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color .2s, border-color .2s;
+    font-size: 1rem;
+    gap: 10px;
+}
+
+.accountTypeButton:hover {
+    background-color: #f3fff5;
+    color: black;
+}
+
+.accountTypeButton:focus {
+    outline: 2px solid white;
+    outline-offset: 2px;
+}
+
+.externalLink {
+    color: white;
+    text-decoration: underline;
+}
+
+.externalLink::after {
+    content: "";
+    width: 1em;
+    height: 1em;
+    margin: 0 0 0 0.2em;
+    /* External link icon */
+    background: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNiAxNiIgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2Ij48cGF0aCBkPSJNOSAyTDkgMyAxMi4zIDMgNiA5LjMgNi43IDEwIDEzIDMuNyAxMyA3IDE0IDcgMTQgMlpNNCA0QzIuOSA0IDIgNC45IDIgNkwyIDEyQzIgMTMuMSAyLjkgMTQgNCAxNEwxMCAxNEMxMS4xIDE0IDEyIDEzLjEgMTIgMTJMMTIgNyAxMSA4IDExIDEyQzExIDEyLjYgMTAuNiAxMyAxMCAxM0w0IDEzQzMuNCAxMyAzIDEyLjYgMyAxMkwzIDZDMyA1LjQgMy40IDUgNCA1TDggNSA5IDRaIi8+PC9zdmc+) no-repeat;
+    background-size: contain;
+    display: inline-block;
+    vertical-align: text-bottom;
+    font-size: 20px;
+    filter: brightness(0) invert(1);
+}

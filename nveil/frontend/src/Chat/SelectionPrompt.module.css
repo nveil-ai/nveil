@@ -1,0 +1,107 @@
+/*
+ * SPDX-FileCopyrightText: 2026 NVEIL SAS
+ * SPDX-FileContributor: Pierre Jacquet
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+.selectionContainer {
+    margin-bottom: 8px;
+    animation: slideIn 0.2s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.selectionHeader {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 6px;
+    border-top: 1px solid #ffffff4a;
+    padding: 10px 4px;
+}
+
+.selectionPromptText {
+    color: #ababab;
+    font-size: 0.85em;
+}
+
+.escHint {
+    color: #666;
+    font-size: 0.72em;
+    flex-shrink: 0;
+}
+
+.optionsList {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.optionCard {
+    background: rgba(50, 50, 50, 0);
+    border: 0px solid rgba(255, 255, 255, 0.15);
+    border-radius: 10px;
+    padding: 8px 12px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+    outline: none;
+    color: white;
+    font-family: inherit;
+    font-size: inherit;
+    text-align: left;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.optionCard:hover {
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.optionCardFocused {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.4);
+}
+
+.radioCircle {
+    width: 16px;
+    height: 16px;
+    min-width: 16px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    box-sizing: border-box;
+    transition: border-color 0.15s, background 0.15s;
+}
+
+.radioCircleFocused {
+    border-color: #49fcb3;
+    background: radial-gradient(circle, #49fcb3 40%, transparent 45%);
+}
+
+.optionContent {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.optionLabel {
+    color: white;
+    font-size: 0.9em;
+}
+
+.optionDescription {
+    color: #888;
+    font-size: 0.78em;
+}

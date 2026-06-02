@@ -1,0 +1,58 @@
+# SPDX-FileCopyrightText: 2026 NVEIL SAS
+# SPDX-FileContributor: Guillaume Franque
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+# syntax=docker/dockerfile:1
+
+# ── Base ────────────────────────────────────────────────────────────────────
+FROM python:3.12.13-slim-trixie AS base
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libpq5 openssl ca-certificates curl libssl3 \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY ./nveil/backend/tools/logger/ /nveil/backend/tools/logger/
+
+RUN mkdir -p /root/DIVE/
+
+RUN python3 -m venv /opt/venv \
+    && /opt/venv/bin/pip install --no-cache-dir --upgrade pip setuptools wheel \
+    && /opt/venv/bin/pip install --no-cache-dir ruamel.yaml
+
+ENV PATH="/opt/venv/bin:$PATH"
+ENV PYTHONUNBUFFERED=1
+
+# ── File Service ────────────────────────────────────────────────────────────
+FROM base
+
+WORKDIR /nveil/backend/file_service
+
+# --- Stable deps ---
+
+ARG REQUIREMENTS=requirements.txt
+COPY ./docker/file/${REQUIREMENTS} /tmp/requirements.txt
+RUN --mount=type=cache,target=/root/.cache/pip \
+    pip install -r /tmp/requirements.txt
+
+# --- Volatile local packages (small layers, re-pushed often) ---
+
+COPY ./nveil/backend/tools/ /tmp/tools/
+RUN pip install --no-cache-dir /tmp/tools/
+
+COPY ./choregraph/ /tmp/choregraph/
+RUN pip install --no-cache-dir /tmp/choregraph/
+
+COPY ./connectors/ /tmp/connectors/
+RUN pip install --no-cache-dir /tmp/connectors/
+
+# --- Entrypoint + application code (smallest, most volatile) ---
+
+COPY ./docker/file/entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+COPY ./nveil/backend/file_service/ /nveil/backend/file_service/
+COPY ./nveil/backend/shared/ /nveil/backend/shared/
+
+EXPOSE 8200
+
+ENTRYPOINT ["sh", "/entrypoint.sh"]

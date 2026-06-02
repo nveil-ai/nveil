@@ -1,0 +1,95 @@
+# SPDX-FileCopyrightText: 2025 NVEIL SAS
+# SPDX-FileContributor: Guillaume Franque
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+# syntax=docker/dockerfile:1
+
+# ── Base ────────────────────────────────────────────────────────────────────
+FROM python:3.12.13-slim-trixie AS base
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libpq5 openssl ca-certificates curl libssl3 \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY ./nveil/backend/tools/logger/ /nveil/backend/tools/logger/
+
+RUN mkdir -p /root/DIVE/
+
+RUN python3 -m venv /opt/venv \
+    && /opt/venv/bin/pip install --no-cache-dir --upgrade pip setuptools wheel \
+    && /opt/venv/bin/pip install --no-cache-dir ruamel.yaml
+
+ENV PATH="/opt/venv/bin:$PATH"
+ENV PYTHONUNBUFFERED=1
+
+# ── Visualization ───────────────────────────────────────────────────────────
+FROM base
+
+WORKDIR /nveil/backend/viz_service/viz_renderer
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    xvfb \
+    libegl-mesa0 \
+    libgl1-mesa-dri \
+    libgles2 \
+    mesa-utils \
+    libxrender1 \
+    libxcursor-dev \
+    libxcomposite1 \
+    libxdamage1 \
+    libxfixes3 \
+    libxrandr2 \
+    libgbm1 \
+    libxkbcommon0 \
+    libnss3 \
+    libnspr4 \
+    libatk1.0-0t64 \
+    libatk-bridge2.0-0t64 \
+    libatspi2.0-0t64 \
+    libcups2t64 \
+    libdrm2 \
+    libpango-1.0-0 \
+    libcairo2 \
+    libasound2t64 \
+    libxshmfence1 \
+    fonts-liberation \
+    fonts-unifont \
+    && rm -rf /var/lib/apt/lists/*
+
+# --- Heavy, stable deps (layers rarely need re-push) ---
+
+COPY ./docker/visualization/requirements.txt /tmp/requirements.txt
+RUN --mount=type=cache,target=/root/.cache/pip \
+    pip install -r /tmp/requirements.txt
+
+RUN playwright install chromium
+
+# --- Volatile local packages (small layers, re-pushed often) ---
+
+COPY ./nveil/backend/tools/ /tmp/tools/
+RUN --mount=type=cache,target=/root/.cache/pip \
+    pip install /tmp/tools/
+
+COPY ./choregraph/ /tmp/choregraph/
+RUN --mount=type=cache,target=/root/.cache/pip \
+    pip install "/tmp/choregraph/[extra,server]"
+
+COPY ./dive/ /tmp/dive/
+RUN --mount=type=cache,target=/root/.cache/pip \
+    pip install "/tmp/dive/[extra]"
+
+# --- Entrypoint + application code (smallest, most volatile) ---
+
+COPY ./docker/visualization/entrypoint.sh /entrypoint.sh
+
+COPY ./nveil/backend/viz_service/viz_renderer/ /nveil/backend/viz_service/viz_renderer/
+COPY ./nveil/backend/shared/ /nveil/backend/shared/
+
+ENV PYTHONPATH="/nveil/backend"
+ENV PYTHONUNBUFFERED=1
+ENV NVIDIA_VISIBLE_DEVICES=all
+ENV NVIDIA_DRIVER_CAPABILITIES=graphics,compute,utility
+ENV GALLIUM_DRIVER=d3d12
+ENV MESA_D3D12_DEFAULT_ADAPTER_NAME=NVIDIA
+
+ENTRYPOINT ["sh", "/entrypoint.sh"]

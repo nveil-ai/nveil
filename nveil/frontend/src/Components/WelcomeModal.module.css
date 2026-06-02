@@ -1,0 +1,344 @@
+/*
+ * SPDX-FileCopyrightText: 2025 NVEIL SAS
+ * SPDX-FileContributor: Pierre Jacquet
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+.popupOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+}
+
+.modalGlassBg {
+    background: linear-gradient(233deg, #F7DD58, #F59E48, #ED7358, #EA4C6A, #E61E80, #AA4E93, #754992, #47469F, #0D4FB0, #0863B8, #1783C4);
+    padding: 2px;
+    border-radius: 8px;
+}
+
+.popupContent {
+    background: rgb(5 5 5 / 85%);
+    color: #dfdfdf;
+    padding: 2rem;
+    border-radius: 8px;
+    width: 590px;
+    max-width: 90vw;
+    box-shadow: 0 4px 20px #0000004d;
+    display: flex;
+    flex-direction: column;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    will-change: transform;
+}
+
+.closeButton {
+    position: absolute;
+    align-self: self-end;
+    padding: 13px;
+    border-radius: 10px;
+    line-height: 0.7;
+    background-color: #c3c3c3;
+    border: 0px;
+    color: #4a4a4a;
+    font-size: 15px;
+    cursor: pointer;
+    /* position: absolute;
+    top: 10px;
+    right: 10px;
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer; */
+}
+
+.translucentInputField {
+    border-radius: 7px;
+    padding: 10px 11px;
+    background-color: #f9f9f912 !important;
+    color: #ffffff !important;
+    border: 1px solid transparent;
+}
+
+.inputField {
+    border-radius: 7px;
+    padding: 10px 11px;
+    background-color: #4d4d4d !important;
+    color: #ffffff !important;
+    border: 1px solid transparent;
+}
+
+.loginButton {
+    border: 0px solid #b0b0b0;
+    background-color: #a2a2a263;
+    border-radius: 11px;
+    padding: 13px 0;
+    cursor: pointer;
+    color: #fff;
+    width: 150px;
+    align-self: center;
+    font-size: medium;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.loginButton:hover {
+    background-color: #ffffff;
+    color: black;
+}
+
+.borderlessButton {
+    border: none;
+    background: transparent;
+    color: white;
+    cursor: pointer;
+    font-size: medium;
+    padding: 0px 10px;
+    text-decoration: underline;
+}
+
+.inputArea {
+    display: flex;
+    flex-direction: column;
+    /* gap: 10px; */
+}
+
+.loginForm {
+    display: flex;
+    flex-direction: column;
+    row-gap: 20px;
+}
+
+.loginForm .fieldError {
+    color: #ff4949;
+    font-size: smaller;
+}
+
+.loginForm .fieldLabel {
+    margin-bottom: 5px;
+}
+
+.loginForm [role=alert] {
+    border: 2px solid red;
+    background: #47474733;
+    border-radius: 6px;
+    padding: 12px;
+    outline: none;
+}
+
+.stepNavigation {
+    flex-wrap: wrap;
+    display: flex;
+    place-content: space-between;
+}
+
+.accountTypeContainer {
+    display: flex;
+    justify-content: center;
+    gap: 60px;
+    margin: 30px 0px;
+}
+
+.accountTypeButton {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 150px;
+    height: 150px;
+    padding: 20px;
+    border: 0 solid #4a4a4a;
+    border-radius: 8px;
+    background-color: #0000004a;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color .2s, border-color .2s;
+    font-size: 1rem;
+    gap: 10px;
+}
+
+.accountTypeButton:hover {
+    background-color: #f3fff5;
+    color: black;
+}
+
+.accountTypeButton:focus {
+    outline: 2px solid white;
+    outline-offset: 2px;
+}
+
+
+/* Tutorial Styles */
+
+.tutorialOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 9999;
+    /* Below modal content but above everything else */
+    pointer-events: none;
+    /* Let clicks pass through if needed, but we capture them in custom logic usually */
+}
+
+/* 
+   We essentially build the "dimmed" background using 4 rectangles around the target 
+   This is often smoother than a giant canvas or complex clip-path for simple rectangles
+*/
+.spotlightDim {
+    position: absolute;
+    background-color: rgb(0 0 0 / 25%);
+    transition: all 0.3s ease;
+    pointer-events: auto;
+    /* Catch clicks on the dimmed area */
+}
+
+.tutorialBox {
+    position: absolute;
+    /* Positioned relative to body/viewport via JS logic */
+    /* Visual styles moved to internal wrapper */
+    width: 400px;
+    max-width: 90vw;
+    z-index: 10001;
+    /* Above the overlay */
+    transition: top 0.3s ease, left 0.3s ease;
+    /* Smooth movement */
+    outline: none;
+}
+
+.tutorialBox h3 {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    font-size: 1.2rem;
+    font-weight: 500;
+}
+
+.tutorialContent {
+    width: 100%;
+    padding: 1.5rem;
+    box-sizing: border-box;
+}
+
+.tutorialControls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1.5rem;
+}
+
+.dotsContainer {
+    display: flex;
+    gap: 6px;
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.3);
+    transition: background-color 0.2s;
+}
+
+.dotActive {
+    background-color: white;
+    transform: scale(1.1);
+}
+
+.navButtons {
+    display: flex;
+    gap: 10px;
+}
+
+.secondaryBtn {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 6px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+}
+
+.secondaryBtn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: white;
+}
+
+.primaryBtn {
+    background: white;
+    border: 1px solid white;
+    color: black;
+    padding: 6px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.primaryBtn:hover {
+    background: #f0f0f0;
+}
+
+/* Hide original modal backdrop/wrapper when in tutorial mode if needed */
+.hidden {
+    display: none !important;
+}
+
+.transparentBackdrop {
+    background: transparent !important;
+    pointer-events: none !important;
+}
+
+/* Route transition overlay */
+.routeTransition {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 10003;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    animation: routeFadeIn 0.2s ease;
+}
+
+@keyframes routeFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.routeTransitionContent {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.routeTransitionSpinner {
+    width: 28px;
+    height: 28px;
+    border: 3px solid rgba(255, 255, 255, 0.2);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: routeSpin 0.7s linear infinite;
+}
+
+@keyframes routeSpin {
+    to { transform: rotate(360deg); }
+}

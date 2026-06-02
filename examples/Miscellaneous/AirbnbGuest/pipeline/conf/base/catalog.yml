@@ -1,0 +1,63 @@
+airbnb:
+  type: pandas.CSVDataset
+  filepath: /root/DIVE/_guest/workspaces/shared/airbnb.csv
+  load_args:
+    header: 0
+    sep: ','
+    skiprows: 0
+
+room_type_counts:
+  type: pandas.ParquetDataset
+  filepath: /root/DIVE/_guest/workspaces/shared/pipeline/data/room_type_counts.parquet
+  save_args:
+    engine: pyarrow
+  versioned: false
+
+nyc_listings:
+  type: pandas.ParquetDataset
+  filepath: /root/DIVE/_guest/workspaces/shared/pipeline/data/nyc_listings.parquet
+  save_args:
+    engine: pyarrow
+  versioned: false
+
+mean_price_by_neighbourhood:
+  type: pandas.ParquetDataset
+  filepath: /root/DIVE/_guest/workspaces/shared/pipeline/data/mean_price_by_neighbourhood.parquet
+  save_args:
+    engine: pyarrow
+  versioned: false
+
+top_15_expensive_neighbourhoods:
+  type: pandas.ParquetDataset
+  filepath: /root/DIVE/_guest/workspaces/shared/pipeline/data/top_15_expensive_neighbourhoods.parquet
+  save_args:
+    engine: pyarrow
+  versioned: false
+
+nyc_listings_with_price:
+  type: pandas.ParquetDataset
+  filepath: /root/DIVE/_guest/workspaces/shared/pipeline/data/nyc_listings_with_price.parquet
+  save_args:
+    engine: pyarrow
+  versioned: false
+
+nyc_with_value_score:
+  type: pandas.ParquetDataset
+  filepath: /root/DIVE/_guest/workspaces/shared/pipeline/data/nyc_with_value_score.parquet
+  save_args:
+    engine: pyarrow
+  versioned: false
+
+sorted_by_value_score:
+  type: pandas.ParquetDataset
+  filepath: /root/DIVE/_guest/workspaces/shared/pipeline/data/sorted_by_value_score.parquet
+  save_args:
+    engine: pyarrow
+  versioned: false
+
+filtered_minimum_nights:
+  type: pandas.ParquetDataset
+  filepath: /root/DIVE/_guest/workspaces/shared/pipeline/data/filtered_minimum_nights.parquet
+  save_args:
+    engine: pyarrow
+  versioned: false

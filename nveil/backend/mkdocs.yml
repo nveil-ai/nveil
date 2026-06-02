@@ -1,0 +1,105 @@
+# SPDX-FileCopyrightText: 2026 NVEIL SAS
+# SPDX-FileContributor: Pierre Jacquet
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+site_name: NVEIL Backend
+site_description: "NVEIL Backend Services — Server, AI, File, and Visualization"
+site_url: ""
+
+theme:
+  name: material
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: orange
+      accent: deep orange
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: orange
+      accent: deep orange
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.indexes
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.code.annotate
+    - toc.follow
+  icon:
+    repo: fontawesome/brands/github
+
+plugins:
+  - search
+  - section-index
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.snippets
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - attr_list
+  - md_in_html
+  - toc:
+      permalink: true
+
+nav:
+  - Home: index.md
+  - Architecture:
+    - architecture/index.md
+    - Service Map: architecture/service-map.md
+    - Database Schema: architecture/database.md
+    - Authentication: architecture/authentication.md
+    - Workspace Filesystem: architecture/workspace.md
+  - Server Service:
+    - server/index.md
+    - Routes: server/routes.md
+    - Database Models: server/models.md
+    - Services: server/services.md
+    - WebSocket: server/websocket.md
+    - Room Management: server/rooms.md
+  - AI Service:
+    - ai/index.md
+    - Routes: ai/routes.md
+    - LangGraph Workflows: ai/workflows.md
+    - LLM Manager: ai/llm-manager.md
+    - Prompts: ai/prompts.md
+  - File Service:
+    - file/index.md
+    - Routes: file/routes.md
+    - FileManager: file/file-manager.md
+  - Viz Service:
+    - viz/index.md
+    - Backends: viz/backends.md
+    - VizContext: viz/viz-context.md
+  - Shared:
+    - shared/index.md
+    - Workspace: shared/workspace.md
+    - Security: shared/security.md
+    - Service Client: shared/service-client.md
+    - Logger: shared/logger.md
+  - Configuration:
+    - config/index.md
+    - Environment Variables: config/env-vars.md
+    - Deployment: config/deployment.md
+
+copyright: "Copyright &copy; 2025 NVEIL — MIT License"

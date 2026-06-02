@@ -1,0 +1,106 @@
+# === NVEIL Project ===
+
+# Data & workspace
+dive_data/
+out/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+*.egg-info/
+htmlcov/
+.coverage
+.pytest_cache/
+
+# IDE / tools
+.claude/
+
+# Environment & secrets
+.env
+localhost+2*.pem
+deploy/k8s/overlays/*/secrets/
+
+# Build artifacts
+build/
+dist/
+**/generated_docs/
+**/site/
+
+# Cython build artifacts
+*.so
+*.pyd
+**/src/**/*.c
+
+# C++ / CMake (legacy dive_cpp)
+**/cmake-build-debug/
+**/CMakeCache.txt
+**/cmake_install.cmake
+**/install_manifest.txt
+**/CMakeFiles/
+**/CTestTestfile.cmake
+**/compile_commands.json
+dive/libs/VTK*
+dive/libs/boost*/*
+!dive/libs/boost/.gitkeep
+dive/libs/clingo*
+dive/libs/usd*
+dive/libs/OpenUSD*
+dive/libs/**/*.tar.gz
+dive.so
+libvsv.so
+
+# CLI (legacy)
+cli/libs/sockpp/*
+cli/libs/sockppOld/*
+cli/install/*
+
+# Node.js
+node_modules/
+
+# IDE
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+.vs/
+.idea/
+
+# Terraform
+.terraform/
+.terraform.lock.hcl
+*.tfstate*
+
+# Grafana / logs
+**/log_service/grafana-data/*
+**/log_service/loki-data/*
+**/log_service/loki-var/*
+**/log_service/provisioning/*
+**/log_service/pyroscope-data/*
+
+# Medical data
+*.mhd
+*.zraw
+
+# Logs
+**/log/
+
+# OS
+.DS_Store
+
+# Misc
+**/nodesource_setup.sh
+**/test.lp
+*.log
+*~
+~$*
+.claude/settings.local.json
+CLAUDE.md
+
+scripts/load-bot/results
+nveil/tests/e2e/results/
+nveil/frontend/test-results/
+
+config.yaml

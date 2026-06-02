@@ -1,0 +1,1 @@
+{"data":[{"type":"pie","labels":["Chrome","Safari","Firefox","Edge","Other"],"values":[64.7,18.6,3.3,5.1,8.3],"marker":{"colors":["#1b90ba","#2563eb","#7c3aed","#a33cb2","#444"]},"hole":0.35,"textinfo":"label+percent","textfont":{"color":"#e0e0e0","size":11}}],"layout":{}}

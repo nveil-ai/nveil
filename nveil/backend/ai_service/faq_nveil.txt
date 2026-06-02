@@ -1,0 +1,70 @@
+* What file types can I import (CSV, JSON, DICOM, etc.)?
+Currently, NVEIL AI supports CSV, XLSX, ODS, JSON, MHD, DICOM, EDF/EDF+ files and most of images format. We are working every day to add new extensions and will offer conversion solutions for other formats in the future.
+
+* Does NVEIL AI require coding or data science skills?
+NVEIL AI is designed for everyone, without requiring coding or data science skills. Its intuitive interface allows anyone to leverage the power of AI without advanced technical knowledge. Each step is clearly explained to detail the processing performed.
+
+* What is the difference between NVEIL AI and a classic data-viz tool?
+NVEIL AI stands out from classic data-viz tools by its ability to automate the visualization creation process from raw data. Unlike traditional tools that require significant manual intervention, NVEIL AI uses custom-developed artificial intelligence to generate interactive visualizations in minutes, making the process faster and accessible to all.
+
+* Can the tool handle very large files (several GB)?
+NVEIL AI is designed to handle large volumes of data, including files of several gigabytes. Thanks to its optimized architecture and advanced technologies, NVEIL AI can efficiently process large amounts of data while maintaining high performance. To access large data processing, you need to subscribe to an appropriate plan. For more details, please see the licensing section.
+
+* Can I export my visualizations to other tools?
+NVEIL AI allows you to export your visualizations to several common formats, making it easy to integrate them into other tools and workflows. You can export your visualizations as images, PDF files, HTML, or even in certain specific visualization library formats. This makes it easy to share your results with others or integrate them into reports and presentations. We also plan to offer direct integrations with business software or via APIs soon.
+
+* Is NVEIL AI compatible with Linux, Windows, and macOS environments?
+Yes, NVEIL AI is compatible with Linux, Windows, and macOS. Every environments that run a compatible web browser.
+
+* Does the AI explain its choices? How does explainability work?
+Yes, NVEIL AI provides explanations for its choices and recommendations. Explainability is integrated into the process, allowing users to understand how and why certain decisions were made by the AI. This includes visualizations of input data, models used, and generated results, so users can follow the AI’s reasoning and validate its conclusions. Unlike other types of artificial intelligence commonly used today, NVEIL AI does not rely on LLMs for reasoning and processing. Instead, a set of explicit rules and logic is used to guide the AI’s decision-making process.
+
+* Does NVEIL AI work online or can it be installed locally?
+NVEIL AI mainly works online, but we also offer a local installation option for companies that need it or want specific security options. Please contact us for more information about local installation solutions.
+
+* What are the average processing times for a visualization?
+Average processing times for a visualization depend on the complexity of the data and the processing applied. In general, NVEIL AI aims to provide results in a few seconds to minutes, but this may vary depending on the size and nature of the data.
+
+* Does NVEIL use my data to train its models?
+NVEIL AI does not use your data to train its models. All data you provide is used only to generate visualizations and analyses, without being stored or used for other purposes. Your privacy and data security are our priority. We only use your feedback (ratings or rejections of visualizations) to improve the tool.
+
+* Can I delete my data after use?
+Yes, you can delete your data after use. NVEIL AI allows you to manage your data transparently, including the ability to delete it at any time. Your data (except conversation history) will be deleted automatically after a certain period in any case.
+
+* How can I access the beta version or a trial of the pro offer?
+To access the beta version or the pro offer of NVEIL AI, you can contact us directly via our website or by email. We will be happy to provide you with the necessary information and assist you in the registration process.
+
+* Are there offers for students and educational institutions?
+Yes, NVEIL AI offers special plans for students and educational institutions. We believe in the importance of education and want to support students and teachers in their learning and research. For more information about these offers, please feel free to contact us.
+
+* What principles does NVEIL AI's artificial intelligence use to automatically choose the type of visualization?
+NVEIL AI bases its choices on a set of best practices for visualizations that enable users to extract the best insights while avoiding the most common biases.
+
+* What is Explainable AI and how is it implemented in NVEIL?
+Explainable artificial intelligence is a set of processes and methods that enable human users to understand and trust the results generated by AI algorithms. It allows the accuracy, fairness, transparency, and results of the model to be characterized in AI-powered decision-making. To meet these requirements, NVEIL AI internally documents the entire creation process for each visualization, allowing control over every step and decision made by the AI.
+
+* Is it possible to manually adjust the selection criteria or correct the AI's suggestions?
+Of course, some requests may sometimes be misinterpreted, mishandled, or not perfectly match your expectations. In this case, simply refine the request to the AI and describe what you want in more detail, iteratively if necessary, until you achieve the desired result.
+
+* What are the features (marks, palette, etc) available?
+There are so many features available with NVEIL AI that listing them all here would take too long! To learn more about what NVEIL AI can do, please click on the telescope icon on the left side of your chat window for a detailed overview of the features we offer. If you have any suggestions or specific requests you would like to see addressed, please let us know.
+
+* How can we reach you?
+You can send us some feedback at https://feedback.nveil.com/">https://feedback.nveil.com/ or via Discord (link in the discord icon in the left navigation bar). You can also reach us by email at: info@nveil.com.
+
+* How can I upload a file?
+To upload a file, simply drag and drop it into the chat, or click on the paperclip icon to the left of the chat bar to open a file manager. You can also use real-time data extracted online by providing us the URL.
+
+* How can I manage my files/data sources? 
+There are two ways to manage your files:
+- Click on the paperclip icon next to the message input bar to open a window. Here you can add new files, source URLs, and manage active data sources (by checking or unchecking them). 
+- By going to the “My Files” tab in the navigation bar (to the left of the chat), you can manage your files (rename them, delete them, re-upload them).
+
+* Are the data transformed in order to produce visualizations?
+For certain types of visualizations or queries, data needs to be transformed (filtering, aggregations, arithmetic calculations, etc.). To perform these operations, we rely on the Kedro library (https://kedro.org/), which has enabled us to implement a vast library of transformations.
+
+* What technical stack is used to display visualizations?
+For your renderings, we use well-known libraries such as Plotly, VTK, deck.gl, and many others, in order to cover a wide range of possibilities. 
+
+* How do I create a dashboard?
+To create a dashboard, you must first generate the visualization using the chat, then export it to a dashboard using the button that appears at the bottom right of the message describing your result. You can then create a dashboard by naming it (or use an existing one). You can then add the visualizations resulting from the chat to this table. To view it, simply select the “Dashboard” tab in the navigation bar to the left of the chat and select the one you want to view. 

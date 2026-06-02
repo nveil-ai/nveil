@@ -1,0 +1,91 @@
+# SPDX-FileCopyrightText: 2025 NVEIL SAS
+# SPDX-FileContributor: Pierre Jacquet
+# SPDX-FileContributor: Guillaume Franque
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+version: 1
+disable_existing_loggers: False
+
+formatters:
+  default:
+    format: '%(asctime)s [%(levelname)s] %(name)s: %(message)s'
+    datefmt: '%Y-%m-%d %H:%M:%S'
+
+handlers:
+  stdout:
+    formatter: default
+    class: logging.StreamHandler
+    stream: ext://sys.stdout
+  stderr:
+    formatter: default
+    class: logging.StreamHandler
+    stream: ext://sys.stderr
+    level: ERROR
+
+loggers:
+  # Uvicorn internal loggers
+  # Note: "uvicorn.error" is Uvicorn's main logger (lifecycle, not errors)
+  uvicorn:
+    level: WARNING
+    handlers:
+      - stdout
+      - stderr
+    propagate: no
+  uvicorn.error:
+    level: WARNING
+    handlers:
+      - stdout
+      - stderr
+    propagate: no
+  uvicorn.access:
+    level: WARNING
+    handlers:
+      - stdout
+      - stderr
+    propagate: no
+  # httpx and httpcore - reduce noise
+  httpx:
+    level: WARNING
+    handlers:
+      - stdout
+      - stderr
+    propagate: no
+  httpcore:
+    level: WARNING
+    handlers:
+      - stdout
+      - stderr
+    propagate: no
+  # Kedro internal loggers - suppress startup/config noise
+  kedro:
+    level: WARNING
+    handlers:
+      - stdout
+    propagate: no
+  kedro.framework.session:
+    level: WARNING
+    handlers:
+      - stdout
+    propagate: no
+  kedro.config:
+    level: WARNING
+    handlers:
+      - stdout
+    propagate: no
+  # Trame internal loggers - suppress widget/state noise
+  trame_client:
+    level: WARNING
+    handlers:
+      - stdout
+    propagate: no
+  trame_server:
+    level: WARNING
+    handlers:
+      - stdout
+    propagate: no
+
+root:
+  level: INFO
+  handlers:
+    - stdout
+    - stderr

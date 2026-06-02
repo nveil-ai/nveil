@@ -1,0 +1,1 @@
+{"data":[{"type":"bar","x":["Electronics","Clothing","Food","Books","Home","Sports","Toys"],"y":[42000,31500,28000,19500,17200,14800,12300],"marker":{"color":["#1b90ba","#2563eb","#7c3aed","#a33cb2","#db2777","#e05555","#f59e0b"]}}],"layout":{"xaxis":{"title":"Category"},"yaxis":{"title":"Revenue ($)"}}}

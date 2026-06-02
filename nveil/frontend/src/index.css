@@ -1,0 +1,269 @@
+/*
+ * SPDX-FileCopyrightText: 2025 NVEIL SAS
+ * SPDX-FileContributor: Guillaume Franque
+ * SPDX-FileContributor: Pierre Jacquet
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+@font-face {
+  font-family: "InterTight";
+  src: local("InterTight"),
+       url("/Fonts/InterTight-VariableFont_wght.woff2") format("woff2");
+  font-display: optional;
+}
+@font-face {
+  font-family: "InterTight";
+  src: local("InterTight"),
+       url("/Fonts/InterTight-Italic-VariableFont_wght.woff2") format("woff2");
+  font-style: italic;
+  font-display: optional;
+}
+
+
+html,
+body {
+  height: 100%;
+  margin: 0 !important;
+  padding: 0;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: InterTight, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', sans-serif;
+  color: white;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+    background-color: #0a0a0f;
+}
+
+/* When the viz plot theme is light/paper, WidgetPanel toggles .viz-light on <html>.
+   Override the overlay tokens used by .bottomBar (Viz.module.css) and
+   .pinned/.pinnedExpanded (WidgetPanel.module.css) so they stay legible over
+   a light canvas. Dark plot themes leave the class off and the CSS fallbacks apply. */
+html.viz-light {
+  --overlay-bg: #08080ca3;
+  --overlay-border: rgba(255, 255, 255, 0.08);
+  --panel-bg: #08080ca3;
+  --panel-border: rgba(255, 255, 255, 0.08);
+}
+
+/* Pinned widget rail occupies a fixed 48px on the right; the bottom bar
+   re-centers itself relative to the remaining canvas via this token. */
+html.viz-rail-pinned {
+  --rail-width: 48px;
+}
+
+/* STYLING EXTERNAL COMPONENTS */
+.react-aria-ToastRegion {
+  position: fixed;
+  bottom: 16px;
+  right: 25px;
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 8px;
+  border-radius: 8px;
+  outline: none;
+  z-index: 1000;
+
+  &[data-focus-visible] {
+    outline: 2px solid #49fcb3;
+    outline-offset: 2px;
+  }
+}
+
+.react-aria-Toast {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #1e1e2e;
+  color: #e0e0e0;
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: 1px solid rgba(73, 252, 179, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  outline: none;
+  font-size: 0.85rem;
+
+  &[data-focus-visible] {
+    outline: 2px solid #49fcb3;
+    outline-offset: 2px;
+  }
+
+  .react-aria-ToastContent {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-width: 0px;
+
+    [slot=title] {
+      font-weight: 500;
+      color: #49fcb3;
+    }
+
+    [slot=description] {
+      font-size: 0.8rem;
+      color: #a0a0a0;
+    }
+  }
+
+  .react-aria-Button[slot=close] {
+    flex: 0 0 auto;
+    background: none;
+    border: none;
+    appearance: none;
+    border-radius: 50%;
+    height: 28px;
+    width: 28px;
+    font-size: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #a0a0a0;
+    padding: 0;
+    outline: none;
+    cursor: pointer;
+
+    &:hover {
+      color: #e0e0e0;
+      border-color: rgba(255, 255, 255, 0.4);
+    }
+
+    &[data-focus-visible] {
+      box-shadow: 0 0 0 2px #1e1e2e, 0 0 0 4px #49fcb3;
+    }
+
+    &[data-pressed] {
+      background: rgba(255, 255, 255, 0.1);
+    }
+  }
+}
+
+.defaultButton{
+    border: 1px solid #ffffff;
+    background-color: transparent;
+    border-radius: 51px;
+    padding: 13px 0;
+    cursor: pointer;
+    color: #fff;
+    min-width: 40%;
+    align-self: center;
+    font-size: medium;
+    margin-top: 10px;
+}
+.defaultButton.active{
+    background-color: #ffffff;
+    color: #000;
+}
+
+.defaultButton:hover{
+    background-color: #ffffff;
+    color: black;
+}
+
+
+
+.react-aria-ModalOverlay {
+  background: #0000007d;
+  position: fixed;
+  inset: 0;
+  z-index: 99999999999999999999999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.react-aria-Checkbox {
+  --selected-color: #6f46ed;
+  --selected-color-pressed: #522acd;
+  --checkmark-color: white;
+
+  display: flex;
+  /* This is needed so the HiddenInput is positioned correctly */
+  position: relative;
+  align-items: center;
+  gap: 0.571rem;
+  font-size: 1.143rem;
+  forced-color-adjust: none;
+  cursor: pointer;
+
+  .checkbox {
+    width: 1.143rem;
+    height: 1.143rem;
+    border: 2px solid rgb(155 155 155);
+    border-radius: 4px;
+    transition: all 200ms;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  svg {
+    width: 1rem;
+    height: 1rem;
+    fill: none;
+    stroke: var(--checkmark-color);
+    stroke-width: 3px;
+    stroke-dasharray: 22px;
+    stroke-dashoffset: 66;
+    transition: all 200ms;
+  }
+
+  &[data-pressed] .checkbox {
+    border-color: #848484;
+  }
+
+  &[data-focus-visible] .checkbox {
+    outline: 2px solid #8e6ef1;
+    outline-offset: 2px;
+  }
+
+  &[data-selected],
+  &[data-indeterminate] {
+    .checkbox {
+      border-color: var(--selected-color);
+      background: var(--selected-color);
+    }
+
+    &[data-pressed] .checkbox {
+      border-color: var(--selected-color-pressed);
+      background: var(--selected-color-pressed);
+    }
+
+    svg {
+      stroke-dashoffset: 44;
+    }
+  }
+
+  &[data-indeterminate] {
+    & svg {
+      stroke: none;
+      fill: var(--checkmark-color);
+    }
+  }
+}
+
+/* ── Global tooltip (JS-driven, position: fixed escapes overflow ancestors) ── */
+/* See tooltip.js — a single shared div is repositioned on each hover.        */
+.tooltip-root {
+  position: fixed;
+  display: none;
+  background: #1e1e1e;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 0.75rem;
+  color: #e0e0e0;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 9999;
+  animation: tooltip-in 0.1s ease;
+}
+
+@keyframes tooltip-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+

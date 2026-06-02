@@ -1,0 +1,32 @@
+# Exclude everything by default
+*
+
+# Include only what Dockerfiles actually need
+!nveil/backend/
+!nveil/frontend/
+!docker/
+!choregraph/
+!connectors/
+!dive/
+!examples/Miscellaneous/AirbnbGuest/
+!scripts/
+
+# Exclude heavy/problematic files within included paths
+nveil/frontend/node_modules/
+nveil/frontend/dist/
+**/__pycache__/
+**/*.pyc
+**/*.so
+**/*.pem
+
+# Exclude non-essential choregraph dirs (avoid invalidating pip install layer)
+choregraph/tests/
+choregraph/test_workspace/
+choregraph/docs/
+choregraph/site/
+choregraph/build/
+choregraph/.pytest_cache/
+
+# Exclude dive C++ build artifacts and tests
+dive/build/
+dive/tests/

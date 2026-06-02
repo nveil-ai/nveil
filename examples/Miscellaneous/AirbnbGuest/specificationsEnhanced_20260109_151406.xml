@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<visuSpec name="UserFile">
+	<coordinates>UNDEFINED</coordinates>
+	<datas>
+		<rawData id="3" name="Filtered minimum nights" rows="231595">
+			<fields>
+				<field id="1" name="name" unit="UNITLESS" dataType="STRING" fieldMin="0" fieldMax="219663" distinctCount="219663" />
+				<field id="2" name="host_id" unit="UNITLESS" dataType="INTEGER" fieldMin="23" fieldMax="506938352" distinctCount="119299" />
+				<field id="3" name="neighbourhood" unit="UNITLESS" dataType="STRING" fieldMin="0" fieldMax="1412" distinctCount="1412" />
+				<field id="4" name="latitude" unit="UNITLESS" dataType="FLOAT" fieldMin="25.957322957283782" fieldMax="47.734009999999998" distinctCount="157760" />
+				<field id="5" name="longitude" unit="UNITLESS" dataType="FLOAT" fieldMin="-123.08913" fieldMax="-70.995999999999995" distinctCount="159733" />
+				<field id="6" name="room_type" unit="UNITLESS" dataType="STRING" fieldMin="0" fieldMax="4" distinctCount="4" />
+				<field id="7" name="price" unit="UNITLESS" dataType="INTEGER" fieldMin="0" fieldMax="2000" distinctCount="1765" />
+				<field id="8" name="minimum_nights" unit="UNITLESS" dataType="INTEGER" fieldMin="1" fieldMax="299" distinctCount="143" />
+				<field id="9" name="number_of_reviews" unit="UNITLESS" dataType="INTEGER" fieldMin="0" fieldMax="3091" distinctCount="861" />
+				<field id="10" name="last_review" unit="UNITLESS" dataType="STRING" fieldMin="0" fieldMax="3143" distinctCount="3143" />
+				<field id="11" name="reviews_per_month" unit="UNITLESS" dataType="FLOAT" fieldMin="0.01" fieldMax="101.42" distinctCount="1367" />
+				<field id="12" name="calculated_host_listings_count" unit="UNITLESS" dataType="INTEGER" fieldMin="1" fieldMax="1003" distinctCount="149" />
+				<field id="13" name="availability_365" unit="UNITLESS" dataType="INTEGER" fieldMin="0" fieldMax="365" distinctCount="366" />
+				<field id="14" name="number_of_reviews_ltm" unit="UNITLESS" dataType="INTEGER" fieldMin="0" fieldMax="1314" distinctCount="271" />
+				<field id="15" name="city" unit="UNITLESS" dataType="STRING" fieldMin="0" fieldMax="27" distinctCount="27" />
+			</fields>
+			<file format="XML" location="./choregraph.xml" />
+		</rawData>
+	</datas>
+	<colorPalettes>
+		<colorPalette id="1" name="SPECTRAL" type="SEQUENTIAL" size="256" />
+	</colorPalettes>
+	<shapePalettes />
+	<channels>
+		<undefinedChannels />
+		<numericChannels>
+			<numericChannel id="3" label="price" dataId="3" fieldId="7" boundMin="0" boundMax="2000" scaleType="LINEAR" discrete="0" />
+			<numericChannel id="6" label="availability_365" dataId="3" fieldId="13" boundMin="0" boundMax="365" scaleType="LINEAR" discrete="0" />
+			<numericChannel id="7" label="minimum_nights" dataId="3" fieldId="8" boundMin="1" boundMax="299" scaleType="LINEAR" discrete="0" />
+			<numericChannel id="8" label="EMPTY" dataId="UNDEFINED" fieldId="UNDEFINED" boundMin="0" boundMax="0" scaleType="LINEAR" discrete="1" />
+		</numericChannels>
+		<colorChannels>
+			<colorChannel id="4" label="price" dataId="3" fieldId="7" boundMin="0" boundMax="20000" scaleType="LINEAR" discrete="0" colorPaletteId="1" />
+		</colorChannels>
+		<shapeChannels />
+	</channels>
+	<marks>
+		<surface id="1" name="surface_1" x="7" y="6" z="3" color="4" time="8" resolution="52.000000" radius="20.000000" influence="0.600000" interpolation="NONE" />
+	</marks>
+	<space xSpatialScaling="1" ySpatialScaling="0.81643835616438354" zSpatialScaling="0.0149" sizeSpatialScaling="1" />
+	<legend title="Price by Availability and Minimum Nights" description="3D surface of listing price as a function of yearly availability and minimum nights (filtered to minimum_nights &lt; 300), colored by price with Spectral palette." />
+</visuSpec>

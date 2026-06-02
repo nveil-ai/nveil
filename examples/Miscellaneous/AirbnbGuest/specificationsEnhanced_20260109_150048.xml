@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<visuSpec name="UserFile">
+	<coordinates>CARTESIAN</coordinates>
+	<datas>
+		<rawData id="7" name="Top 15 expensive neighbourhoods" rows="15">
+			<fields>
+				<field id="1" name="neighbourhood" unit="UNITLESS" dataType="STRING" fieldMin="0" fieldMax="15" distinctCount="15" />
+				<field id="2" name="host_id" unit="UNITLESS" dataType="FLOAT" fieldMin="0" fieldMax="506938352" distinctCount="15" />
+				<field id="3" name="latitude" unit="UNITLESS" dataType="FLOAT" fieldMin="40.5" fieldMax="40.91" distinctCount="15" />
+				<field id="4" name="longitude" unit="UNITLESS" dataType="FLOAT" fieldMin="-74.25" fieldMax="-73.71" distinctCount="15" />
+				<field id="5" name="price" unit="UNITLESS" dataType="FLOAT" fieldMin="150" fieldMax="2000" distinctCount="1765" />
+				<field id="6" name="minimum_nights" unit="UNITLESS" dataType="FLOAT" fieldMin="1" fieldMax="100" distinctCount="15" />
+				<field id="7" name="number_of_reviews" unit="UNITLESS" dataType="FLOAT" fieldMin="0" fieldMax="500" distinctCount="15" />
+				<field id="8" name="reviews_per_month" unit="UNITLESS" dataType="FLOAT" fieldMin="0" fieldMax="5" distinctCount="15" />
+				<field id="9" name="calculated_host_listings_count" unit="UNITLESS" dataType="FLOAT" fieldMin="1" fieldMax="100" distinctCount="15" />
+				<field id="10" name="availability_365" unit="UNITLESS" dataType="FLOAT" fieldMin="0" fieldMax="365" distinctCount="15" />
+				<field id="11" name="number_of_reviews_ltm" unit="UNITLESS" dataType="FLOAT" fieldMin="0" fieldMax="100" distinctCount="15" />
+			</fields>
+			<file format="XML" location="./choregraph.xml" />
+		</rawData>
+	</datas>
+	<colorPalettes>
+		<colorPalette id="1" name="VAPORWAVE" type="QUALITATIVE" size="256" />
+	</colorPalettes>
+	<shapePalettes />
+	<channels>
+		<undefinedChannels />
+		<numericChannels>
+			<numericChannel id="1" label="neighbourhood" dataId="7" fieldId="1" boundMin="0" boundMax="15" scaleType="LINEAR" discrete="1" />
+			<numericChannel id="2" label="Average listing price ($)" dataId="7" fieldId="5" boundMin="150" boundMax="500" scaleType="LINEAR" discrete="0" />
+			<numericChannel id="8" label="EMPTY" dataId="UNDEFINED" fieldId="UNDEFINED" boundMin="0" boundMax="0" scaleType="LINEAR" discrete="0" />
+		</numericChannels>
+		<colorChannels>
+			<colorChannel id="3" label="Average listing price ($)" dataId="7" fieldId="5" boundMin="150" boundMax="500" scaleType="LINEAR" discrete="0" colorPaletteId="1" />
+		</colorChannels>
+		<shapeChannels />
+	</channels>
+	<marks>
+		<bar id="1" name="bar_1" x="1" y="2" z="8" color="3" time="8" />
+	</marks>
+	<space xSpatialScaling="1" ySpatialScaling="1" zSpatialScaling="1" sizeSpatialScaling="1" />
+	<legend title="Average Listing Price by Neighbourhood (Top 15, NYC)" description="The 15 most expensive New York City neighbourhoods ranked by average Airbnb listing price, filtered from 232K US listings." />
+</visuSpec>

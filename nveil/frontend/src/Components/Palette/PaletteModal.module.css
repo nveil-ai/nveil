@@ -1,0 +1,187 @@
+/*
+ * SPDX-FileCopyrightText: 2025 NVEIL SAS
+ * SPDX-FileContributor: Pierre Jacquet
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+
+/* ============================================
+   Color Palette Modal Styles
+   ============================================ */
+
+.colorPaletteOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.colorPaletteModal {
+  background: #2a2a2a;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 550px;
+  max-height: 85vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  animation: slideUp 0.25s ease-out;
+  /* Ensure clicks inside the modal don't propagate to the overlay (handled in JS but good to have) */
+}
+
+@keyframes slideUp {
+  from { 
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.colorPaletteHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid #3a3a3a;
+  background: #252525;
+}
+
+.colorPaletteHeader h3 {
+  margin: 0;
+  color: white;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  color: #888;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: background 0.15s, color 0.15s;
+}
+
+.closeButton:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.colorPaletteContent {
+  padding: 20px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.paletteNameRow {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.paletteNameInput {
+  flex: 1;
+}
+
+.paletteTypeInput {
+  flex: 0 0 140px;
+}
+
+.paletteNameInput label,
+.paletteTypeInput label {
+  display: block;
+  color: #aaa;
+  margin-bottom: 6px;
+  font-size: 12px;
+}
+
+.paletteNameInput input,
+.paletteTypeInput select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #444;
+  border-radius: 6px;
+  background: #1a1a1a;
+  color: white;
+  font-size: 13px;
+  box-sizing: border-box;
+}
+
+.paletteNameInput input:focus,
+.paletteTypeInput select:focus {
+  outline: none;
+  border-color: #6f46ed;
+}
+
+.paletteTypeInput select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23888' d='M6 8L2 4h8z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  padding-right: 30px;
+}
+
+.colorPaletteFooter {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 16px 20px;
+  border-top: 1px solid #3a3a3a;
+  background: #252525;
+}
+
+.cancelButton,
+.saveButton {
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
+  border: none;
+}
+
+.cancelButton {
+  background: #3a3a3a;
+  color: #ccc;
+}
+
+.cancelButton:hover {
+  background: #444;
+  color: white;
+}
+
+.saveButton {
+  background: linear-gradient(135deg, #6f46ed, #9f7aea);
+  color: white;
+  font-weight: 500;
+}
+
+.saveButton:hover {
+  background: linear-gradient(135deg, #5a35c7, #8b5cf6);
+  transform: translateY(-1px);
+}
+
+.saveButton:active {
+  transform: translateY(0);
+}

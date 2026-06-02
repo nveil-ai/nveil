@@ -1,0 +1,124 @@
+/*
+ * SPDX-FileCopyrightText: 2026 NVEIL SAS
+ * SPDX-FileContributor: Pierre Jacquet
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+/* ── Collapsible group (matches WidgetGroup pattern) ── */
+
+.group {
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.group:first-child {
+    border-top: none;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 12px 4px;
+    background: none;
+    border: none;
+    color: #ddd;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-weight: 500;
+    outline: none;
+    transition: color 0.15s ease;
+}
+
+.header:hover {
+    color: #f0f0f0;
+}
+
+.headerIcon {
+    display: flex;
+    align-items: center;
+    color: #1b90ba;
+    font-size: 20px;
+    flex-shrink: 0;
+    opacity: 0.8;
+}
+
+.headerLabel {
+    flex: 1;
+    text-align: left;
+}
+
+.chevron {
+    font-size: 18px;
+    color: #555;
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    flex-shrink: 0;
+}
+
+.chevronOpen {
+    transform: rotate(180deg);
+}
+
+/* ── Content area ── */
+
+.content {
+    padding: 0 4px 12px 4px;
+}
+
+/* ── Segmented toggle ── */
+
+.toggle {
+    display: flex;
+    gap: 0;
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 8px;
+    padding: 3px;
+    margin-bottom: 10px;
+}
+
+.tab {
+    flex: 1;
+    padding: 6px 0;
+    border: none;
+    border-radius: 6px;
+    background: none;
+    color: #888;
+    font-family: inherit;
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    outline: none;
+}
+
+.tab:hover {
+    color: #bbb;
+}
+
+.tabActive {
+    background: rgba(27, 144, 186, 0.2);
+    color: #1b90ba;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+/* ── Schema — full width, centered ── */
+
+.schemaWrap {
+    display: flex;
+    justify-content: center;
+    padding: 4px 0 8px;
+}
+
+.schema {
+    max-width: 100%;
+    height: auto;
+}
+
+/* ── Sliders ── */
+
+.sliders {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}

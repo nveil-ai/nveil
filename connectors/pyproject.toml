@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "connectors"
+version = "0.1.0"
+description = "External tool connectors for NVEIL (PhysiCell, etc.)"
+authors = [{name = "NVEIL"}]
+license = {text = "MIT"}
+requires-python = ">=3.10"
+dependencies = [
+    "scipy>=1.10.0",
+    "lxml>=5.0.0",
+    "pandas>=2.0.0",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]

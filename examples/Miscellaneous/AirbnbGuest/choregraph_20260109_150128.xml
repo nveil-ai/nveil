@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<choregraph>
+  <inputs>
+    <input id="1" label="airbnb" location="/root/DIVE/_guest/workspaces/shared/airbnb.csv" format="CSV" header="True" fieldSeparator="," skipLines="0" visibility="false"/>
+  </inputs>
+  <pipeline>
+    <node id="2" label="Count listings by room type" type="aggregate_count">
+      <inputPort name="df" sourceRef="1" type="DATAFRAME"/>
+      <inputPort name="group_columns" value="room_type" type="STRING"/>
+      <outputPort id="3" name="result" label="Room type counts" type="DATAFRAME" visibility="true"/>
+    </node>
+  </pipeline>
+</choregraph>

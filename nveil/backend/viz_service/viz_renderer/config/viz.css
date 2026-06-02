@@ -1,0 +1,271 @@
+/*
+ * SPDX-FileCopyrightText: 2025 NVEIL SAS
+ * SPDX-FileContributor: Guillaume Franque
+ * SPDX-FileContributor: Pierre Jacquet
+ * SPDX-FileContributor: Clément Baraille
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+@font-face {
+  font-family: "Inter Tight";
+  /*Can be any text*/
+  src: local("Inter Tight"), url("./fonts/InterTight-VariableFont_wght.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Inter Tight";
+  /*Can be any text*/
+  src: local("Inter Tight"), url("./fonts/InterTight-Italic-VariableFont_wght.ttf") format("truetype");
+  font-style: italic;
+}
+
+#app {
+  height: 100%;
+  background: url(/gradient_bg_light.webp) !important;
+}
+
+.v-application {
+  background: #09090996 !important;
+  backdrop-filter: blur(40px);
+}
+
+#input {
+  background-color: #000 !important;
+}
+
+.side-panel {
+  position: fixed;
+  right: 0;
+  width: 67%;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0 !important;
+  padding: 0;
+}
+
+.chat-input {
+  position: absolute;
+  bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  width: 27%;
+  row-gap: 4px;
+  padding-left: 30px;
+  padding-right: 30px;
+}
+
+.chat-options {
+  flex: 0.1;
+  display: flex;
+}
+
+#chat-input1 {
+  padding: 1.4em 1.5em;
+  color: white;
+  border-radius: 12px;
+  background: rgba(79, 107, 133, 0.377);
+}
+
+.chat-suggestions {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+}
+
+.chat-suggestions button {
+  flex: 1;
+  padding: 0.7em 0.7em;
+  border-radius: 9px;
+  background: rgba(79, 107, 133, 0.377);
+  color: white;
+  font-size: small;
+  text-align: left;
+  cursor: pointer;
+  border: none;
+}
+
+.chat-suggestions button:hover {
+  background: rgba(79, 107, 133, 0.6);
+}
+
+
+.tribute-container {
+  max-width: 400px;
+  background: #1c1f27 !important;
+  border: 1px solid #444;
+  border-radius: 8px;
+}
+
+.tribute-container .highlight {
+  background: #4c4c4c !important;
+  border-radius: 7px !important;
+}
+
+.mention {
+  color: #affff7;
+}
+
+[contenteditable=true]:empty:before {
+  content: attr(placeholder);
+  pointer-events: none;
+  color: hsl(0, 0%, 61%);
+  font-size: small;
+}
+
+.v-slider>.v-input__append,
+.v-slider>.v-input__prepend {
+  padding: 5px 5px !important;
+  margin-right: 30px !important;
+}
+
+.v-switch>.v-input__append,
+.v-switch>.v-input__prepend {
+  padding: 5px 5px !important;
+  margin-right: 30px !important;
+}
+
+.v-switch {
+  align-items: center;
+  margin-inline: 8px 8px;
+}
+
+
+#widget_menu {
+  backdrop-filter: blur(4px);
+  background-color: #2121212b;
+}
+
+#widget_menu .v-navigation-drawer__content {
+  padding-top: 70px;
+}
+
+.plot-theme-switcher {
+  padding: 12px;
+  border-radius: 21px;
+}
+
+/* ================================================================
+   SIDEBAR COLLAPSED (rail) STATE — hide text content, keep icons
+   ================================================================ */
+
+/* Hide switch labels */
+nav.v-navigation-drawer--expand-on-hover:not(.v-navigation-drawer--is-hovering) .v-switch .v-input__control .v-label {
+  display: none;
+}
+
+/* Hide messages */
+nav.v-navigation-drawer--expand-on-hover:not(.v-navigation-drawer--is-hovering) .v-messages__message {
+  display: none;
+}
+
+/* Expansion panels: hide the TEXT/BODY but keep the title visible (for icons) */
+nav.v-navigation-drawer--expand-on-hover:not(.v-navigation-drawer--is-hovering) .v-expansion-panel-text {
+  display: none;
+}
+
+/* Hide title TEXT in expansion panels (keep icons visible) */
+nav.v-navigation-drawer--expand-on-hover:not(.v-navigation-drawer--is-hovering) .v-expansion-panel-title span {
+  display: none;
+}
+
+/* Hide expansion panel chevron when collapsed */
+nav.v-navigation-drawer--expand-on-hover:not(.v-navigation-drawer--is-hovering) .v-expansion-panel-title__icon {
+  display: none;
+}
+
+/* Hide card text content */
+nav.v-navigation-drawer--expand-on-hover:not(.v-navigation-drawer--is-hovering) .v-card-text {
+  display: none;
+}
+
+/* Hide slider tick labels when collapsed */
+nav.v-navigation-drawer--expand-on-hover:not(.v-navigation-drawer--is-hovering) .v-slider-track__tick-label {
+  display: none;
+}
+
+nav.v-navigation-drawer--expand-on-hover:not(.v-navigation-drawer--is-hovering) .v-checkbox {
+  display: none;
+}
+
+nav.v-navigation-drawer--expand-on-hover:not(.v-navigation-drawer--is-hovering) .v-checkbox {
+  display: none;
+}
+
+/* Cards: strip background/padding, show only their icons */
+nav.v-navigation-drawer--expand-on-hover:not(.v-navigation-drawer--is-hovering) .v-card {
+  padding: 10px 0px 10px 0px;
+  background: none !important;
+}
+
+nav.v-navigation-drawer--expand-on-hover:not(.v-navigation-drawer--is-hovering) .v-card.hide-on-rail {
+  display: none !important;
+}
+
+nav.v-navigation-drawer--expand-on-hover:not(.v-navigation-drawer--is-hovering) .v-card.hide-on-rail {
+  display: none !important;
+}
+
+/* Hide card title text (keep the prepend icon if any) */
+nav.v-navigation-drawer--expand-on-hover:not(.v-navigation-drawer--is-hovering) .v-card-item {
+  display: none;
+}
+
+/* Hide export button text */
+nav.v-navigation-drawer--expand-on-hover:not(.v-navigation-drawer--is-hovering) .exportBtn .v-btn__content {
+  display: none;
+}
+
+nav.v-navigation-drawer--expand-on-hover:not(.v-navigation-drawer--is-hovering) .exportBtn .v-btn__prepend {
+  margin-inline: 0px !important;
+}
+
+.exportBtn {
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  background: linear-gradient(180deg, #132437, #132335);
+}
+
+/* ================================================================
+   EXPANSION PANEL CONTENT — inherit styles, no extra spacing
+   ================================================================ */
+
+/* Strip Vuetify's default padding on panel body so nested VCards
+   look identical to VCards outside panels */
+.v-expansion-panel-text__wrapper {
+  padding: 0 !important;
+}
+
+/* No extra spacing on nested VCards */
+.v-expansion-panel-text .v-card {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* ================================================================
+   DROPDOWN FIX — keep sidebar expanded while a dropdown is open
+   ================================================================ */
+
+/* When any v-overlay (dropdown menu) is active, force the sidebar
+   to stay in its expanded state so the dropdown remains usable.
+   Uses :has() — supported in all modern browsers. */
+body:has(.v-overlay--active.v-menu) #widget_menu.v-navigation-drawer--expand-on-hover {
+  width: 350px !important;
+}
+body:has(.v-overlay--active.v-menu) #widget_menu .v-navigation-drawer__content {
+  overflow-y: auto !important;
+}
+
+
+.modalGlassBg {
+  background: linear-gradient(233deg, #F7DD58, #F59E48, #ED7358, #EA4C6A, #E61E80, #AA4E93, #754992, #47469F, #0D4FB0, #0863B8, #1783C4);
+  padding: 2px;
+  border-radius: 8px;
+}
+
+/* NVEIL KPI card styles live in dive/src/dive/builder/_html_assets/kpi.css
+   and are injected here by layout.py. Shared source of truth with the
+   dive export pipeline so thumbnails match the on-screen rendering. */

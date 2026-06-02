@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<visuSpec name="UserFile">
+	<coordinates>CARTESIAN</coordinates>
+	<datas>
+		<rawData id="9" name="Sorted by value score" rows="42899">
+			<fields>
+				<field id="1" name="name" unit="UNITLESS" dataType="STRING" fieldMin="0" fieldMax="42000" distinctCount="42000" />
+				<field id="2" name="host_id" unit="UNITLESS" dataType="INTEGER" fieldMin="23" fieldMax="506938352" distinctCount="35000" />
+				<field id="3" name="neighbourhood" unit="UNITLESS" dataType="STRING" fieldMin="0" fieldMax="223" distinctCount="223" />
+				<field id="4" name="latitude" unit="UNITLESS" dataType="FLOAT" fieldMin="40.499790000000003" fieldMax="40.913059999999999" distinctCount="38000" />
+				<field id="5" name="longitude" unit="UNITLESS" dataType="FLOAT" fieldMin="-74.244420000000005" fieldMax="-73.712980000000005" distinctCount="38000" />
+				<field id="6" name="room_type" unit="UNITLESS" dataType="STRING" fieldMin="0" fieldMax="4" distinctCount="4" />
+				<field id="7" name="price" unit="UNITLESS" dataType="INTEGER" fieldMin="1" fieldMax="2000" distinctCount="1765" />
+				<field id="8" name="minimum_nights" unit="UNITLESS" dataType="INTEGER" fieldMin="1" fieldMax="1250" distinctCount="130" />
+				<field id="9" name="number_of_reviews" unit="UNITLESS" dataType="INTEGER" fieldMin="0" fieldMax="3091" distinctCount="700" />
+				<field id="10" name="last_review" unit="UNITLESS" dataType="STRING" fieldMin="0" fieldMax="3147" distinctCount="2800" />
+				<field id="11" name="reviews_per_month" unit="UNITLESS" dataType="FLOAT" fieldMin="0.01" fieldMax="101.42" distinctCount="1000" />
+				<field id="12" name="calculated_host_listings_count" unit="UNITLESS" dataType="INTEGER" fieldMin="1" fieldMax="1003" distinctCount="100" />
+				<field id="13" name="availability_365" unit="UNITLESS" dataType="INTEGER" fieldMin="0" fieldMax="365" distinctCount="366" />
+				<field id="14" name="number_of_reviews_ltm" unit="UNITLESS" dataType="INTEGER" fieldMin="0" fieldMax="1314" distinctCount="200" />
+				<field id="15" name="city" unit="UNITLESS" dataType="STRING" fieldMin="0" fieldMax="1" distinctCount="1" />
+				<field id="16" name="value_score" unit="UNITLESS" dataType="FLOAT" fieldMin="0" fieldMax="36500" distinctCount="42000" />
+				<field id="17" name="price_tier" unit="UNITLESS" dataType="STRING" fieldMin="0" fieldMax="4" distinctCount="4" />
+			</fields>
+			<file format="XML" location="./choregraph.xml" />
+		</rawData>
+	</datas>
+	<colorPalettes>
+		<colorPalette id="1" name="VAPORWAVE" type="QUALITATIVE" size="11" />
+	</colorPalettes>
+	<shapePalettes>
+		<shapePalette id="1">
+			<shape>POINT</shape>
+		</shapePalette>
+	</shapePalettes>
+	<channels>
+		<undefinedChannels />
+		<numericChannels>
+			<numericChannel id="1" label="price" dataId="9" fieldId="7" boundMin="1" boundMax="2000" scaleType="LINEAR" discrete="0" />
+			<numericChannel id="2" label="value_score" dataId="9" fieldId="16" boundMin="0" boundMax="100" scaleType="LINEAR" discrete="0" />
+			<numericChannel id="8" label="EMPTY" dataId="UNDEFINED" fieldId="UNDEFINED" boundMin="0" boundMax="0" scaleType="LINEAR" discrete="0" />
+		</numericChannels>
+		<colorChannels>
+			<colorChannel id="3" label="price_tier" dataId="9" fieldId="17" boundMin="0" boundMax="4" scaleType="LINEAR" discrete="1" colorPaletteId="1" />
+		</colorChannels>
+		<shapeChannels>
+			<shapeChannel id="9" label="EMPTY" dataId="UNDEFINED" fieldId="UNDEFINED" boundMin="0" boundMax="0" scaleType="LINEAR" discrete="0" shapePaletteId="1" />
+		</shapeChannels>
+	</channels>
+	<marks>
+		<point id="1" name="scatter_value_score" x="1" y="2" z="8" color="3" time="8" shape="9" size="8" />
+	</marks>
+	<space xSpatialScaling="1" ySpatialScaling="1" zSpatialScaling="1" sizeSpatialScaling="1" />
+	<legend title="NYC Listing Value Score" description="Scatter plot comparing listing price against computed value score (reviews x availability / price) for 42,899 NYC Airbnb listings, colored by price tier." />
+</visuSpec>

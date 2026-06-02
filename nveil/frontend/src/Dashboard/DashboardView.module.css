@@ -1,0 +1,732 @@
+/*
+ * SPDX-FileCopyrightText: 2026 NVEIL SAS
+ * SPDX-FileContributor: Pierre Jacquet
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+.page {
+    height: 100vh;
+    width: 100%;
+    padding: 0;
+    overflow: hidden;
+    background: url(/gradient_bg_light.webp);
+    background-size: cover;
+    transition: background-color 0.4s ease;
+}
+
+/* Theme: dark (default) */
+.theme_default { /* uses the gradient background image */ }
+
+/* Theme: clean — flat white */
+.theme_clean {
+    background: #f5f5f5;
+    background-image: none;
+    --overlay-bg: #08080ca3;
+    --overlay-border: rgba(255, 255, 255, 0.08);
+    --panel-bg: #08080ca3;
+    --panel-border: rgba(255, 255, 255, 0.08);
+}
+
+/* Theme: paper — warm parchment */
+.theme_paper {
+    background: rgb(245, 237, 223);
+    background-image: none;
+    --overlay-bg: #08080ca3;
+    --overlay-border: rgba(255, 255, 255, 0.08);
+    --panel-bg: #08080ca3;
+    --panel-border: rgba(255, 255, 255, 0.08);
+}
+
+.backdrop {
+    height: 100%;
+    -webkit-backdrop-filter: blur(40px);
+    backdrop-filter: blur(40px);
+    background-color: #09090996;
+    display: flex;
+    flex-direction: column;
+    transition: background-color 0.4s ease, backdrop-filter 0.4s ease;
+}
+
+.theme_clean .backdrop {
+    background-color: rgba(245, 245, 245, 0.85);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+}
+
+.theme_paper .backdrop {
+    background-color: rgba(245, 237, 223, 0.85);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+}
+
+/* Toolbar */
+.toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    flex-shrink: 0;
+}
+
+.backBtn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+    background: rgba(30, 30, 30, 0.6);
+    color: #b0b0b0;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.backBtn:hover {
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.15);
+    background: rgba(40, 40, 40, 0.7);
+}
+
+.dashboardTitle {
+    flex: 1;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    color: #ccc;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+    padding: 0 12px;
+}
+
+.toolbarActions {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.refreshBtn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border: 1px solid rgba(27, 144, 186, 0.2);
+    border-radius: 20px;
+    background: rgba(27, 144, 186, 0.08);
+    color: #1b90ba;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.refreshBtn:hover:not(:disabled) {
+    background: rgba(27, 144, 186, 0.15);
+    border-color: rgba(27, 144, 186, 0.35);
+}
+
+.refreshBtn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.refreshBtn.refreshing svg {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Refresh status text */
+.refreshStatus {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.78rem;
+    color: rgba(27, 144, 186, 0.85);
+    padding: 4px 10px;
+    white-space: nowrap;
+    animation: fadeIn 0.25s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateX(6px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+.refreshHint {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.72rem;
+    color: rgba(255, 255, 255, 0.45);
+    white-space: nowrap;
+    margin: auto;
+}
+
+/* Auto-refresh interval select */
+.refreshIntervalSelect {
+    padding: 5px 10px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+    background: rgba(30, 30, 30, 0.6);
+    color: #b0b0b0;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.78rem;
+    cursor: pointer;
+    outline: none;
+    transition: all 0.2s ease;
+    appearance: none;
+    -webkit-appearance: none;
+    padding-right: 22px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23888'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+}
+
+.refreshIntervalSelect:hover {
+    border-color: rgba(255, 255, 255, 0.15);
+    color: #fff;
+}
+
+.refreshIntervalSelect:focus {
+    border-color: rgba(27, 144, 186, 0.35);
+}
+
+.refreshIntervalSelect:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.refreshIntervalSelect option {
+    background: #1a1a1a;
+    color: #ccc;
+}
+
+/* Theme Button */
+.themeBtn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+    background: rgba(30, 30, 30, 0.6);
+    color: #b0b0b0;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.themeBtn:hover:not(:disabled) {
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.15);
+    background: rgba(40, 40, 40, 0.7);
+}
+
+.themeBtn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+/* Add Panel Button */
+.addPanelBtn {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border: 1px solid rgba(76, 175, 80, 0.2);
+    border-radius: 20px;
+    background: rgba(76, 175, 80, 0.08);
+    color: #4caf50;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.addPanelBtn:hover {
+    background: rgba(76, 175, 80, 0.15);
+    border-color: rgba(76, 175, 80, 0.35);
+}
+
+.addPanelBadge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    border-radius: 9px;
+    background: #4caf50;
+    color: #fff;
+    font-size: 0.65rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+}
+
+.addPanelBadge.glow {
+    animation: pulse 2s ease-in-out infinite;
+    box-shadow: 0 0 8px rgba(76, 175, 80, 0.6);
+}
+
+@keyframes pulse {
+    0%, 100% { box-shadow: 0 0 4px rgba(76, 175, 80, 0.4); }
+    50% { box-shadow: 0 0 12px rgba(76, 175, 80, 0.8); }
+}
+
+/* Add Panel Popover */
+.addPanelWrapper {
+    position: relative;
+}
+
+.addPanelPopover {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    min-width: 220px;
+    max-width: 320px;
+    background: rgba(20, 20, 20, 0.95);
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    padding: 6px;
+    z-index: 100;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+}
+
+.addPanelPopover::before {
+    content: '';
+    position: absolute;
+    top: -5px;
+    right: 16px;
+    width: 10px;
+    height: 10px;
+    background: rgba(20, 20, 20, 0.95);
+    border-left: 1px solid rgba(255, 255, 255, 0.08);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    transform: rotate(45deg);
+}
+
+.addPanelItem {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    color: #ccc;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    text-align: left;
+}
+
+.addPanelItem:hover {
+    background: rgba(76, 175, 80, 0.12);
+    color: #fff;
+}
+
+.addPanelItem svg {
+    flex-shrink: 0;
+    color: #4caf50;
+}
+
+.addPanelEmpty {
+    padding: 12px;
+    color: #666;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.8rem;
+    text-align: center;
+}
+
+/* Viewer Area */
+.viewer {
+    flex: 1;
+    position: relative;
+    overflow-y: auto;
+    border-radius: 10px;
+    margin: 4px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.12) transparent;
+}
+
+.viewer::-webkit-scrollbar {
+    width: 5px;
+}
+
+.viewer::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.viewer::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 3px;
+}
+
+.viewer::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.22);
+}
+
+/* -----------------------------------------------------------------------
+   Grid Item
+   ----------------------------------------------------------------------- */
+.gridItem {
+    display: flex;
+    flex-direction: column;
+    background: rgba(15, 15, 15, 0);
+    border: none;
+    border-radius: 8px;
+    overflow: hidden;
+    height: 100%;
+    transition: background-color 0.2s ease;
+}
+
+.gridItem:hover {
+    background: rgba(15, 15, 15, 0.4);
+}
+
+/* Panel Header — entire bar is the drag handle */
+.panelHeader {
+    height: 32px;
+    min-height: 32px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0 4px 0 10px;
+    background: #2c2c2c24;
+    cursor: grab;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.gridItem:hover .panelHeader {
+    opacity: 1;
+}
+
+.panelHeader:active {
+    cursor: grabbing;
+}
+
+.panelTitle {
+    flex: 1;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.75rem;
+    color: #aaa;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    user-select: none;
+}
+
+.panelTitleInput {
+    flex: 1;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.75rem;
+    color: #ddd;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(27, 144, 186, 0.4);
+    border-radius: 3px;
+    padding: 2px 6px;
+    outline: none;
+    min-width: 0;
+}
+
+.panelActions {
+    display: flex;
+    gap: 2px;
+    flex-shrink: 0;
+}
+
+.panelActionBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border: none;
+    border-radius: 4px;
+    background: transparent;
+    color: #555;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    padding: 0;
+}
+
+.panelActionBtn:hover {
+    background: rgba(255, 255, 255, 0.06);
+    color: #ccc;
+}
+
+/* Panel Iframe */
+.panelIframe {
+    flex: 1;
+    width: 100%;
+    border: none;
+    background: transparent;
+    color-scheme: dark;
+}
+
+
+/* Maximized Overlay */
+.maximizedOverlay {
+    position: absolute;
+    inset: 0;
+    z-index: 20;
+    display: flex;
+    flex-direction: column;
+    background: transparent;
+    border-radius: 8px;
+}
+
+.maximizedOverlay .panelHeader {
+    opacity: 1;
+}
+
+/* -----------------------------------------------------------------------
+   RGL Overrides
+   ----------------------------------------------------------------------- */
+
+/* Placeholder shown while dragging */
+.viewer :global(.react-grid-placeholder) {
+    background: rgba(27, 144, 186, 0.15) !important;
+    border: 1px dashed rgba(27, 144, 186, 0.4) !important;
+    border-radius: 8px !important;
+    opacity: 1 !important;
+}
+
+/* Resize handles — invisible but with generous hit area */
+.viewer :global(.react-grid-item > .react-resizable-handle) {
+    background-image: none !important;
+    background: transparent !important;
+}
+
+.viewer :global(.react-resizable-handle)::after {
+    display: none !important;
+}
+
+/* Edge handles — wide invisible hit zones */
+.viewer :global(.react-resizable-handle-e),
+.viewer :global(.react-resizable-handle-w) {
+    width: 16px !important;
+    height: 100% !important;
+    top: 0 !important;
+}
+
+.viewer :global(.react-resizable-handle-n),
+.viewer :global(.react-resizable-handle-s) {
+    height: 16px !important;
+    width: 100% !important;
+    left: 0 !important;
+}
+
+/* Corner handles — large square hit zones */
+.viewer :global(.react-resizable-handle-se),
+.viewer :global(.react-resizable-handle-sw),
+.viewer :global(.react-resizable-handle-ne),
+.viewer :global(.react-resizable-handle-nw) {
+    width: 20px !important;
+    height: 20px !important;
+}
+
+/* Loading */
+.loadingOverlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    z-index: 10;
+    background: rgba(9, 9, 9, 0.6);
+}
+
+.spinner {
+    width: 48px;
+    height: 48px;
+    border: 3px solid rgba(255, 255, 255, 0.1);
+    border-top-color: #1b90ba;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+.loadingText {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+    color: #888;
+}
+
+/* Error */
+.errorOverlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    z-index: 10;
+    background: rgba(9, 9, 9, 0.8);
+}
+
+.errorText {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    color: #999;
+}
+
+.retryBtn {
+    padding: 10px 24px;
+    border: 1px solid #444;
+    border-radius: 24px;
+    background: rgba(45, 45, 45, 0.8);
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.retryBtn:hover {
+    background: rgba(55, 55, 55, 0.9);
+    border-color: #555;
+}
+
+/* -----------------------------------------------------------------------
+   Light theme overrides (clean & paper)
+   ----------------------------------------------------------------------- */
+.theme_clean .toolbar,
+.theme_paper .toolbar {
+    border-bottom-color: rgba(0, 0, 0, 0.06);
+}
+
+.theme_clean .backBtn,
+.theme_paper .backBtn,
+.theme_clean .themeBtn,
+.theme_paper .themeBtn {
+    background: rgba(0, 0, 0, 0.05);
+    border-color: rgba(0, 0, 0, 0.1);
+    color: #555;
+}
+
+.theme_clean .backBtn:hover,
+.theme_paper .backBtn:hover,
+.theme_clean .themeBtn:hover:not(:disabled),
+.theme_paper .themeBtn:hover:not(:disabled) {
+    background: rgba(0, 0, 0, 0.1);
+    border-color: rgba(0, 0, 0, 0.15);
+    color: #222;
+}
+
+.theme_clean .dashboardTitle,
+.theme_paper .dashboardTitle {
+    color: #333;
+}
+
+.theme_clean .refreshBtn,
+.theme_paper .refreshBtn {
+    background: rgba(27, 144, 186, 0.08);
+    border-color: rgba(27, 144, 186, 0.2);
+}
+
+.theme_clean .refreshHint,
+.theme_paper .refreshHint {
+    color: rgba(0, 0, 0, 0.4);
+}
+
+.theme_clean .refreshIntervalSelect,
+.theme_paper .refreshIntervalSelect {
+    background: rgba(0, 0, 0, 0.05);
+    border-color: rgba(0, 0, 0, 0.1);
+    color: #555;
+}
+
+.theme_clean .refreshIntervalSelect option,
+.theme_paper .refreshIntervalSelect option {
+    background: #fff;
+    color: #333;
+}
+
+.theme_clean .addPanelBtn,
+.theme_paper .addPanelBtn {
+    background: rgba(76, 175, 80, 0.08);
+    border-color: rgba(76, 175, 80, 0.2);
+}
+
+.theme_clean .panelHeader,
+.theme_paper .panelHeader {
+    background: rgba(0, 0, 0, 0.04);
+}
+
+.theme_clean .panelTitle,
+.theme_paper .panelTitle {
+    color: #555;
+}
+
+.theme_clean .panelActionBtn,
+.theme_paper .panelActionBtn {
+    color: #999;
+}
+
+.theme_clean .panelActionBtn:hover,
+.theme_paper .panelActionBtn:hover {
+    background: rgba(0, 0, 0, 0.06);
+    color: #333;
+}
+
+.theme_clean .gridItem:hover,
+.theme_paper .gridItem:hover {
+    background: rgba(0, 0, 0, 0.04);
+}
+
+.theme_clean .loadingOverlay,
+.theme_paper .loadingOverlay {
+    background: rgba(245, 245, 245, 0.6);
+}
+
+.theme_clean .loadingText,
+.theme_paper .loadingText {
+    color: #666;
+}
+
+/* Focus-visible styles */
+.refreshBtn:focus-visible,
+.addPanelBtn:focus-visible,
+.backBtn:focus-visible,
+.retryBtn:focus-visible {
+    outline: 2px solid rgba(27, 144, 186, 0.6);
+    outline-offset: 2px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .toolbar {
+        padding: 8px 12px;
+    }
+
+    .backBtn span,
+    .refreshBtn span,
+    .addPanelBtn span,
+    .themeBtn span,
+    .refreshStatus,
+    .refreshHint,
+    .dashboardTitle {
+        display: none;
+    }
+
+    .refreshIntervalSelect {
+        font-size: 0.7rem;
+        padding: 4px 18px 4px 8px;
+    }
+}

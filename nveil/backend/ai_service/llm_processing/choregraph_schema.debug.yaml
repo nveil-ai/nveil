@@ -1,0 +1,329 @@
+# SPDX-FileCopyrightText: 2026 NVEIL SAS
+# SPDX-FileContributor: Pierre Jacquet
+# SPDX-FileContributor: Clément Baraille
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+# ============================================================
+# AUTO-GENERATED — DO NOT EDIT
+# This file is regenerated each time the AI service starts.
+# It exists for debugging purposes only.
+# ============================================================
+
+root_elements:
+  choregraph:
+    attributes:
+      schemaVersion: {type: string, default: 1.0.0}
+PortType:
+  enum: [DATAFRAME, LIST, FLOAT, INTEGER, BOOLEAN, STRING, JSON, DICT, IMAGE]
+TransformFunction:
+  enum: [melt, arithmetic_op, discretize, extract_date_part, rolling_statistics, lag_lead, offset_datetime, forecast_time_series,
+    flatten_json, tidy_excel_data, geocode_location, get_country_contours, nlp_binarize_labels_auto,
+    nlp_binarize_labels_hinted, hierarchical_rollup, image_to_dataframe, extract_channel, image_metadata, execute_code, concat_partitions]
+JoinHow:
+  enum: [inner, outer, left, right]
+InputsType:
+  children:
+  - input: {optional: true, multiple: true}
+PipelineType:
+  children:
+  - node: {optional: true, multiple: true}
+InputPortElement:
+  attributes:
+    name: {type: string, required: true}
+    value: {type: string}
+    sourceRef: {type: string}
+    type: {type: PortType}
+OutputPortElement:
+  attributes:
+    id: {type: integer, required: true}
+    name: {type: string, required: true}
+    label: {type: string, required: true}
+    type: {type: PortType}
+    visibility: {type: boolean, default: 'false'}
+Melt:
+  doc: Converts a wide-format table into long format by unpivoting selected columns into rows. Useful after a join that produced
+    suffixed columns to get a single column with a "source" identifier.
+  attributes:
+    output_type: {type: string}
+  children:
+    sequence (order matters for XSD validity):
+    - {df: DataFrame}
+    - id_columns: {type: List, optional: true}
+    - value_columns: {type: List, optional: true}
+    - var_name: {type: String, optional: true}
+    - value_name: {type: String, optional: true}
+  function: melt
+  group: ReshapeOperations
+ArithmeticOp:
+  doc: Applies arithmetic operator (ADD, SUB, PROD, DIV) between column and column/constant. Use right_column for column-to-column
+    operations OR constant for column-to-scalar operations.
+  attributes:
+    output_type: {type: string}
+  children:
+    sequence (order matters for XSD validity):
+    - {df: DataFrame}
+    - {left_column: String}
+    - operator: {type: String, optional: true}
+    - output_column: {type: String, optional: true}
+  function: arithmetic_op
+ExtractDatePart:
+  doc: 'Extracts a date/time component from a datetime column. part (one of): YEAR, MONTH, DAY, DAY_OF_YEAR, WEEKDAY'
+  attributes:
+    output_type: {type: string}
+  children:
+    sequence (order matters for XSD validity):
+    - {df: DataFrame}
+    - {column: String}
+    - {part: String}
+    - output_column: {type: String, optional: true}
+  function: extract_date_part
+RollingStatistics:
+  doc: 'Computes a rolling-window or cumulative statistic for a column. Available functions: MEAN, STD, MIN, MAX, SUM, CUMSUM.
+    Rolling functions (MEAN, STD, MIN, MAX, SUM) automatically use a centered window for temporal alignment. CUMSUM uses trailing
+    accumulation and does not require window_size.'
+  attributes:
+    output_type: {type: string}
+  children:
+    sequence (order matters for XSD validity):
+    - {df: DataFrame}
+    - {column: String}
+    - window_size: {type: Integer, optional: true}
+    - {function: String}
+    - group_by: {type: List, optional: true}
+    - output_column: {type: String, optional: true}
+  function: rolling_statistics
+LagLead:
+  doc: Lags or leads a column by N periods.
+  attributes:
+    output_type: {type: string}
+  children:
+    sequence (order matters for XSD validity):
+    - {df: DataFrame}
+    - {column: String}
+    - {periods: Integer}
+    - output_column: {type: String, optional: true}
+  function: lag_lead
+OffsetDatetime:
+  doc: Adds or subtracts a time duration to every value in a datetime column.
+  attributes:
+    output_type: {type: string}
+  children:
+    sequence (order matters for XSD validity):
+    - {df: DataFrame}
+    - {column: String}
+    - {offset: Integer}
+    - {unit: String}
+    - output_column: {type: String, optional: true}
+  function: offset_datetime
+ForecastTimeSeries:
+  doc: Forecasts a time series using RandomForest on pct-change features with Monte-Carlo recursive prediction. Returns a
+    Dataframe with date_col, value_col, Forecast_lower, Forecast_upper and Is_Forecast columns.
+  attributes:
+    output_type: {type: string}
+  children:
+    sequence (order matters for XSD validity):
+    - {df: DataFrame}
+    - {date_col: String}
+    - {value_col: String}
+    - horizon: {type: Integer, optional: true}
+  function: forecast_time_series
+  group: TimeSeriesOperations
+NormalizeColumn:
+  doc: Normalizes a numeric column using min-max or z-score.
+  attributes:
+    output_type: {type: string}
+  children:
+    sequence (order matters for XSD validity):
+    - {df: DataFrame}
+    - {column: String}
+    - method: {type: String, optional: true}
+    - output_column: {type: String, optional: true}
+  function: normalize_column
+Discretize:
+  doc: Discretizes a continuous column into bins. When labels are provided (e.g. "low, medium, high") the bins are named with
+    those labels instead of integers. Using labels is warmly recommended for readability. The number of labels must match
+    the number of bins.
+  attributes:
+    output_type: {type: string}
+  children:
+    sequence (order matters for XSD validity):
+    - {df: DataFrame}
+    - {column: String}
+    - bins: {type: Integer, optional: true}
+    - strategy: {type: String, optional: true}
+    - output_column: {type: String, optional: true}
+    - labels: {type: List, optional: true}
+  function: discretize
+FlattenJson:
+  doc: 'Converts arbitrary JSON data into a flat DataFrame. Auto-detects common patterns: - Array of objects: [{col:val,...},
+    ...] → direct table - Dict of paired arrays: {key: [[x,y],...], ...} → joined on shared first column (e.g. CoinGecko/API
+    time-series) - Dict of simple arrays: {key: [v1,v2,...], ...} → one column per key - Nested structures → json_normalize
+    fallback This is the default transform to use when loading flat/tabular JSON data from APIs or files. For richer
+    structures (graphs, nested collections), prefer execute_code nodes driven by the extract_with cartography block.'
+  attributes:
+    output_type: {type: string}
+  children:
+    sequence (order matters for XSD validity):
+    - data
+    - root_key: {type: String, optional: true}
+    - columns: {type: String, optional: true}
+  function: flatten_json
+  group: JSONOperations
+GeoScope:
+  enum: [city, country, unknown]
+GeocodeLocation:
+  doc: 'Enriches a DataFrame with geo location data (columns : "latitude", "longitude", "country", "iso2", "iso3") based on
+    a column containing location names (e.g., "France", "Paris") or codes (e.g., "FR", "US").'
+  attributes:
+    output_type: {type: string}
+  children:
+    sequence (order matters for XSD validity):
+    - {df: DataFrame}
+    - {column: String}
+    - scope: {optional: true}
+  function: geocode_location
+GetCountryContours:
+  doc: Downloads and returns country boundary geometries (GeoDataFrame) for the ISO3 codes in the specified column. Uses Natural
+    Earth 10m resolution data. Results are cached locally after first download. Output the original dataframe columns plus
+    a 'geometry' column.
+  attributes:
+    output_type: {type: string}
+  children:
+    sequence (order matters for XSD validity):
+    - {df: DataFrame}
+    - {column: String}
+  function: get_country_contours
+NlpBinarizeLabelsAuto:
+  doc: Automatically detects language and delimiters, lemmatizes labels, and returns a long-format table where the input column
+    keeps its name and holds one label per row, with an added "value" column (0/1 occurrence). Limited to the top N most frequent
+    labels (default 30). Each row of the original data is repeated once per detected label.
+  attributes:
+    output_type: {type: string}
+  children:
+    sequence (order matters for XSD validity):
+    - {df: DataFrame}
+    - {column: String}
+    - max_labels: {type: Integer, optional: true}
+  function: nlp_binarize_labels_auto
+NlpBinarizeLabelsHinted:
+  doc: Uses fuzzy matching to map extracted tokens to the provided list of hints. Prefer this function when all unique labels
+    are available as hints for better control and accuracy. Returns a long-format table where the input column keeps its name
+    and holds one matched label per row, with an added "value" column (0/1). Limited to the top N most frequent labels (default
+    30). Each row of the original data is repeated once per matched hint label.
+  attributes:
+    output_type: {type: string}
+  children:
+    sequence (order matters for XSD validity):
+    - {df: DataFrame}
+    - {column: String}
+    - {hints: List}
+    - max_labels: {type: Integer, optional: true}
+  function: nlp_binarize_labels_hinted
+HierarchicalRollup:
+  doc: 'Transforms tabular data with N categorical columns representing a hierarchy (broadest to most specific) into a parent-child-value
+    long-format DataFrame. All numeric columns from the source data are preserved as summed aggregates at each hierarchy level.
+    WHEN TO USE: - The user asks for a Treemap, Sunburst, Sankey, or hierarchical visualization. - The user mentions "hierarchical
+    mapping" of multiple columns. - The visualization involves a Partition mark and the source data is a flat table with 2+
+    categorical columns forming a hierarchy. - The user asks for a Sankey diagram based on hierarchical categories. If value_column
+    is omitted, row counts are used as the primary value. INPUT ARGUMENTS: - df: input DataFrame with categorical columns
+    representing the hierarchy - path_columns: ordered list of column names from broadest to most specific (e.g. "continent,
+    country, city") - value_column: optional numeric column to aggregate (sum) at each level. If omitted, counts rows. - root_label:
+    optional label for the synthetic root node. Default: "Total" OUTPUT COLUMNS (always present): - id: path-based unique
+    identifier (e.g. "Europe/France/Paris") - parent: parent node''s id (empty string for the root) - value: primary metric
+    (sum of value_column, or count if omitted) - count: number of rows aggregated into this node EXTRA NUMERIC COLUMNS (automatic):
+    All numeric columns from the input (except path_columns) are summed at each hierarchy level and included as "{column}_sum".
+    These can be mapped to color or other visual channels in the VisuSpec.'
+  attributes:
+    output_type: {type: string}
+  children:
+    sequence (order matters for XSD validity):
+    - {df: DataFrame}
+    - {path_columns: List}
+    - value_column: {type: String, optional: true}
+    - root_label: {type: String, optional: true}
+  function: hierarchical_rollup
+  group: HierarchicalTransform
+ImageColorFormat:
+  enum: [rgba, gray]
+ImageToDataframe:
+  doc: 'Converts a PIL Image into a DataFrame with columns: x, y, r, g, b, a. Large images are automatically subsampled to
+    stay under max_pixels.'
+  attributes:
+    output_type: {type: string}
+  children:
+    sequence (order matters for XSD validity):
+    - {image: Image}
+    - color_format: {optional: true}
+    - max_pixels: {type: Integer, optional: true}
+    - sample_step: {type: Integer, optional: true}
+  function: image_to_dataframe
+  group: ImageOperations
+ExtractChannel:
+  doc: 'Extracts one colour channel (r, g, b, a, or gray) from an image and returns a DataFrame with columns: x, y, value.'
+  attributes:
+    output_type: {type: string}
+  children:
+    sequence (order matters for XSD validity):
+    - {image: Image}
+    - channel: {type: String, optional: true}
+    - max_pixels: {type: Integer, optional: true}
+    - sample_step: {type: Integer, optional: true}
+  function: extract_channel
+  group: ImageOperations
+ImageMetadata:
+  doc: 'Returns a single-row DataFrame with columns: width, height, channels, format, mode.'
+  attributes:
+    output_type: {type: string}
+  children:
+  - {image: Image}
+  function: image_metadata
+  group: ImageOperations
+ConcatPartitions:
+  doc: 'Concatenates a PartitionedDataset (temporal collection) into a single DataFrame by loading all partitions in sorted
+    key order. Each row is tagged with a __partition__ column (0.0, 1.0, …) that records which partition it came from. Use
+    this when a downstream transform needs global context across all timesteps — for example: - discretize with quantile strategy
+    (global bin edges) - aggregate / max / min across all timesteps - normalize_column (global min/max) - any transform where
+    consistent results across partitions matter'
+  attributes:
+    output_type: {type: string}
+  children:
+  - {partitioned: DataFrame}
+  function: concat_partitions
+  group: PartitionUtilities
+DataFrame:
+  attributes:
+    sourceRef: {type: integer, required: true}
+    type: {type: string}
+Image:
+  attributes:
+    sourceRef: {type: integer, required: true}
+    type: {type: string}
+String:
+  attributes:
+    value: {type: string, required: true}
+    type: {type: string}
+List:
+  doc: 'Comma-separated values WITHOUT quotes or brackets. Example: value="col1, col2" — NOT value=''"col1", "col2"'''
+  attributes:
+    value: {type: string}
+    type: {type: string}
+Float:
+  attributes:
+    value: {type: decimal, required: true}
+    type: {type: string}
+Integer:
+  attributes:
+    value: {type: integer}
+    type: {type: string}
+Boolean:
+  attributes:
+    value: {type: boolean}
+    type: {type: string}
+Json:
+  attributes:
+    value: {type: string, required: true}
+    type: {type: string}
+Dict:
+  attributes:
+    value: {type: string, required: true}
+    type: {type: string}

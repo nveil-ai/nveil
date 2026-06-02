@@ -1,0 +1,249 @@
+/*
+ * SPDX-FileCopyrightText: 2025 NVEIL SAS
+ * SPDX-FileContributor: Pierre Jacquet
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+.container {
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 8px;
+    margin-right: 8px;
+}
+
+.triggerBtn {
+    background: none;
+    border: none;
+    padding: 4px;
+    cursor: pointer;
+    border-radius: 50%;
+    transition: background-color 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* .triggerBtn:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+} */
+
+.colorCircle {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+}
+
+
+
+.dialog {
+    outline: none;
+    padding: 12px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    border-bottom: 1px solid #333;
+    padding-bottom: 8px;
+}
+
+.header label {
+    font-size: 14px;
+    color: #e5e7eb;
+}
+
+.addBtn {
+color: #9d9d9d;
+    cursor: pointer;
+    background: 0 0;
+    border: none;
+    /* border-radius: 4px; */
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 4px;
+    font-size: 16px;
+    display: flex;
+    border-top: 1px solid #555555;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    margin-top: 10px;
+}
+.addBtn svg {
+    width: 20px;
+    height: 20px;
+}
+
+.addBtn:hover {
+    background-color: rgb(139 139 139 / 10%);
+    border: 0px !important;
+    border-radius: 40px;
+}
+
+.listContainer {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.emptyState {
+    color: #9ca3af;
+    font-size: 13px;
+    text-align: center;
+    padding: 16px;
+}
+
+.listBox {
+    outline: none;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    max-width: 250px;
+}
+
+.listItem {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px;
+    border-radius: 4px;
+    margin-bottom: 6px;
+    background: #2a2a2a;
+    outline: none;
+    cursor: pointer;
+}
+
+.listItem:hover {
+    background: #333;
+}
+
+.activeItem {
+    background: #232323 !important;
+    border: 1px solid #00ffc2;
+}
+
+.itemContent {
+    flex: 1;
+    margin-right: 8px;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.itemInfo {
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+    display: flex;
+}
+
+.itemName {
+    font-size: 13px;
+    color: #a0a0a0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-weight: 500;
+}
+.activeItem .itemName {
+    color: #e5e7eb!important;
+}
+
+.activeContainer {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* New active label style */
+.activeLabel {
+    font-size: 10px;
+    text-transform: uppercase;
+    color: #00ffc2;
+    /* Faded green */
+    letter-spacing: 0.5px;
+    font-weight: 600;
+}
+
+.activeIcon {
+    color: #00ffc2;
+    font-size: 14px;
+    flex-shrink: 0;
+}
+
+/* Updated preview style for flex layout */
+.miniPreview {
+    border-radius: 30px;
+    width: 100%;
+    height: 12px;
+    display: flex;
+    overflow: hidden;
+}
+
+.actions {
+    display: none;
+    gap: 4px;
+    flex-shrink: 0;
+    place-self: self-end;
+}
+
+.listItem:hover .actions {
+    display: flex;
+}
+
+.actionBtn {
+    background: none;
+    border: none;
+    padding: 4px;
+    cursor: pointer;
+    color: #9ca3af;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+}
+
+.actionBtn:hover {
+    color: #e5e7eb;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.popover {
+    background: #1e1e1e;
+    border: 1px solid #333;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    padding: 0;
+    min-width: 280px;
+    max-width: 350px;
+    z-index: 1000;
+}
+
+
+.popover {
+    --background-color: #303030;
+    --border-color: #8d8d8d4d;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 8px 20px rgba(0 0 0 / 0.1);
+  border-radius: 8px;
+  background: var(--background-color);
+  color: var(--text-color);
+  outline: none;
+  max-width: 250px;
+  transition: transform 200ms, opacity 200ms;
+  --starting-scale: scale(0.9);
+  transform-origin: var(--trigger-anchor-point);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    min-width: 280px;
+    max-width: 350px;
+    z-index: 1000;
+ .overlayArrow svg {
+    display: block;
+    fill: var(--background-color);
+    stroke: var(--border-color);
+    stroke-width: 1px;
+  }
+
+}

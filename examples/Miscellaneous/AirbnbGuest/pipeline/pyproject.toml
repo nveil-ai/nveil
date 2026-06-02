@@ -1,0 +1,21 @@
+[tool.kedro]
+package_name = "viz_wrapper"
+project_name = "Viz Wrapper"
+kedro_init_version = "1.1.1"
+
+[project]
+name = "viz_wrapper"
+version = "0.1.0"
+description = "Auto-generated wrapper"
+requires-python = ">=3.10"
+dependencies = [
+    "kedro", 
+    "kedro-datasets", 
+    "pandas", 
+    "pyarrow", 
+    "choregraph"
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+namespaces = false

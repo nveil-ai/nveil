@@ -1,0 +1,49 @@
+# SPDX-FileCopyrightText: 2026 NVEIL SAS
+# SPDX-FileContributor: Clément Baraille
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+# Generic OpenAI-compatible endpoint (OpenRouter, Nebius, Together AI, vLLM,
+# Azure OpenAI, …). The actual model comes from OPENAI_COMPAT_MODEL (setup
+# wizard / .env) or the X-Nveil-LLM-Model SDK header — model_override wins
+# over the `model` below for ALL nodes. The placeholder here is only used if
+# a request somehow reaches this provider without supplying a model.
+#
+# No response_format default: structured outputs are driven by langchain's
+# with_structured_output (json_schema / function-calling), the most portable
+# choice across proxies. reasoning_effort is intentionally omitted since
+# support varies by the underlying model behind the endpoint.
+
+defaults:
+  model: gpt-4o-mini
+  temperature: 0.3
+
+# Smallest/cheapest viable model for this provider — single source of truth,
+# shared by choregraph CSV characterization and the setup "test connection"
+# ping. The real model comes from OPENAI_COMPAT_MODEL (model_override wins),
+# so this placeholder only applies if no model is supplied. Nodes opt in via
+# `inherits: minimal`.
+minimal:
+  model: gpt-4o-mini
+
+nodes:
+  entry_classification:
+    temperature: 0
+
+  exclusion_processing:
+    temperature: 0.2
+
+  xml_generation:
+    temperature: 0.1
+
+  keyword_classification:
+    temperature: 0.2
+
+  planning_transformation:
+    temperature: 0.1
+
+  feedback:
+    temperature: 0.7
+
+  csv_characterization:
+    inherits: minimal
+    temperature: 0

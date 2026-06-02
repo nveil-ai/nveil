@@ -1,0 +1,268 @@
+/*
+ * SPDX-FileCopyrightText: 2026 NVEIL SAS
+ * SPDX-FileContributor: Pierre Jacquet
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+/* ── Upload row (file + URL side by side) ── */
+
+.uploadRow {
+    display: flex;
+    gap: 1.2rem;
+    align-items: flex-start;
+}
+
+/* ── Section ── */
+
+.section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.sectionHeader {
+    color: #999;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.72rem;
+    letter-spacing: 0.07em;
+    padding-bottom: 6px;
+}
+
+/* ── Drop Zone ── */
+
+.dropZone {
+    border: 2px dashed #3a3a4a;
+    border-radius: 12px;
+    padding: 1.4rem 1rem;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+}
+
+.dropZone:hover {
+    border-color: #49fcb3;
+    background: rgba(73, 252, 179, 0.04);
+}
+
+.dropZoneActive {
+    border-color: #49fcb3;
+    background: rgba(73, 252, 179, 0.07);
+}
+
+.dropZoneIcon {
+    font-size: 1.8rem;
+    color: #666;
+}
+
+.dropZoneText {
+    color: #888;
+    font-size: 0.85rem;
+}
+
+/* ── Pending files badges ── */
+
+.pendingFiles {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 4px;
+    max-height: 150px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+}
+
+.pendingFiles::-webkit-scrollbar {
+    width: 4px;
+}
+
+.pendingFiles::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.pendingFiles::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 2px;
+}
+
+.fileBadge {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: #1a1a1a;
+    border: 1px solid #303030;
+    border-radius: 8px;
+    padding: 4px 10px;
+    font-size: 0.82rem;
+    color: #ddd;
+}
+
+.fileName {
+    max-width: 160px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.removeFileBtn {
+    background: none;
+    border: none;
+    color: #888;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: bold;
+    padding: 0 2px;
+    transition: color 0.15s;
+}
+
+.removeFileBtn:hover {
+    color: #fff;
+}
+
+/* ── Connector selector ── */
+
+.connectorSection {
+    margin-top: 0.75rem;
+}
+
+.connectorLabel {
+    font-size: 0.78rem;
+    color: #999;
+    margin-bottom: 0.35rem;
+    font-weight: 500;
+}
+
+.connectorOptions {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 0.5rem;
+}
+
+.connectorBtn {
+    padding: 5px 14px;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.04);
+    color: #999;
+    font-size: 0.8rem;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.connectorBtn:hover:not(:disabled) {
+    border-color: rgba(27, 144, 186, 0.3);
+    color: #ccc;
+}
+
+.connectorBtn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+
+.connectorBtnActive {
+    border-color: rgba(27, 144, 186, 0.5);
+    background: rgba(27, 144, 186, 0.12);
+    color: #1b90ba;
+}
+
+.connectorMissing {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.78rem;
+    color: #e0a030;
+}
+
+/* ── URL Section ── */
+
+.urlList {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.urlRow {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.urlLabelRow {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+
+.urlLabelRow .inputField {
+    flex: 1;
+}
+
+.removeUrlBtn {
+    background: none;
+    border: 1px solid #3a3a4a;
+    color: #888;
+    cursor: pointer;
+    font-size: 1.1em;
+    font-weight: bold;
+    padding: 6px 8px;
+    border-radius: 8px;
+    flex-shrink: 0;
+    transition: color 0.15s, border-color 0.15s;
+    line-height: 1;
+}
+
+.removeUrlBtn:hover {
+    color: #f87171;
+    border-color: rgba(248, 113, 113, 0.3);
+}
+
+.addUrlBtn {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: none;
+    border: 1px dashed #3a3a4a;
+    color: #777;
+    padding: 6px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.78rem;
+    font-family: inherit;
+    transition: border-color 0.15s, color 0.15s;
+    align-self: flex-start;
+}
+
+.addUrlBtn:hover {
+    border-color: #49fcb3;
+    color: #49fcb3;
+}
+
+.inputField {
+    width: 100%;
+    padding: 9px 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid #333;
+    border-radius: 10px;
+    color: #fff;
+    font-size: 0.88rem;
+    outline: none;
+    box-sizing: border-box;
+    font-family: inherit;
+    transition: border-color 0.2s, background 0.2s;
+}
+
+.inputField:focus {
+    border-color: #49fcb3;
+    background: rgba(255, 255, 255, 0.07);
+}
+
+.inputField::placeholder {
+    color: #555;
+}

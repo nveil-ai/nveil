@@ -1,0 +1,307 @@
+/*
+ * SPDX-FileCopyrightText: 2025 NVEIL SAS
+ * SPDX-FileContributor: Guillaume Franque
+ * SPDX-FileContributor: Pierre Jacquet
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+.homeContainer {
+	display: flex;
+	flex-direction: row;
+	height: 100vh;
+	width: 100%;
+	background: url(/nveil_degrade.webp);
+	background-size: cover;
+}
+
+.content {
+	display: flex;
+	height: 100%;
+	/* max-height: calc(100vh - 60px); */
+	width: 100%;
+	flex-direction: row;
+}
+
+
+.errorMessage {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	height: 100%;
+	background-color: #1a1a1a;
+	color: #ffffff;
+	text-align: center;
+	padding: 2rem;
+}
+
+.errorMessage h3 {
+	color: #ff6b6b;
+	margin-bottom: 1rem;
+}
+
+.errorMessage p {
+	margin-bottom: 0.5rem;
+	opacity: 0.8;
+}
+
+.errorMessage button {
+	margin-top: 1rem;
+	padding: 0.5rem 1rem;
+	background-color: #4a9eff;
+	color: white;
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
+}
+
+.errorMessage button:hover {
+	background-color: #357abd;
+}
+
+.loaderOverlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.5);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	z-index: 9999;
+}
+
+.loader {
+	width: 150px;
+	height: 150px;
+	background-image: url('/nveil.png');
+	background-size: contain;
+	background-position: center;
+	background-repeat: no-repeat;
+	animation: pulse 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes pulse {
+	from { transform: scale(0.8); }
+	to { transform: scale(1.2); }
+}
+.panelTransition {
+  transition-property: flex-basis;
+  transition-duration: 0.3s;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+.panelRight{
+  padding: 5px 5px 5px 0px;
+}
+
+.panelFull {
+  padding: 5px;
+}
+
+.panelLeft{
+  padding: 5px 0px 5px 5px;
+}
+/* ── Mobile unified layout ── */
+
+/* Outer wrapper: column direction so tab bar sits below PanelGroup */
+.mobileContent {
+  padding: 2px;
+  flex-direction: column;
+}
+
+/* PanelGroup: becomes a positioned container, panels inside use absolute */
+.mobileLayout {
+  position: relative !important;
+  flex: 1 !important;
+  min-height: 0 !important;
+}
+
+/* Chat panel: absolute fill, shown/hidden via display */
+.mobileChatActive {
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 5;
+  flex: none !important;
+  overflow: auto !important;
+  padding: 0 !important;
+  border-radius: 10px 10px 0 0;
+}
+
+.mobileChatHidden {
+  display: none !important;
+}
+
+/* Viz panel: absolute fill, always present behind chat */
+.mobileVizPanel {
+  position: absolute !important;
+  inset: 0 !important;
+  flex: none !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+}
+
+/* Glassmorphism tab bar sitting on the colored background */
+.mobileTabBar {
+  display: flex;
+  flex-shrink: 0;
+  border-radius: 0 0 10px 10px;
+  background: rgba(26, 26, 26, 0.45);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+  backdrop-filter: blur(20px) saturate(1.4);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.mobileTabButton {
+  flex: 1;
+  background: none;
+  border: none;
+  color: #888;
+  font-size: 0.85rem;
+  font-family: 'Inter', inherit;
+  padding: 10px 0;
+  cursor: pointer;
+  transition: color 0.2s;
+  text-align: center;
+  outline: none;
+  border-bottom: 2px solid transparent;
+}
+
+.mobileTabActive {
+  color: #fff;
+  border-bottom-color: #49fcb3;
+}
+
+/* ── Chat panel wrapper (for dock/undock button) ── */
+.chatPanelWrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.undockButton {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  padding: 5px 7px;
+  line-height: 0;
+  font-size: 14px;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  transition: color 0.2s, background 0.2s, border-color 0.2s;
+}
+
+.undockButton:hover {
+  color: #fff;
+  background: rgba(27, 144, 186, 0.15);
+  border-color: rgba(27, 144, 186, 0.3);
+}
+
+/* ── Floating chat (non-docked desktop) ── */
+.floatingChat {
+  position: fixed;
+  overflow: hidden;
+  background: #1a1a1e;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.04);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  animation: floatIn 0.3s ease-out;
+  will-change: transform;
+}
+
+@keyframes floatIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.floatingChatHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  cursor: grab;
+  flex-shrink: 0;
+  user-select: none;
+  -webkit-user-select: none;
+  position: relative;
+  z-index: 1;
+}
+
+.floatingChatHeader:active {
+  cursor: grabbing;
+}
+
+.floatingChatTitle {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.4);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+.headerButtons {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.minimizeButton,
+.dockButton {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  padding: 4px 6px;
+  line-height: 0;
+  font-size: 14px;
+  transition: color 0.2s, background 0.2s, border-color 0.2s;
+}
+
+.minimizeButton:hover,
+.dockButton:hover {
+  color: #fff;
+  background: rgba(27, 144, 186, 0.15);
+  border-color: rgba(27, 144, 186, 0.3);
+}
+
+.floatingChatBody {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* ── Resize handles (invisible hit zones) ── */
+.resizeN  { position: absolute; z-index: 10; top: 0; left: 12px; right: 12px; height: 5px; cursor: ns-resize; }
+.resizeS  { position: absolute; z-index: 10; bottom: 0; left: 12px; right: 12px; height: 5px; cursor: ns-resize; }
+.resizeE  { position: absolute; z-index: 10; top: 12px; right: 0; bottom: 12px; width: 5px; cursor: ew-resize; }
+.resizeW  { position: absolute; z-index: 10; top: 12px; left: 0; bottom: 12px; width: 5px; cursor: ew-resize; }
+.resizeNe { position: absolute; z-index: 11; top: 0; right: 0; width: 12px; height: 12px; cursor: nesw-resize; }
+.resizeNw { position: absolute; z-index: 11; top: 0; left: 0; width: 12px; height: 12px; cursor: nwse-resize; }
+.resizeSe { position: absolute; z-index: 11; bottom: 0; right: 0; width: 12px; height: 12px; cursor: nwse-resize; }
+.resizeSw { position: absolute; z-index: 11; bottom: 0; left: 0; width: 12px; height: 12px; cursor: nesw-resize; }
+
+/* Hide undock button on mobile */
+@media (max-width: 1000px) {
+  .undockButton {
+    display: none;
+  }
+  .floatingChat {
+    display: none;
+  }
+}

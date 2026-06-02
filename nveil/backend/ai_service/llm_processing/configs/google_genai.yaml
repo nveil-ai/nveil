@@ -1,0 +1,49 @@
+# SPDX-FileCopyrightText: 2026 NVEIL SAS
+# SPDX-FileContributor: Pierre Jacquet
+# SPDX-FileContributor: Clément Baraille
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+defaults:
+  model: gemini-3-flash-preview
+  temperature: 0.3
+  thinking_level: low
+  include_thoughts: true
+
+# Smallest/cheapest viable model for this provider — single source of truth,
+# shared by choregraph CSV characterization and the setup "test connection"
+# ping. Nodes opt in via `inherits: minimal`.
+minimal:
+  model: gemini-3-flash-preview
+  thinking_level: low
+  include_thoughts: false
+
+nodes:
+  entry_classification:
+    temperature: 0
+    thinking_level: low
+
+  exclusion_processing:
+    temperature: 0.2
+    thinking_level: low
+
+  xml_generation:
+    temperature: 0.1
+    thinking_level: low
+
+  keyword_classification:
+    temperature: 0.2
+    thinking_level: minimal
+
+  planning_transformation:
+    temperature: 0.1
+    thinking_level: low
+    include_thoughts: true
+
+  feedback:
+    temperature: 0.7
+    thinking_level: low
+    include_thoughts: true
+
+  csv_characterization:
+    inherits: minimal
+    temperature: 0

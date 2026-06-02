@@ -1,0 +1,66 @@
+# SPDX-FileCopyrightText: 2026 NVEIL SAS
+# SPDX-FileContributor: Clément Baraille
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+# Ollama — thinking temporarily disabled across all nodes (perf debug).
+# `extra_body` is forwarded by langchain_openai to Ollama's OpenAI-compat layer.
+# `options.num_ctx` raises the context window from the 2048 default (silent
+# truncation otherwise kills xml_generation / planning_transformation prompts).
+# NOTE: `get_node_config` does a SHALLOW merge — any per-node `extra_body`
+# block would CLOBBER `num_ctx`. Keep extra_body in defaults only.
+#
+# JSON-mode (`response_format.type: json_object`) is enabled by default.
+# Ollama's OpenAI-compat translates this to its native `format: "json"` —
+# same GBNF sampler as llama.cpp under the hood. When `_ainvoke_structured`
+# calls `with_structured_output(method="json_schema")`, langchain-openai
+# overrides this default with a stricter `json_schema` response_format at
+# call-time (Ollama ≥ 0.5 maps it to `format: <schema>`). On the
+# `function_calling` fallback, json_object stays active as a safety net —
+# prevents quantized Qwen3 from emitting "Sure, here's the JSON: …"
+# preambles that break parsing. Top-level kwarg (NOT inside extra_body) so
+# the shallow-merge clobber rule above doesn't apply.
+#
+# Disable JSON-mode on a node by setting `response_format: null` in its
+# override block (used for `xml_generation`, which emits raw XML).
+
+defaults:
+  model: laguna-xs.2:latest
+  temperature: 0.3
+  response_format:
+    type: json_object
+  extra_body:
+    think: false
+    options:
+      num_ctx: 16384
+
+# Smallest/cheapest viable model for this provider — single source of truth,
+# shared by choregraph CSV characterization and the setup "test connection"
+# ping. Ollama runs a single local model, so this mirrors defaults.model.
+# Nodes opt in via `inherits: minimal`.
+minimal:
+  model: laguna-xs.2:latest
+
+nodes:
+  entry_classification:
+    temperature: 0
+
+  exclusion_processing:
+    temperature: 0.2
+
+  xml_generation:
+    temperature: 0.1
+    # Raw XML output — JSON-mode would force valid-JSON sampling and break it.
+    response_format: null
+
+  keyword_classification:
+    temperature: 0.2
+
+  planning_transformation:
+    temperature: 0.1
+
+  feedback:
+    temperature: 0.7
+
+  csv_characterization:
+    inherits: minimal
+    temperature: 0

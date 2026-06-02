@@ -1,0 +1,8 @@
+# Canonical contributor identities — used for attribution, headers, and `git shortlog`.
+# Each line normalizes all commits with the given email to the proper name.
+# Format: Proper Name <canonical-email> <commit-email>
+Pierre Jacquet <pierre.jacquet@nveil.com> <pierre.jacquet@nveil.com>
+Pierre Jacquet <pierre.jacquet@nveil.com> <peepanjacquet@gmail.com>
+Guillaume Franque <guillaume.franque@nveil.com> <guillaume.franque@nveil.com>
+Clément Baraille <clement.baraille@nveil.com> <clement.baraille@nveil.com>
+Rémi Segretain <remi.segretain@univ-grenoble-alpes.fr> <remi.segretain@univ-grenoble-alpes.fr>

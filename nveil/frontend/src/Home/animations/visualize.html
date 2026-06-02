@@ -1,0 +1,85 @@
+<!--
+SPDX-FileCopyrightText: 2026 NVEIL SAS
+SPDX-FileContributor: Pierre Jacquet
+SPDX-License-Identifier: AGPL-3.0-or-later
+-->
+
+<div class="stage" id="vs-stage">
+  <div class="glow"></div>
+
+  <!-- Heading -->
+  <div class="top-heading">
+    <h1>Get <span>Production-Ready</span> Visuals</h1>
+    <p>Interactive · Exportable · Zoom · Filter · Explore</p>
+  </div>
+
+  <!-- Chart Window -->
+  <div class="chart-window" id="vs-chartWindow">
+    <div class="toolbar" id="vs-toolbar">
+      <div class="chart-label" id="vs-chartLabel">REVENUE BY PRODUCT</div>
+      <!-- chips injected by JS -->
+      <div style="display:flex;gap:6px;margin-left:auto;" id="vs-tbtnGroup">
+        <div class="tbtn" id="vs-btnZoomIn" title="Zoom in">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+        </div>
+        <div class="tbtn" id="vs-btnZoomOut" title="Zoom out">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+        </div>
+        <div class="tbtn" id="vs-btnReset" title="Reset view">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.95"/></svg>
+        </div>
+        <div class="export-btn" id="vs-exportBtn">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          EXPORT
+        </div>
+      </div>
+    </div>
+    <div class="chart-body" id="vs-chartBody">
+      <!-- Grid lines -->
+      <div class="grid-line" style="bottom:20%"></div>
+      <div class="grid-line" style="bottom:40%"></div>
+      <div class="grid-line" style="bottom:60%"></div>
+      <div class="grid-line" style="bottom:80%"></div>
+      <!-- SVG canvas -->
+      <svg id="vs-mainSvg" style="width:100%;height:100%;position:absolute;inset:0;" preserveAspectRatio="none"></svg>
+      <!-- Tooltip -->
+      <div class="tooltip" id="vs-tooltip">
+        <div class="tooltip-title" id="vs-ttTitle">Q3 2025</div>
+        <div id="vs-ttRows"></div>
+      </div>
+      <!-- Zoom badge -->
+      <div class="zoom-badge" id="vs-zoomBadge">2×</div>
+      <!-- Export dropdown -->
+      <div class="export-dropdown" id="vs-exportDropdown">
+        <div class="export-item" id="vs-exp-png">
+          <div class="export-icon" style="background:#5E35B1;color:#fff;">PNG</div> Export as PNG
+        </div>
+        <div class="export-item" id="vs-exp-svg">
+          <div class="export-icon" style="background:#7B4ED4;color:#fff;">SVG</div> Export as SVG
+        </div>
+        <div class="export-item" id="vs-exp-csv">
+          <div class="export-icon" style="background:#4ADE80;color:#1C161D;">CSV</div> Download data
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Feature badges -->
+  <div class="feature-row" id="vs-featureRow">
+    <div class="feat-badge" id="vs-fb1"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9662FE" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg> Zoom &amp; Pan</div>
+    <div class="feat-badge" id="vs-fb2"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9662FE" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg> Filter &amp; Slice</div>
+    <div class="feat-badge" id="vs-fb3"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9662FE" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> One-click Export</div>
+    <div class="feat-badge" id="vs-fb4"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9662FE" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> Hover Insights</div>
+  </div>
+
+  <!-- Cursor -->
+  <div class="cursor" id="vs-cursor">
+    <svg width="22" height="28" viewBox="0 0 22 28" fill="none">
+      <path d="M3 2L3 22L7.5 17.5L11 26L13.5 25L10 16.5L18 16.5L3 2Z"
+        fill="white" stroke="#1C161D" stroke-width="1.6" stroke-linejoin="round"/>
+    </svg>
+  </div>
+
+  <!-- Dots -->
+  <div class="dots" id="vs-dots"></div>
+</div>

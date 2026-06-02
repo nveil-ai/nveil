@@ -1,0 +1,98 @@
+/*
+ * SPDX-FileCopyrightText: 2026 NVEIL SAS
+ * SPDX-FileContributor: Pierre Jacquet
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+.modalGlassBg {
+    background: linear-gradient(233deg, #F7DD58, #F59E48, #ED7358, #EA4C6A, #E61E80, #AA4E93, #754992, #47469F, #0D4FB0, #0863B8, #1783C4);
+    padding: 2px;
+    border-radius: 8px;
+}
+
+.dialog {
+    padding: 2rem;
+    background: rgb(5 5 5 / 85%);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 6px;
+    will-change: transform;
+    border: none;
+    max-width: 380px;
+    box-shadow: 0 4px 20px #0000004d;
+}
+
+.dialog:focus,
+.dialog:focus-visible {
+    outline: none !important;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.title {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #fff;
+    text-align: center;
+}
+
+.description {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #aaa;
+    text-align: center;
+    line-height: 1.5;
+}
+
+.actions {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+    margin-top: 0.5rem;
+}
+
+.cancelButton {
+    cursor: pointer;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 40px;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+}
+
+.cancelButton:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: #fff;
+}
+
+.confirmButton {
+    cursor: pointer;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 40px;
+    font-size: 0.9rem;
+    background-color: #a2a2a263;
+    transition: all 0.2s;
+}
+
+.confirmButton:hover {
+    background-color: #fff;
+    color: #000;
+}
+
+.confirmButton.danger {
+    background-color: rgba(239, 68, 68, 0.25);
+}
+
+.confirmButton.danger:hover {
+    background-color: #ef4444;
+    color: #fff;
+}
