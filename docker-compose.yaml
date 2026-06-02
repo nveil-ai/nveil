@@ -70,9 +70,9 @@ services:
     profiles: ["core"]
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-nveil}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-}
       POSTGRES_DB: ${POSTGRES_DB:-nveil}
-      AI_DB_PASSWORD: ${AI_DB_PASSWORD:?Set AI_DB_PASSWORD in .env}
+      AI_DB_PASSWORD: ${AI_DB_PASSWORD:-}
     volumes:
     - postgres-data:/var/lib/postgresql/data
     - ./docker/postgres/init-ai-db.sh:/docker-entrypoint-initdb.d/init-ai-db.sh:ro
@@ -99,7 +99,7 @@ services:
       TEST: "1"
       DATABASE_SCHEMA: ${DATABASE_SCHEMA:-nveilseption}
       DATABASE_URL: "postgresql+asyncpg://${POSTGRES_USER:-nveil}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-nveil}"
-      SECRET_KEY: ${SECRET_KEY:?Set SECRET_KEY in .env}
+      SECRET_KEY: ${SECRET_KEY:-}
       ALGORITHM: ${ALGORITHM:-HS512}
 
       # ── LLM providers (BYOK) ──────────────────────────────────────────
@@ -118,7 +118,7 @@ services:
       OPENAI_COMPAT_API_KEY: ${OPENAI_COMPAT_API_KEY:-}
       OPENAI_COMPAT_MODEL: ${OPENAI_COMPAT_MODEL:-}
 
-      APP_ENCRYPTION_KEY: ${APP_ENCRYPTION_KEY:?Set APP_ENCRYPTION_KEY in .env}
+      APP_ENCRYPTION_KEY: ${APP_ENCRYPTION_KEY:-}
       AI_HOST: ai
       AI_PORT: "8100"
       FILE_HOST: file
@@ -267,7 +267,6 @@ services:
     build:
       context: .
       dockerfile: docker/setup/Dockerfile
-    profiles: ["core"]
     ports:
     - "3000:3000"
     volumes:
