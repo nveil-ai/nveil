@@ -29,5 +29,5 @@ sqlalchemy==2.0.49
 uvicorn==0.46.0
 xmlschema==4.3.1
 pyyaml==6.0.3
-nveil-dive==1.4.0
-choregraph==1.4.0
+nveil-dive
+choregraph
