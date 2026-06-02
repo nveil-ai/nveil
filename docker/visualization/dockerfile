@@ -70,14 +70,6 @@ COPY ./nveil/backend/tools/ /tmp/tools/
 RUN --mount=type=cache,target=/root/.cache/pip \
     pip install /tmp/tools/
 
-COPY ./choregraph/ /tmp/choregraph/
-RUN --mount=type=cache,target=/root/.cache/pip \
-    pip install "/tmp/choregraph/[extra,server]"
-
-COPY ./dive/ /tmp/dive/
-RUN --mount=type=cache,target=/root/.cache/pip \
-    pip install "/tmp/dive/[extra]"
-
 # --- Entrypoint + application code (smallest, most volatile) ---
 
 COPY ./docker/visualization/entrypoint.sh /entrypoint.sh

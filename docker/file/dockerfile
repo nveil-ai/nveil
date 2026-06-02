@@ -39,9 +39,6 @@ RUN --mount=type=cache,target=/root/.cache/pip \
 COPY ./nveil/backend/tools/ /tmp/tools/
 RUN pip install --no-cache-dir /tmp/tools/
 
-COPY ./choregraph/ /tmp/choregraph/
-RUN pip install --no-cache-dir /tmp/choregraph/
-
 COPY ./connectors/ /tmp/connectors/
 RUN pip install --no-cache-dir /tmp/connectors/
 
