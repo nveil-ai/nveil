@@ -41,6 +41,11 @@ COPY ./nveil/frontend /build/frontend
 
 RUN npm install -g npm@latest
 RUN npm install
+# Optional Google Tag Manager container ID, baked into the build by Vite.
+# Empty by default (self-hosted Community Edition → no analytics loaded);
+# set via --build-arg VITE_GTM_ID=... to enable tracking. The ARG value is
+# already in `npm run build`'s environment, so no ENV line is needed.
+ARG VITE_GTM_ID=""
 RUN npm run build
 
 # ── Server ──────────────────────────────────────────────────────────────────
