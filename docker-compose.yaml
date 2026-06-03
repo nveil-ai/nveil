@@ -88,21 +88,9 @@ services:
       SECRET_KEY: ${SECRET_KEY:-}
       ALGORITHM: ${ALGORITHM:-HS512}
 
-      # ── LLM providers (BYOK) ──────────────────────────────────────────
-      #  Run `docker compose run --rm --build setup` to fill these in.
-      #  At least one must be set (commercial key or local endpoint+model).
-      #  Boot order: Google → OpenAI → Anthropic → Mistral → Ollama → llama.cpp.
+      # Only GOOGLE_API_KEY here — the server forwards it to the viz containers
+      # it spawns (Gemini-based viz). The full BYOK provider set lives on `ai`.
       GOOGLE_API_KEY: ${GOOGLE_API_KEY:-}
-      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
-      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
-      MISTRAL_API_KEY: ${MISTRAL_API_KEY:-}
-      OLLAMA_BASE_URL: ${OLLAMA_BASE_URL:-}
-      OLLAMA_MODEL: ${OLLAMA_MODEL:-}
-      LLAMACPP_BASE_URL: ${LLAMACPP_BASE_URL:-}
-      LLAMACPP_MODEL: ${LLAMACPP_MODEL:-}
-      OPENAI_COMPAT_BASE_URL: ${OPENAI_COMPAT_BASE_URL:-}
-      OPENAI_COMPAT_API_KEY: ${OPENAI_COMPAT_API_KEY:-}
-      OPENAI_COMPAT_MODEL: ${OPENAI_COMPAT_MODEL:-}
 
       APP_ENCRYPTION_KEY: ${APP_ENCRYPTION_KEY:-}
 
@@ -169,18 +157,6 @@ services:
     environment:
       DATABASE_SCHEMA: ${DATABASE_SCHEMA:-nveilseption}
       DATABASE_URL: "postgresql+asyncpg://${POSTGRES_USER:-nveil}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-nveil}"
-      # ── LLM providers (BYOK) — mirror of `server`/`ai`. ───────────────
-      GOOGLE_API_KEY: ${GOOGLE_API_KEY:-}
-      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
-      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
-      MISTRAL_API_KEY: ${MISTRAL_API_KEY:-}
-      OLLAMA_BASE_URL: ${OLLAMA_BASE_URL:-}
-      OLLAMA_MODEL: ${OLLAMA_MODEL:-}
-      LLAMACPP_BASE_URL: ${LLAMACPP_BASE_URL:-}
-      LLAMACPP_MODEL: ${LLAMACPP_MODEL:-}
-      OPENAI_COMPAT_BASE_URL: ${OPENAI_COMPAT_BASE_URL:-}
-      OPENAI_COMPAT_API_KEY: ${OPENAI_COMPAT_API_KEY:-}
-      OPENAI_COMPAT_MODEL: ${OPENAI_COMPAT_MODEL:-}
     volumes:
     - ./nveil/backend:/nveil/backend
     - "${DIVE_DATA_PATH:-nveil-dive-data}:/root/DIVE"
