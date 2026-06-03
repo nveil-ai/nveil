@@ -134,7 +134,6 @@ services:
     volumes:
     - /var/run/docker.sock:/var/run/docker.sock
     - ./nveil/backend:/nveil/backend
-    - ./choregraph:/choregraph
     - "${DIVE_DATA_PATH:-nveil-dive-data}:/root/DIVE"
     - ./scripts:/scripts:ro
     - nveil-certs:/certs:ro
@@ -195,8 +194,6 @@ services:
     - "host.docker.internal:host-gateway"
     volumes:
     - ./nveil/backend:/nveil/backend
-    # - ./choregraph:/choregraph
-    # - ./dive/src:/dive/src
     - "${DIVE_DATA_PATH:-nveil-dive-data}:/root/DIVE"
     - ./scripts:/scripts:ro
     - nveil-certs:/certs:ro
@@ -238,7 +235,6 @@ services:
       OPENAI_COMPAT_MODEL: ${OPENAI_COMPAT_MODEL:-}
     volumes:
     - ./nveil/backend:/nveil/backend
-    - ./choregraph:/choregraph
     - "${DIVE_DATA_PATH:-nveil-dive-data}:/root/DIVE"
     - nveil-certs:/certs:ro
     ports:
