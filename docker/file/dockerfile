@@ -22,15 +22,14 @@ RUN python3 -m venv /opt/venv \
 ENV PATH="/opt/venv/bin:$PATH"
 ENV PYTHONUNBUFFERED=1
 # Runtime defaults baked into the image (formerly the docker-compose
-# x-backend-env anchor + mode flags). A container/compose/K8s env var still
-# overrides any of these.
+# x-backend-env anchor). Container/compose/K8s env still overrides these.
+# ENV + GCP are intentionally NOT set — their code defaults are already
+# "local"/"0"; only LOCAL=1 is a non-default (Community runs local-dev mode).
 ENV PYTHONWARNINGS="ignore:::requests"
 ENV KEDRO_LOGGING_CONFIG="/nveil/backend/tools/logger/logging_config.yaml"
 ENV WATCHFILES_FORCE_POLLING="true"
 ENV PYTHONPATH="/nveil/backend:/nveil/backend/tools/logger"
-ENV ENV="local"
 ENV LOCAL="1"
-ENV GCP="0"
 
 # ── File Service ────────────────────────────────────────────────────────────
 FROM base
