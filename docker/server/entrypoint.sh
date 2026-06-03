@@ -52,8 +52,7 @@ cd /nveil/backend/server_service
   --log-level warning \
   --reload --reload-dir /nveil/backend/server_service \
   --reload-dir /nveil/backend/shared \
-  --reload-dir /nveil/backend/tools \
-  --reload-dir /choregraph/src &
+  --reload-dir /nveil/backend/tools  &
 UVICORN_PID=$!
 
 # Prerender (cloud only — needs Puppeteer + running server)
