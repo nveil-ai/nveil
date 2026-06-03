@@ -21,6 +21,16 @@ RUN python3 -m venv /opt/venv \
 
 ENV PATH="/opt/venv/bin:$PATH"
 ENV PYTHONUNBUFFERED=1
+# Runtime defaults baked into the image (formerly the docker-compose
+# x-backend-env anchor + mode flags). A container/compose/K8s env var still
+# overrides any of these.
+ENV PYTHONWARNINGS="ignore:::requests"
+ENV KEDRO_LOGGING_CONFIG="/nveil/backend/tools/logger/logging_config.yaml"
+ENV WATCHFILES_FORCE_POLLING="true"
+ENV PYTHONPATH="/nveil/backend:/nveil/backend/tools/logger"
+ENV ENV="local"
+ENV LOCAL="1"
+ENV GCP="0"
 
 # ── Node builder ────────────────────────────────────────────────────────────
 FROM debian:13.4-slim AS node-builder
@@ -110,7 +120,15 @@ RUN mkdir -p /nveil/guest_data
 COPY ./examples/Miscellaneous/AirbnbGuest/ /nveil/guest_data/AirbnbGuest/
 
 ENV NODE_ENV=production
-ENV PYTHONPATH=/nveil/backend
+# Service-discovery + viz pool defaults (formerly docker-compose env);
+# overridable. PYTHONPATH now comes from the base stage.
+ENV AI_HOST="ai"
+ENV AI_PORT="8100"
+ENV FILE_HOST="file"
+ENV FILE_PORT="8200"
+ENV SERVER_INTERNAL_HOST="server"
+ENV VIZ_IMAGE="nveil_visualization:latest"
+ENV VIZ_POOL_MIN_SIZE="1"
 
 EXPOSE 8000
 

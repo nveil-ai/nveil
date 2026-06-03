@@ -25,16 +25,6 @@
 # ============================================================================
 
 
-# ── Shared anchors (referenced with *name below) ────────────────────────────
-
-x-backend-env: &backend-env
-  PYTHONUNBUFFERED: "1"
-  KEDRO_LOGGING_CONFIG: "/nveil/backend/tools/logger/logging_config.yaml"
-  PYTHONPATH: "/nveil/backend:/nveil/backend/tools/logger:/choregraph/src"
-  PYTHONWARNINGS: "ignore:::requests"
-  WATCHFILES_FORCE_POLLING: "true"
-
-
 # ============================================================================
 #  Services
 # ============================================================================
@@ -92,10 +82,6 @@ services:
       dockerfile: docker/server/dockerfile
     profiles: ["core"]
     environment:
-      <<: *backend-env
-      ENV: local
-      LOCAL: "1"
-      GCP: "0"
       TEST: "1"
       DATABASE_SCHEMA: ${DATABASE_SCHEMA:-nveilseption}
       DATABASE_URL: "postgresql+asyncpg://${POSTGRES_USER:-nveil}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-nveil}"
@@ -119,17 +105,12 @@ services:
       OPENAI_COMPAT_MODEL: ${OPENAI_COMPAT_MODEL:-}
 
       APP_ENCRYPTION_KEY: ${APP_ENCRYPTION_KEY:-}
-      AI_HOST: ai
-      AI_PORT: "8100"
-      FILE_HOST: file
-      FILE_PORT: "8200"
-      SERVER_INTERNAL_HOST: server
 
-      VIZ_IMAGE: nveil_visualization:latest
+      # Project-scoped Docker resource names the server needs to spawn viz
+      # containers (derived from the compose project name; kept here).
       DOCKER_NETWORK: "${COMPOSE_PROJECT_NAME:-nveil-community}_default"
       CERT_VOLUME: "${COMPOSE_PROJECT_NAME:-nveil-community}_nveil-certs"
       DIVE_VOLUME: "${COMPOSE_PROJECT_NAME:-nveil-community}_${DIVE_DATA_PATH:-nveil-dive-data}"
-      VIZ_POOL_MIN_SIZE: "1"
       AUTH_TEST_EMAILS: ${AUTH_TEST_EMAILS:-}
     volumes:
     - /var/run/docker.sock:/var/run/docker.sock
@@ -153,9 +134,6 @@ services:
       dockerfile: docker/ai/dockerfile
     profiles: ["core"]
     environment:
-      <<: *backend-env
-      ENV: local
-      GCP: "0"
       # ── LLM providers (BYOK) — mirror of `server`. ────────────────────
       GOOGLE_API_KEY: ${GOOGLE_API_KEY:-}
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}
@@ -168,11 +146,7 @@ services:
       OPENAI_COMPAT_BASE_URL: ${OPENAI_COMPAT_BASE_URL:-}
       OPENAI_COMPAT_API_KEY: ${OPENAI_COMPAT_API_KEY:-}
       OPENAI_COMPAT_MODEL: ${OPENAI_COMPAT_MODEL:-}
-      SERVER_HOST: server
-      SERVER_PORT: "8000"
       STATE_DATABASE_URL: "postgresql+asyncpg://ai_user:${AI_DB_PASSWORD}@postgres:5432/state"
-      STATE_DATABASE_SCHEMA: state_schema
-      PYTHONPATH: "/nveil/backend:/nveil/backend/tools/logger:/choregraph/src:/dive/src"
 
       # Langfuse (LLM tracing + prompt management) — opt-in.
       # Off by default. The Langfuse stack is defined in this same file under the
@@ -213,14 +187,8 @@ services:
       dockerfile: docker/file/dockerfile
     profiles: ["core"]
     environment:
-      <<: *backend-env
-      ENV: local
-      LOCAL: "1"
-      GCP: "0"
       DATABASE_SCHEMA: ${DATABASE_SCHEMA:-nveilseption}
       DATABASE_URL: "postgresql+asyncpg://${POSTGRES_USER:-nveil}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-nveil}"
-      AI_HOST: ai
-      AI_PORT: "8100"
       # ── LLM providers (BYOK) — mirror of `server`/`ai`. ───────────────
       GOOGLE_API_KEY: ${GOOGLE_API_KEY:-}
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}
