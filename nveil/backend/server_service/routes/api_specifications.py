@@ -117,19 +117,13 @@ async def sdk_process(
 
     payload = _decrypt_request_blob(payload)
 
-    # SDK-provided X-Nveil-LLM-* headers are forwarded as-is. If absent,
-    # ai_service uses its boot-selected default provider (operator-supplied
-    # keys from .env). There is no per-user override anymore.
-    forwarded_headers: dict[str, str] = {}
-    for h in ("X-Nveil-LLM-Provider", "X-Nveil-LLM-API-Key", "X-Nveil-LLM-Base-URL", "X-Nveil-LLM-Model"):
-        v = request.headers.get(h)
-        if v:
-            forwarded_headers[h] = v
-
+    # The LLM provider/credentials are fixed server-side at setup time
+    # (operator .env); ai_service runs every request on its boot-selected
+    # default provider. The SDK cannot override it — no LLM headers are
+    # accepted or forwarded.
     resp = await _ai_client.post(
         _ai_url("/ai/sdk/process"),
         json=payload,
-        headers=forwarded_headers,
         timeout=120.0,
     )
 

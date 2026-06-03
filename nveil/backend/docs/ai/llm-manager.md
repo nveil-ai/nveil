@@ -1,8 +1,9 @@
 # LLM Manager
 
-The AI service is provider-agnostic. Each request can target a different LLM
-provider (model, base URL, API key) — selected via SDK headers, or falling
-back to the server-default `LLM_PROVIDER` env var.
+The AI service is provider-agnostic. The LLM provider (model, base URL, API
+key) is chosen once at startup from the operator's environment (`.env`,
+written by the setup) and is used for **every** request — clients cannot
+override it.
 
 For the full provider plug-in walk-through (adding a new provider, local
 models via Ollama/llama.cpp, OpenAI-compatible proxies), see the main
@@ -19,10 +20,11 @@ Code lives under `ai_service/llm_processing/managers/`.
 | `GeminiLLMManager` (`gemini.py`) | Subclass override that adds Google's context-cache support. |
 | `RouterLLMManager` (`router.py`) | Singleton held by the FastAPI app. Dispatches a request to the right manager based on `llm_config.provider`. |
 
-## Per-request config
+## Provider config (`LLMConfig`)
 
 `shared/llm_config.LLMConfig` is the immutable dataclass carried through
-LangGraph nodes via `RunnableConfig.configurable["llm_config"]`:
+LangGraph nodes via `RunnableConfig.configurable["llm_config"]`. It always
+holds the server's boot-selected provider (same value for every request):
 
 ```python
 LLMConfig(
@@ -43,15 +45,8 @@ operators provide keys via the setup TUI, which writes them to
 
 `LLMConfig.from_env_ordered()` exposes the same boot list to callers (used in
 ai_service's lifespan). `LLMConfig.from_env()` returns the top-priority entry.
-
-SDK clients override per request with headers:
-
-| Header | Purpose |
-|--------|---------|
-| `X-Nveil-LLM-Provider` | Provider id |
-| `X-Nveil-LLM-API-Key` | Auth (omitted for `ollama` / `llamacpp`) |
-| `X-Nveil-LLM-Base-URL` | Optional — for OpenRouter, vLLM, Azure OpenAI, … |
-| `X-Nveil-LLM-Model` | Optional — overrides the per-node yaml model (Ollama tags, etc.) |
+`ai_server.get_llm_config()` returns the boot-selected default for every
+request — there is no header-based override.
 
 ## Model pool
 

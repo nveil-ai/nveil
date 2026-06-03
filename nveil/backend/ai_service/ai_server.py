@@ -29,7 +29,6 @@ from database.repository import StateRepository
 from shared.secrets import get_secret
 from shared.workspace import user_file_path, write_metadata
 from fastapi import (FastAPI, HTTPException, Request)
-from fastapi.responses import JSONResponse
 from llm_processing.graphs.workflow_postprocess_nodes import (
     convert_feedback_to_html,
 )
@@ -43,8 +42,6 @@ from llm_processing.prompt import Prompt, seed_langfuse_prompts_if_missing
 from shared.llm_config import (
     LLMConfig,
     LLMProvider,
-    LOCAL_API_KEY_SENTINEL,
-    LOCAL_PROVIDERS_WITHOUT_KEY,
 )
 from llm_processing.turn_metrics import TurnMetrics, set_turn_metrics
 from logger import DEBUG, ERROR, INFO, SUCCESS, WARNING, logger
@@ -174,75 +171,27 @@ async def lifespan(app: FastAPI):
 ai_app = FastAPI(lifespan=lifespan)
 
 
-# SDK-only headers carrying the user's chosen provider + key. The SaaS
-# frontend doesn't send them — the server's default config is used in
-# that case. Header names are lowercased on the wire (HTTP/2) but
-# fastapi headers are case-insensitive.
-LLM_PROVIDER_HEADER = "X-Nveil-LLM-Provider"
-LLM_API_KEY_HEADER = "X-Nveil-LLM-API-Key"
-# Optional. Set when the SDK targets an OpenAI-compatible proxy
-# (OpenRouter, Together AI, vLLM, Azure OpenAI). Only meaningful when
-# the provider header is also set.
-LLM_BASE_URL_HEADER = "X-Nveil-LLM-Base-URL"
-# Optional. Overrides the per-node yaml-defined model for ALL nodes of
-# this request. Useful when the user's endpoint (Ollama, OpenRouter)
-# doesn't accept the yaml's default model name.
-LLM_MODEL_HEADER = "X-Nveil-LLM-Model"
+def get_llm_config() -> LLMConfig:
+    """Return the server's configured LLM provider.
 
-
-def llm_config_from_request(request: Request) -> LLMConfig:
-    """Build the per-request LLMConfig.
-
-    SDK requests carry `X-Nveil-LLM-Provider` + `X-Nveil-LLM-API-Key`,
-    optionally `X-Nveil-LLM-Base-URL` and `X-Nveil-LLM-Model`; if
-    provider+key are present and valid, return a user-scoped config.
-    Anything else falls back to the server's default config (Gemini
-    env key). Partial headers are an SDK contract violation → 400,
-    EXCEPT for local providers (`ollama`, `llamacpp`) where the key
-    is not required (a sentinel is injected so the OpenAI-compat
-    client has something to pass through).
+    The provider, credentials and endpoint are fixed at setup time (the
+    operator's ``.env``) and selected once at boot — ``default_llm_config``
+    is the first provider in ``PROVIDER_BOOT_ORDER`` that passes the
+    startup smoke-test. There is no per-request override: the SDK and web
+    paths both run on this single server-side config.
     """
-    provider = request.headers.get(LLM_PROVIDER_HEADER)
-    api_key = request.headers.get(LLM_API_KEY_HEADER)
-    base_url = request.headers.get(LLM_BASE_URL_HEADER)
-    model_override = request.headers.get(LLM_MODEL_HEADER)
-    if not provider and not api_key:
-        if base_url or model_override:
-            raise HTTPException(
-                status_code=400,
-                detail=(
-                    f"{LLM_BASE_URL_HEADER}/{LLM_MODEL_HEADER} require "
-                    f"{LLM_PROVIDER_HEADER} and {LLM_API_KEY_HEADER} to be set."
-                ),
-            )
-        if default_llm_config is None:
-            raise HTTPException(
-                status_code=503,
-                detail="No LLM provider configured. Set your API key in Settings.",
-            )
-        return default_llm_config
-    if provider in LOCAL_PROVIDERS_WITHOUT_KEY and not api_key:
-        api_key = LOCAL_API_KEY_SENTINEL
-    if not provider or not api_key:
+    if default_llm_config is None:
         raise HTTPException(
-            status_code=400,
-            detail=(
-                f"Both {LLM_PROVIDER_HEADER} and {LLM_API_KEY_HEADER} "
-                f"headers must be set together."
-            ),
+            status_code=503,
+            detail="No LLM provider configured. Run the setup and set a provider key.",
         )
-    return LLMConfig(
-        provider=provider,
-        api_key=api_key,
-        base_url=base_url or None,
-        model_override=model_override or None,
-    )
+    return default_llm_config
 
 
 # Cheap, widely-available validation models per provider. Used by the
-# /ai/validate-llm-config endpoint when the user hasn't supplied an
-# explicit model override. Picked for low cost and high availability —
-# the goal is just to confirm auth + endpoint work.
+# boot-time smoke-test (`_smoke_test_llm`) when a provider's config has no
+# explicit model_override. Picked for low cost and high availability — the
+# goal is just to confirm auth + endpoint work.
 _VALIDATION_MODELS: dict[str, str] = {
     "google_genai": "gemini-2.5-flash",
     "openai":      "gpt-4o-mini",
@@ -250,8 +199,8 @@ _VALIDATION_MODELS: dict[str, str] = {
     # llm_processing/configs/anthropic.yaml.
     "anthropic":   "claude-haiku-4-5-20251001",
     "mistralai":   "mistral-small-latest",
-    # ollama / llamacpp: no sensible default — the user must supply
-    # X-Nveil-LLM-Model (Ollama tag, or llama-server --alias).
+    # ollama / llamacpp: no sensible default — the operator must set
+    # <PROVIDER>_MODEL in .env (Ollama tag, or llama-server --alias).
 }
 
 # Per-provider timeout for the validation ping. Local models need a
@@ -298,8 +247,7 @@ async def _smoke_test_llm(cfg: LLMConfig) -> tuple[bool, str, str]:
     contains the raw provider exception (some SDKs echo the API key or
     base_url back in errors).
 
-    Reused by both the HTTP `/ai/validate-llm-config` route and the
-    boot-time provider selection in `lifespan()`.
+    Used by the boot-time provider selection in `lifespan()`.
     """
     test_model = cfg.model_override or _VALIDATION_MODELS.get(cfg.provider)
     if not test_model:
@@ -352,49 +300,6 @@ async def _select_first_responding_provider(
     return None
 
 
-@ai_app.post("/ai/validate-llm-config")
-async def validate_llm_config(request: Request):
-    """Smoke-test the LLM credentials carried in the X-Nveil-LLM-* headers.
-
-    Builds a `BaseChatModel` and runs a one-token completion to confirm
-    auth + base_url + model are all working. Returns 200 on success or
-    400 with a categorized `error_code` / `message`.
-
-    This endpoint is internal — called by server_service before
-    persisting a user-provided LLM config.
-    """
-    # Reject silent fallback to env defaults: validation requires an
-    # explicit user-supplied provider header. The api_key header is
-    # required for every provider except local ones (Ollama, llama.cpp)
-    # which run without authentication.
-    header_provider = request.headers.get(LLM_PROVIDER_HEADER)
-    if not header_provider:
-        raise HTTPException(
-            status_code=400,
-            detail=(
-                f"{LLM_PROVIDER_HEADER} and {LLM_API_KEY_HEADER} headers "
-                f"are required for validation."
-            ),
-        )
-    if header_provider not in LOCAL_PROVIDERS_WITHOUT_KEY and not request.headers.get(LLM_API_KEY_HEADER):
-        raise HTTPException(
-            status_code=400,
-            detail=(
-                f"{LLM_PROVIDER_HEADER} and {LLM_API_KEY_HEADER} headers "
-                f"are required for validation."
-            ),
-        )
-    cfg = llm_config_from_request(request)
-
-    ok, error_code, message = await _smoke_test_llm(cfg)
-    if not ok:
-        return JSONResponse(
-            status_code=400,
-            content={"error_code": error_code, "message": message},
-        )
-    return {"ok": True}
-
-
 @ai_app.post("/ai/process_user_message")
 async def chat_endpoint(input_data: Request):
     """
@@ -429,7 +334,7 @@ async def chat_endpoint(input_data: Request):
     )
 
     room_id = data.get("room_id")
-    llm_cfg = llm_config_from_request(input_data)
+    llm_cfg = get_llm_config()
     graph_config = {
         "configurable": {
             "thread_id": str(room_id),
@@ -571,7 +476,7 @@ async def characterize_csv_ai(request: Request):
     Accepts a binary sample and returns {header, fieldSeparator, recordSeparator}.
     """
     body = await request.body()
-    llm_cfg = llm_config_from_request(request)
+    llm_cfg = get_llm_config()
     try:
         from viz_file_utils.characterization import ai_characterisation
         result = ai_characterisation(body, llm_config=llm_cfg)
@@ -612,7 +517,7 @@ async def preprocess_excel(request: Request):
         logger().logp(ERROR, f"Invalid file_path for excel preprocessing: {e}")
         raise HTTPException(status_code=400, detail="Invalid file_path")
 
-    llm_cfg = llm_config_from_request(request)
+    llm_cfg = get_llm_config()
     try:
         from choregraph.collection.excel.main import tidy_excel_data
         import pandas as pd
@@ -881,7 +786,7 @@ async def api_sdk_process(request: Request):
         session_id = f"api-{uuid.uuid4()}"
         tm.set_context(room_id=session_id, owner_id=owner_id, user_id="api", source="sdk")
 
-    llm_cfg = llm_config_from_request(request)
+    llm_cfg = get_llm_config()
     graph_config = {
         "configurable": {
             "thread_id": session_id,
