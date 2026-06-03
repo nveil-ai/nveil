@@ -320,10 +320,8 @@ PROVIDER_PAGE_HEADER = (
     '<div class="fallback-box">'
     "<strong>How the fallback works:</strong> "
     "At startup, the AI service pings each configured provider in order: "
-    "<em>Google &rarr; OpenAI &rarr; Anthropic &rarr; Ollama &rarr; llama.cpp</em>. "
-    "The first one that responds becomes the <strong>default provider</strong>. "
-    "All other configured providers remain available &mdash; users can switch "
-    "between them from the UI at any time."
+    "<em>Google &rarr; OpenAI &rarr; Anthropic &rarr; Mistral &rarr; Ollama &rarr; llama.cpp</em>. "
+    "The first one that responds becomes the <strong>default provider</strong>."
     "</div>"
     '<p class="fallback-note">Tip: configure multiple providers for redundancy. '
     "If the default goes down, users can switch to another without restarting.</p>"

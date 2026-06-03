@@ -261,34 +261,20 @@ Two layers:
 
 ### How a request picks a provider
 
-Two modes, in priority order:
+There is **one** provider for the whole service, chosen at startup — clients
+(SDK or web) cannot select or override it. The lifespan walks
+`PROVIDER_BOOT_ORDER` (`google_genai`, `openai`, `anthropic`, `mistralai`,
+`ollama`, `llamacpp`) and keeps the **first one** that:
 
-1. **SDK headers** — clients send:
-   - `X-Nveil-LLM-Provider`
-   - `X-Nveil-LLM-API-Key` (omitted for `ollama` / `llamacpp`, which inject a
-     `LOCAL_API_KEY_SENTINEL`)
-   - `X-Nveil-LLM-Base-URL` *(optional)* — for OpenAI-compatible proxies
-     (OpenRouter, Together AI, vLLM, Azure OpenAI).
-   - `X-Nveil-LLM-Model` *(optional)* — overrides the per-node yaml-defined
-     model for **all** nodes of the request. Use when your endpoint doesn't
-     accept the yaml's default name (Ollama tags, OpenRouter slugs).
-2. **Server default (boot-selected)** — when no headers are present, ai_service
-   uses the provider it picked at startup. The lifespan walks
-   `PROVIDER_BOOT_ORDER` (`google_genai`, `openai`, `anthropic`, `mistralai`,
-   `ollama`, `llamacpp`) and keeps the **first one** that:
-   - has a usable env-level config (matching `<PROVIDER>_API_KEY` set, or
-     `<PROVIDER>_BASE_URL` + `<PROVIDER>_MODEL` for locals), and
-   - passes a one-token smoke-test against its endpoint.
+- has a usable env-level config (matching `<PROVIDER>_API_KEY` set, or
+  `<PROVIDER>_BASE_URL` + `<PROVIDER>_MODEL` for locals), and
+- passes a one-token smoke-test against its endpoint.
 
-   There is **no NVEIL fallback** — if no provider in the order passes, the
-   service refuses to start. Operators configure keys through the setup TUI,
-   which writes them to `docker-compose.yaml` + `.env`.
-
-The `POST /ai/validate-llm-config` endpoint runs the same smoke-test on
-arbitrary credentials passed via `X-Nveil-LLM-*` headers; it returns a
-categorized error code (`invalid_api_key`, `model_not_available`,
-`connection_failed`, `timeout`, `rate_limited`, …). Provider error messages
-are **never** echoed back — they can leak API key prefixes or base URLs.
+There is **no NVEIL fallback** — if no provider in the order passes, the
+service refuses to start. Operators configure keys through the setup, which
+writes them to `docker-compose.yaml` + `.env`. Every request then resolves
+its config through `ai_server.get_llm_config()`, which returns this single
+boot-selected provider.
 
 ### Adding a brand new provider
 
@@ -304,8 +290,8 @@ the provider be supported by `langchain.init_chat_model`. To add one:
 4. Create `llm_processing/configs/<provider>.yaml` with `defaults` + per-node
    overrides in the provider's **native** kwarg syntax (no abstraction).
 5. Add a validation model to `_VALIDATION_MODELS` and a timeout to
-   `_VALIDATION_TIMEOUTS` in `ai_server.py` if you want
-   `/ai/validate-llm-config` to support it.
+   `_VALIDATION_TIMEOUTS` in `ai_server.py` so the boot smoke-test can
+   verify it.
 6. (Optional) Subclass `LangChainLLMManager` and register it in
    `RouterLLMManager.PROVIDER_OVERRIDES` if the provider needs special
    handling (caching, custom rate-limiting, …).
@@ -319,7 +305,7 @@ stay isolated and quantized-model swaps don't reuse a stale `BaseChatModel`.
 Both are wired through LangChain's `openai` client against an
 OpenAI-compatible local endpoint:
 
-- **Ollama** — the user must supply `X-Nveil-LLM-Model` (the Ollama tag,
+- **Ollama** — the operator must set `OLLAMA_MODEL` in `.env` (the Ollama tag,
   e.g. `qwen3:27b`). `extra_body.think: false` and `options.num_ctx: 16384` are
   set in `ollama.yaml` to avoid the default 2048-token context window
   silently truncating the XSD-heavy prompts.
@@ -328,8 +314,8 @@ OpenAI-compatible local endpoint:
   string when no alias is set).
 
 Cold-load timeouts: Ollama's first request can take **30–60 s** to load a
-multi-GB model into VRAM. `/ai/validate-llm-config` uses a **120 s** budget
-for Ollama specifically.
+multi-GB model into VRAM. The boot smoke-test uses a **120 s** budget for
+Ollama specifically.
 
 ---
 
@@ -433,7 +419,6 @@ in `ai_server.py` turns the pending value into the JSON the frontend expects
 |--------|------|---------|
 | GET | `/ai/health` | Health check. |
 | POST | `/ai/process_user_message` | Main chat endpoint (web). |
-| POST | `/ai/validate-llm-config` | Smoke-test an LLM credential pair before persisting. |
 | POST | `/ai/characterize_csv` | LLM-based fallback when heuristic CSV characterization fails. |
 | POST | `/ai/preprocess_excel` | Detect tables in an Excel sheet and write companion parquets. |
 | GET | `/ai/user/settings` | Get the user's AI preferences (tone, additional info). |
