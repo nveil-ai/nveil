@@ -548,12 +548,7 @@ export default function Auth({ isOpen, onClose, onLoginSuccess }) {
         setMode("login");
     };
 
-    const Wrapper = googleAuthClientId
-        ? ({ children }) => <GoogleOAuthProvider clientId={googleAuthClientId}>{children}</GoogleOAuthProvider>
-        : ({ children }) => <>{children}</>;
-
-    return createPortal(
-        <Wrapper>
+    const modalContent = (
         <div className={styles.popupOverlay} onClick={() => {
             if (mode !== "complete-profile" && mode !== "change-password") onClose();
         }}>
@@ -663,7 +658,12 @@ export default function Auth({ isOpen, onClose, onLoginSuccess }) {
                 </div>
             </div>
         </div>
-        </Wrapper>,
+    );
+
+    return createPortal(
+        googleAuthClientId
+            ? <GoogleOAuthProvider clientId={googleAuthClientId}>{modalContent}</GoogleOAuthProvider>
+            : modalContent,
         document.body
     );
 }
