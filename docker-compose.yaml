@@ -18,9 +18,10 @@
 #
 #  (Before .env exists, or to be explicit, prefix with --profile core.)
 #
-#  Optional LLM tracing (Langfuse) runs as a SEPARATE project from this same
-#  file — its explicit --profile tracing overrides the COMPOSE_PROFILES default:
-#    docker compose -p langfuse --profile tracing up -d
+#  Developer extras (source mounts, debug mode, Langfuse LLM tracing) live in
+#  docker-compose.dev.yml — apply it explicitly on top of this file:
+#    docker compose -f docker-compose.yaml -f docker-compose.dev.yml --profile core up
+#    (add --profile tracing for the bundled Langfuse stack)
 #
 # ============================================================================
 
@@ -82,7 +83,6 @@ services:
       dockerfile: docker/server/dockerfile
     profiles: ["core"]
     environment:
-      TEST: "1"
       DATABASE_SCHEMA: ${DATABASE_SCHEMA:-nveilseption}
       DATABASE_URL: "postgresql+asyncpg://${POSTGRES_USER:-nveil}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-nveil}"
       SECRET_KEY: ${SECRET_KEY:-}
@@ -111,7 +111,6 @@ services:
       DOCKER_NETWORK: "${COMPOSE_PROJECT_NAME:-nveil-community}_default"
       CERT_VOLUME: "${COMPOSE_PROJECT_NAME:-nveil-community}_nveil-certs"
       DIVE_VOLUME: "${COMPOSE_PROJECT_NAME:-nveil-community}_${DIVE_DATA_PATH:-nveil-dive-data}"
-      AUTH_TEST_EMAILS: ${AUTH_TEST_EMAILS:-}
     volumes:
     - /var/run/docker.sock:/var/run/docker.sock
     - ./nveil/backend:/nveil/backend
@@ -147,25 +146,6 @@ services:
       OPENAI_COMPAT_API_KEY: ${OPENAI_COMPAT_API_KEY:-}
       OPENAI_COMPAT_MODEL: ${OPENAI_COMPAT_MODEL:-}
       STATE_DATABASE_URL: "postgresql+asyncpg://ai_user:${AI_DB_PASSWORD}@postgres:5432/state"
-
-      # Langfuse (LLM tracing + prompt management) — opt-in.
-      # Off by default. The Langfuse stack is defined in this same file under the
-      # "tracing" profile but is meant to run as a SEPARATE project so it groups
-      # apart in Docker Desktop. To enable, set LANGFUSE_TRACING=1 in .env and:
-      #     docker compose -p langfuse --profile tracing up -d
-      # Cross-project, this service reaches langfuse-web via the host's published
-      # port (host.docker.internal:3030), so no shared docker network is needed.
-      # When unreachable, prompt fetches fall back to prompt_templates.yaml.
-      LANGFUSE_TRACING: "${LANGFUSE_TRACING:-}"
-      LANGFUSE_HOST: "${LANGFUSE_HOST:-http://host.docker.internal:3030}"
-      LANGFUSE_PUBLIC_KEY: "${LANGFUSE_PUBLIC_KEY:-pk-lf-community-dev}"
-      LANGFUSE_SECRET_KEY: "${LANGFUSE_SECRET_KEY:-sk-lf-community-dev}"
-      LANGFUSE_PROMPT_LABEL: "${LANGFUSE_PROMPT_LABEL:-latest}"
-    # Lets the container resolve host.docker.internal on Linux too (Docker
-    # Desktop provides it natively). Used only to reach the separate Langfuse
-    # project; harmless when tracing is off.
-    extra_hosts:
-    - "host.docker.internal:host-gateway"
     volumes:
     - ./nveil/backend:/nveil/backend
     - "${DIVE_DATA_PATH:-nveil-dive-data}:/root/DIVE"
@@ -236,150 +216,6 @@ services:
     volumes:
     - .:/workspace
 
-  # ── Langfuse (optional: LLM tracing + prompt management) ───────────────────
-  # All six services live under the "tracing" profile. They are meant to run as
-  # a SEPARATE Docker Compose project (so they group apart in Docker Desktop)
-  # from the SAME file — start them with a different project name:
-  #     docker compose -p langfuse --profile tracing up -d
-  # The app services (profile "core") therefore never pull these in, and these
-  # never pull in the app services. The `ai` service reaches langfuse-web across
-  # projects via host.docker.internal:3030 (the published port).
-  # UI: http://localhost:3030 — login dev@nveil.com / dev-password
-  # See nveil/backend/docs/ai/tracing.md for the full guide.
-
-  langfuse-postgres:
-    image: postgres:17-alpine
-    profiles: ["tracing"]
-    environment:
-      POSTGRES_USER: ${LANGFUSE_DB_USER:-langfuse}
-      POSTGRES_PASSWORD: ${LANGFUSE_DB_PASSWORD:-langfuse}
-      POSTGRES_DB: langfuse
-    volumes:
-    - langfuse-postgres-data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U langfuse"]
-      interval: 5s
-      timeout: 3s
-      retries: 10
-
-  langfuse-clickhouse:
-    image: clickhouse/clickhouse-server
-    profiles: ["tracing"]
-    user: "101:101"
-    environment:
-      CLICKHOUSE_DB: default
-      CLICKHOUSE_USER: ${LANGFUSE_CLICKHOUSE_USER:-clickhouse}
-      CLICKHOUSE_PASSWORD: ${LANGFUSE_CLICKHOUSE_PASSWORD:-clickhouse}
-    volumes:
-    - langfuse-clickhouse-data:/var/lib/clickhouse
-    - langfuse-clickhouse-logs:/var/log/clickhouse-server
-    healthcheck:
-      test: wget --no-verbose --tries=1 --spider http://localhost:8123/ping || 
-        exit 1
-      interval: 5s
-      timeout: 5s
-      retries: 10
-
-  langfuse-redis:
-    image: redis:7-alpine
-    profiles: ["tracing"]
-    command: --requirepass ${LANGFUSE_REDIS_PASSWORD:-myredissecret}
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 3s
-      timeout: 10s
-      retries: 10
-
-  langfuse-minio:
-    image: minio/minio
-    profiles: ["tracing"]
-    entrypoint: sh
-    command: -c 'mkdir -p /data/langfuse && minio server --address ":9000" 
-      --console-address ":9001" /data'
-    environment:
-      MINIO_ROOT_USER: ${LANGFUSE_MINIO_USER:-minio}
-      MINIO_ROOT_PASSWORD: ${LANGFUSE_MINIO_PASSWORD:-miniosecret}
-    volumes:
-    - langfuse-minio-data:/data
-    healthcheck:
-      test: ["CMD", "mc", "ready", "local"]
-      interval: 5s
-      timeout: 3s
-      retries: 10
-
-  langfuse-worker:
-    image: langfuse/langfuse-worker:3
-    profiles: ["tracing"]
-    restart: always
-    depends_on:
-      langfuse-postgres: {condition: service_healthy}
-      langfuse-clickhouse: {condition: service_healthy}
-      langfuse-redis: {condition: service_healthy}
-      langfuse-minio: {condition: service_healthy}
-    environment:
-      DATABASE_URL: "postgresql://${LANGFUSE_DB_USER:-langfuse}:${LANGFUSE_DB_PASSWORD:-langfuse}@langfuse-postgres:5432/langfuse"
-      SALT: ${LANGFUSE_SALT:-mysalt}
-      ENCRYPTION_KEY: ${LANGFUSE_ENCRYPTION_KEY:-a1b2c3d4e5f60718293a4b5c6d7e8f9012345678901234567890abcdef123456}
-      TELEMETRY_ENABLED: "false"
-      LANGFUSE_ENABLE_EXPERIMENTAL_FEATURES: "true"
-      CLICKHOUSE_URL: http://langfuse-clickhouse:8123
-      CLICKHOUSE_MIGRATION_URL: clickhouse://langfuse-clickhouse:9000
-      CLICKHOUSE_USER: ${LANGFUSE_CLICKHOUSE_USER:-clickhouse}
-      CLICKHOUSE_PASSWORD: ${LANGFUSE_CLICKHOUSE_PASSWORD:-clickhouse}
-      CLICKHOUSE_CLUSTER_ENABLED: "false"
-      REDIS_CONNECTION_STRING: "redis://default:${LANGFUSE_REDIS_PASSWORD:-myredissecret}@langfuse-redis:6379/0"
-      LANGFUSE_S3_EVENT_UPLOAD_BUCKET: langfuse
-      LANGFUSE_S3_EVENT_UPLOAD_REGION: auto
-      LANGFUSE_S3_EVENT_UPLOAD_ACCESS_KEY_ID: ${LANGFUSE_MINIO_USER:-minio}
-      LANGFUSE_S3_EVENT_UPLOAD_SECRET_ACCESS_KEY: ${LANGFUSE_MINIO_PASSWORD:-miniosecret}
-      LANGFUSE_S3_EVENT_UPLOAD_ENDPOINT: http://langfuse-minio:9000
-      LANGFUSE_S3_EVENT_UPLOAD_FORCE_PATH_STYLE: "true"
-      LANGFUSE_S3_EVENT_UPLOAD_PREFIX: events/
-      LANGFUSE_LOG_LEVEL: "${LANGFUSE_WEB_LOG_LEVEL:-warn}"
-
-  langfuse-web:
-    image: langfuse/langfuse:3
-    profiles: ["tracing"]
-    restart: always
-    depends_on:
-      langfuse-postgres: {condition: service_healthy}
-      langfuse-clickhouse: {condition: service_healthy}
-      langfuse-redis: {condition: service_healthy}
-      langfuse-minio: {condition: service_healthy}
-    ports:
-    - "3030:3000"
-    environment:
-      DATABASE_URL: "postgresql://${LANGFUSE_DB_USER:-langfuse}:${LANGFUSE_DB_PASSWORD:-langfuse}@langfuse-postgres:5432/langfuse"
-      SALT: ${LANGFUSE_SALT:-mysalt}
-      ENCRYPTION_KEY: ${LANGFUSE_ENCRYPTION_KEY:-a1b2c3d4e5f60718293a4b5c6d7e8f9012345678901234567890abcdef123456}
-      TELEMETRY_ENABLED: "false"
-      LANGFUSE_ENABLE_EXPERIMENTAL_FEATURES: "true"
-      CLICKHOUSE_URL: http://langfuse-clickhouse:8123
-      CLICKHOUSE_MIGRATION_URL: clickhouse://langfuse-clickhouse:9000
-      CLICKHOUSE_USER: ${LANGFUSE_CLICKHOUSE_USER:-clickhouse}
-      CLICKHOUSE_PASSWORD: ${LANGFUSE_CLICKHOUSE_PASSWORD:-clickhouse}
-      CLICKHOUSE_CLUSTER_ENABLED: "false"
-      REDIS_CONNECTION_STRING: "redis://default:${LANGFUSE_REDIS_PASSWORD:-myredissecret}@langfuse-redis:6379/0"
-      LANGFUSE_S3_EVENT_UPLOAD_BUCKET: langfuse
-      LANGFUSE_S3_EVENT_UPLOAD_REGION: auto
-      LANGFUSE_S3_EVENT_UPLOAD_ACCESS_KEY_ID: ${LANGFUSE_MINIO_USER:-minio}
-      LANGFUSE_S3_EVENT_UPLOAD_SECRET_ACCESS_KEY: ${LANGFUSE_MINIO_PASSWORD:-miniosecret}
-      LANGFUSE_S3_EVENT_UPLOAD_ENDPOINT: http://langfuse-minio:9000
-      LANGFUSE_S3_EVENT_UPLOAD_FORCE_PATH_STYLE: "true"
-      LANGFUSE_S3_EVENT_UPLOAD_PREFIX: events/
-      NEXTAUTH_URL: http://localhost:3030
-      NEXTAUTH_SECRET: ${LANGFUSE_NEXTAUTH_SECRET:-mysecret}
-      LANGFUSE_INIT_ORG_ID: nveil
-      LANGFUSE_INIT_ORG_NAME: Nveil
-      LANGFUSE_INIT_PROJECT_ID: ai
-      LANGFUSE_INIT_PROJECT_NAME: ai-service
-      LANGFUSE_INIT_PROJECT_PUBLIC_KEY: "${LANGFUSE_PUBLIC_KEY:-pk-lf-community-dev}"
-      LANGFUSE_INIT_PROJECT_SECRET_KEY: "${LANGFUSE_SECRET_KEY:-sk-lf-community-dev}"
-      LANGFUSE_INIT_USER_EMAIL: dev@nveil.com
-      LANGFUSE_INIT_USER_NAME: nveil
-      LANGFUSE_INIT_USER_PASSWORD: ${LANGFUSE_INIT_USER_PASSWORD:-dev-password}
-      LANGFUSE_LOG_LEVEL: "${LANGFUSE_WEB_LOG_LEVEL:-warn}"
-
 
 # ============================================================================
 #  Volumes
@@ -388,7 +224,3 @@ volumes:
   postgres-data:
   nveil-certs:
   nveil-dive-data:
-  langfuse-postgres-data:
-  langfuse-clickhouse-data:
-  langfuse-clickhouse-logs:
-  langfuse-minio-data:
