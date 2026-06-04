@@ -46,48 +46,43 @@ This is the **Community Edition** — the complete platform, free and open under
 
 ## Quick start
 
-Self-host in a few minutes with **prebuilt images** — one Compose file, nothing to build.
+Self-host in minutes with **prebuilt images** — nothing to build.
 
 > **Prerequisites:** Docker + Docker Compose, and one LLM provider — a Gemini / OpenAI / Anthropic / Mistral key, or a local model (Ollama, llama.cpp, any OpenAI-compatible endpoint).
 
+**1.** Download **[`docker-compose.yaml`](https://github.com/nveil-ai/nveil/raw/main/docker-compose.yaml)** into an empty folder — it's the only file you need.
+
+**2.** Run the setup wizard, then open <http://localhost:3000> to configure (it writes your `.env`):
+
 ```bash
-# Download the Compose file — the only file you need.
-curl -O https://raw.githubusercontent.com/nveil-ai/nveil/main/docker-compose.yaml
+docker compose up setup
+```
 
-# Configure — a guided wizard writes your .env (DB passwords, secrets, LLM provider).
-docker compose up setup            # then open http://localhost:3000
+**3.** Pull the images and launch:
 
-# Pull the images and start.
+```bash
 docker compose up -d
 ```
 
-Then open **https://localhost:8000**.
+Open **https://localhost:8000** — and start chatting with your data. 🎉
 
-<details>
-<summary><strong>🛠️ Developer setup — debug, LLM tracing, build the images yourself</strong></summary>
+## Developer setup
 
-<br>
-
-Clone the repo and build every image from source, with live reload, TEST mode (debug routes), and optional Langfuse tracing — all in `docker-compose.dev.yml`:
+Want to **debug**, turn on **LLM tracing**, or **build the images yourself**? Clone the repo and use `docker-compose.dev.yml` — it builds from source, with live reload and TEST mode (debug routes):
 
 ```bash
 git clone https://github.com/nveil-ai/nveil.git
 cd nveil
 
-# Configure → http://localhost:3000
-docker compose -f docker-compose.dev.yml up setup
-
-# Build & start → https://localhost:8000
-docker compose -f docker-compose.dev.yml --profile core up --build -d
+docker compose -f docker-compose.dev.yml up setup                       # configure → localhost:3000
+docker compose -f docker-compose.dev.yml --profile core up --build -d   # build & run → localhost:8000
 ```
 
-Optional LLM tracing with the bundled Langfuse:
+Optional LLM tracing with the bundled Langfuse (→ <http://localhost:3030>):
 
 ```bash
-docker compose -f docker-compose.dev.yml --profile core --profile tracing up -d   # → http://localhost:3030
+docker compose -f docker-compose.dev.yml --profile core --profile tracing up -d
 ```
-
-</details>
 
 ## Why NVEIL?
 
@@ -135,14 +130,6 @@ NVEIL is **dual-licensed**:
 
 - **Open source** — GNU **AGPL-3.0-or-later**: use, study, modify, and self-host freely. Note that AGPL §13 requires you to offer the corresponding source of any *modified* version you run as a network service. See [`LICENSE`](LICENSE).
 - **Commercial** — to embed NVEIL in a closed-source product, or run a modified hosted version without publishing your changes, a commercial license removes the copyleft obligations. See [`COMMERCIAL-LICENSE.md`](COMMERCIAL-LICENSE.md) — contact `pierre.jacquet@nveil.com`.
-
-## Contributors
-
-Thanks to everyone who helps make NVEIL better 💜
-
-<a href="https://github.com/nveil-ai/nveil/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=nveil-ai/nveil" alt="Contributors">
-</a>
 
 ---
 
