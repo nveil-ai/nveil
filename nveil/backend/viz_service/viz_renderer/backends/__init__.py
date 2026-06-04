@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2026 NVEIL SAS
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # Visualization backends for different rendering engines
 from .deckgl_backend import show_deckgl_viz
 from .echarts_backend import show_echarts_viz

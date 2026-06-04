@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2026 NVEIL SAS
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 airbnb:
   type: pandas.CSVDataset
   filepath: /root/DIVE/_guest/workspaces/shared/airbnb.csv
