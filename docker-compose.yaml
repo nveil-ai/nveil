@@ -49,6 +49,9 @@ x-llm-env: &llm-env
 # ============================================================================
 services:
   # ── TLS certificate init ──────────────────────────────────────────────────
+  # Kept inline (NOT a mounted script): the Community edition ships ONLY this
+  # compose file + pulled images, so there is no host file to mount. TODO: bake
+  # cert-gen into a prebuilt image (pass 5) to slim this block.
   init-certs:
     image: alpine/openssl
     profiles: ["core"]
@@ -116,11 +119,11 @@ services:
       # containers (derived from the compose project name; kept here).
       DOCKER_NETWORK: "${COMPOSE_PROJECT_NAME:-nveil-community}_default"
       CERT_VOLUME: "${COMPOSE_PROJECT_NAME:-nveil-community}_nveil-certs"
-      DIVE_VOLUME: "${COMPOSE_PROJECT_NAME:-nveil-community}_${DIVE_DATA_PATH:-nveil-dive-data}"
+      DIVE_VOLUME: "${COMPOSE_PROJECT_NAME:-nveil-community}_${DATA_PATH:-nveil-dive-data}"
     volumes:
     - /var/run/docker.sock:/var/run/docker.sock
     - ./nveil/backend:/nveil/backend
-    - "${DIVE_DATA_PATH:-nveil-dive-data}:/root/DIVE"
+    - "${DATA_PATH:-nveil-dive-data}:/root/DIVE"
     - ./scripts:/scripts:ro
     - nveil-certs:/certs:ro
     ports:
@@ -143,7 +146,7 @@ services:
       STATE_DATABASE_URL: "postgresql+asyncpg://ai_user:${AI_DB_PASSWORD}@postgres:5432/state"
     volumes:
     - ./nveil/backend:/nveil/backend
-    - "${DIVE_DATA_PATH:-nveil-dive-data}:/root/DIVE"
+    - "${DATA_PATH:-nveil-dive-data}:/root/DIVE"
     - ./scripts:/scripts:ro
     - nveil-certs:/certs:ro
     ports:
@@ -166,7 +169,7 @@ services:
       DATABASE_URL: "postgresql+asyncpg://${POSTGRES_USER:-nveil}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-nveil}"
     volumes:
     - ./nveil/backend:/nveil/backend
-    - "${DIVE_DATA_PATH:-nveil-dive-data}:/root/DIVE"
+    - "${DATA_PATH:-nveil-dive-data}:/root/DIVE"
     - nveil-certs:/certs:ro
     ports:
     - "8200:8200"

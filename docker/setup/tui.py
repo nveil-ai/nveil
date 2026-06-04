@@ -111,7 +111,7 @@ FIELD_DEFS = [
     FieldDef("DATABASE_SCHEMA", "Database schema", "nveilseption", validate_identifier, group="advanced"),
     FieldDef("SECRET_KEY", "JWT secret key (64+ hex)", "", validate_hex_key, group="advanced", secret=True, auto=True),
     FieldDef("ALGORITHM", "JWT algorithm", "HS512", validate_algorithm, group="advanced"),
-    FieldDef("DIVE_DATA_PATH", "Data storage path", "nveil-dive-data", validate_path, group="advanced"),
+    FieldDef("DATA_PATH", "Data storage path", "nveil-dive-data", validate_path, group="advanced"),
     # ── Langfuse (LLM tracing + prompt management) ─ optional, off by default
     FieldDef(
         "LANGFUSE_TRACING",

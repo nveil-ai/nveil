@@ -70,19 +70,19 @@ def _dive_field(value):
     v = html_escape(str(value))
     return (
         '<div class="field">'
-        '<label for="DIVE_DATA_PATH">Data storage path '
-        '<span class="key">DIVE_DATA_PATH</span></label>'
+        '<label for="DATA_PATH">Data storage path '
+        '<span class="key">DATA_PATH</span></label>'
         '<div class="dir-input-row">'
-        f'<input type="text" id="DIVE_DATA_PATH" name="DIVE_DATA_PATH" '
+        f'<input type="text" id="DATA_PATH" name="DATA_PATH" '
         f'value="{v}" autocomplete="off" spellcheck="false" '
         f'placeholder="Volume name or absolute path (e.g. /home/user/data, C:\\\\Users\\\\me\\\\data)" '
-        "onblur=\"validateField('DIVE_DATA_PATH')\">"
+        "onblur=\"validateField('DATA_PATH')\">"
         '<button type="button" class="btn-reset-path" onclick="resetDivePath()"'
         ' title="Reset to default Docker volume">Reset</button>'
         "</div>"
         '<p class="field-hint">Docker volume name (default) or absolute host path '
         "(Linux: /path, Windows: C:\\..., macOS: /Users/...).</p>"
-        '<div class="field-status" id="status-DIVE_DATA_PATH"></div>'
+        '<div class="field-status" id="status-DATA_PATH"></div>'
         "</div>"
     )
 
@@ -223,7 +223,7 @@ def _render_provider(prov, values):
 
 
 def _page1_fields(values):
-    return _dive_field(values.get("DIVE_DATA_PATH", "nveil-dive-data"))
+    return _dive_field(values.get("DATA_PATH", "nveil-dive-data"))
 
 
 def _page2_fields(values):
@@ -625,7 +625,7 @@ function isProviderEnabled(pid) {
 }
 
 var validators = {
-  DIVE_DATA_PATH: function(v) {
+  DATA_PATH: function(v) {
     if (!v || !v.trim()) return 'Required.';
     v = v.trim();
     // Absolute Linux/macOS path
@@ -735,7 +735,7 @@ var validators = {
 };
 
 var pageFields = [
-  ['DIVE_DATA_PATH'],
+  ['DATA_PATH'],
   [],
   ['POSTGRES_USER','POSTGRES_PASSWORD','POSTGRES_DB','AI_DB_PASSWORD',
    'DATABASE_SCHEMA','SECRET_KEY','ALGORITHM']
@@ -957,8 +957,8 @@ function toggleVis(btn) {
 }
 
 function resetDivePath() {
-  document.getElementById('DIVE_DATA_PATH').value = 'nveil-dive-data';
-  validateField('DIVE_DATA_PATH');
+  document.getElementById('DATA_PATH').value = 'nveil-dive-data';
+  validateField('DATA_PATH');
 }
 
 function testProvider(pid) {
@@ -1093,11 +1093,11 @@ _HEX_RE = re.compile(r"^[0-9a-fA-F]{64,}$")
 def validate_all(values):
     errors = {}
 
-    dive = values.get("DIVE_DATA_PATH", "").strip()
+    dive = values.get("DATA_PATH", "").strip()
     if not dive:
-        errors["DIVE_DATA_PATH"] = "Required."
+        errors["DATA_PATH"] = "Required."
     elif not (_ABS_LINUX_RE.match(dive) or _ABS_WIN_RE.match(dive) or _VOLUME_NAME_RE.match(dive)):
-        errors["DIVE_DATA_PATH"] = "Enter a valid absolute path or Docker volume name."
+        errors["DATA_PATH"] = "Enter a valid absolute path or Docker volume name."
 
     for key in ("POSTGRES_USER", "POSTGRES_DB", "DATABASE_SCHEMA"):
         v = values.get(key, "")
