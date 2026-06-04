@@ -88,8 +88,10 @@ services:
       SECRET_KEY: ${SECRET_KEY:-}
       ALGORITHM: ${ALGORITHM:-HS512}
 
-      # Only GOOGLE_API_KEY here — the server forwards it to the viz containers
-      # it spawns (Gemini-based viz). The full BYOK provider set lives on `ai`.
+      # TODO(team): GOOGLE_API_KEY is forwarded to the viz containers because viz
+      # runs choregraph's LLM-assisted nodes. Forwarding only Gemini is arbitrary
+      # and not clean — unify the ai<->viz LLM env (no per-service duplication),
+      # or drop the LLM invocation from viz entirely.
       GOOGLE_API_KEY: ${GOOGLE_API_KEY:-}
 
       APP_ENCRYPTION_KEY: ${APP_ENCRYPTION_KEY:-}

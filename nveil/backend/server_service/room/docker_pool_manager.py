@@ -300,6 +300,9 @@ class DockerVizPoolManager:
             "POOL_ID": pool_id,
             "GCP": "0",
             "TEST": "0",
+            # TODO(team): viz runs choregraph LLM-assisted nodes, so it needs the
+            # CONFIGURED LLM provider key. Forwarding only GOOGLE_API_KEY is
+            # arbitrary — unify the ai<->viz LLM env (no duplication) or drop LLM from viz.
             "GOOGLE_API_KEY": get_secret("GOOGLE_API_KEY", ""),
             "SSL_KEYFILE": "/certs/ma_cle_privee.key",
             "SSL_CERTFILE": "/certs/mon_certificat.crt",

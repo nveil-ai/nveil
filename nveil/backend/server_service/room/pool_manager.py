@@ -891,6 +891,8 @@ class VizPoolManager:
                         "fieldRef": {"fieldPath": "status.podIP"}
                     }},
                     {"name": "POOL_ID", "value": pool_id},
+                    # TODO(team): gemini-only LLM key forwarded to viz (choregraph LLM
+                    # nodes) — arbitrary; unify the ai<->viz LLM env or drop LLM from viz.
                     {"name": "GOOGLE_API_KEY", "value": get_secret("GOOGLE_API_KEY", "")},
                 ],
                 "ports": [
