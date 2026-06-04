@@ -12,14 +12,15 @@
 <p align="center">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-AGPL--3.0--or--later-blue" alt="License"></a>
   <a href="https://github.com/nveil-ai/nveil/stargazers"><img src="https://img.shields.io/github/stars/nveil-ai/nveil?style=flat&color=yellow" alt="Stars"></a>
+  <a href="https://github.com/nveil-ai/nveil/network/members"><img src="https://img.shields.io/github/forks/nveil-ai/nveil?style=flat" alt="Forks"></a>
+  <a href="https://github.com/nveil-ai/nveil/releases"><img src="https://img.shields.io/github/v/release/nveil-ai/nveil?sort=semver" alt="Release"></a>
+  <a href="https://github.com/nveil-ai/nveil/commits"><img src="https://img.shields.io/github/last-commit/nveil-ai/nveil" alt="Last commit"></a>
   <a href="https://github.com/nveil-ai/nveil/pulls"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen" alt="PRs welcome"></a>
   <a href="https://docs.nveil.com"><img src="https://img.shields.io/badge/docs-docs.nveil.com-blue" alt="Docs"></a>
-  <a href="https://nveil.com"><img src="https://img.shields.io/badge/website-nveil.com-black" alt="Website"></a>
 </p>
 
 <p align="center">
   <a href="#quick-start">Quick start</a> &bull;
-  <a href="#hosted-or-self-hosted">Hosted or self-hosted</a> &bull;
   <a href="#why-nveil">Why NVEIL</a> &bull;
   <a href="#use-it-from-your-code">From code</a> &bull;
   <a href="#contributing">Contributing</a> &bull;
@@ -30,28 +31,15 @@
 
 **NVEIL is the fast, conversational way to explore, process, and visualize data — any kind, any domain.** Point it at your data, say what you want in plain language, and NVEIL prepares it and turns it into interactive, production-ready visualizations. No plotting code, no dashboards to wire by hand.
 
-**Your raw data never leaves your infrastructure.** Only its *shape* — column names, types, aggregate statistics — is sent to the model. Everything else is processed and rendered where you run NVEIL.
+This is the **Community Edition** — the complete platform, free and open under the AGPL, that you self-host. **Don't want to run your own server?** The same platform is available hosted at **[nveil.com](https://nveil.com)** — a free tier plus paid plans, nothing to install.
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/nveil-ai/nveil-toolkit/main/assets/ai-chat.png" alt="NVEIL — conversational data exploration and visualization" width="820">
+  <img src="assets/hero.png" alt="NVEIL — conversational data exploration with an interactive 3D surface visualization" width="900">
 </p>
 
 <p align="center">
   <strong><a href="https://app.nveil.com">▶&nbsp; Try the live demo</a></strong> &nbsp;—&nbsp; no install, free to start.
 </p>
-
-## Hosted or self-hosted?
-
-Same platform — two ways to run it. Pick what fits you:
-
-|  | **Hosted** · [app.nveil.com](https://app.nveil.com) | **Self-hosted** · this repo |
-|---|---|---|
-| **Setup** | Nothing to install | Docker, ~5 minutes |
-| **Pricing** | Freemium — free tier + paid plans | Free & open source (AGPL) |
-| **Your data** | On NVEIL's cloud | On *your* infrastructure |
-| **Best for** | Getting started instantly | Privacy, control, customization |
-
-This **Community Edition** is the full platform, free under the AGPL, that you host yourself.
 
 ## Quick start
 
@@ -60,37 +48,41 @@ Self-host in a few minutes with **prebuilt images** — one Compose file, nothin
 > **Prerequisites:** Docker + Docker Compose, and one LLM provider — a Gemini / OpenAI / Anthropic / Mistral key, or a local model (Ollama, llama.cpp, any OpenAI-compatible endpoint).
 
 ```bash
-# 1. Download the Compose file — the only file you need.
+# Download the Compose file — the only file you need.
 curl -O https://raw.githubusercontent.com/nveil-ai/nveil/main/docker-compose.yaml
 
-# 2. Configure — a guided wizard writes your .env (DB passwords, secrets, LLM provider).
+# Configure — a guided wizard writes your .env (DB passwords, secrets, LLM provider).
 docker compose up setup            # then open http://localhost:3000
 
-# 3. Pull the images and start.
+# Pull the images and start.
 docker compose up -d
-
-# 4. Open https://localhost:8000
 ```
 
-That's it. Full guide: **[docs.nveil.com](https://docs.nveil.com)**.
+Then open **https://localhost:8000**. Full guide: **[docs.nveil.com](https://docs.nveil.com)**.
 
 <details>
-<summary><strong>🛠️ Prefer to build from source? (for contributors)</strong></summary>
+<summary><strong>🛠️ Developer setup — debug, LLM tracing, build the images yourself</strong></summary>
 
 <br>
 
-Builds every image from the local source, with live reload, TEST mode, and optional Langfuse tracing — all in `docker-compose.dev.yml`:
+Clone the repo and build every image from source, with live reload, TEST mode (debug routes), and optional Langfuse tracing — all in `docker-compose.dev.yml`:
 
 ```bash
 git clone https://github.com/nveil-ai/nveil.git
 cd nveil
 
-docker compose -f docker-compose.dev.yml up setup                     # configure → http://localhost:3000
-docker compose -f docker-compose.dev.yml --profile core up --build -d  # build & start → https://localhost:8000
+# Configure → http://localhost:3000
+docker compose -f docker-compose.dev.yml up setup
+
+# Build & start → https://localhost:8000
+docker compose -f docker-compose.dev.yml --profile core up --build -d
 ```
 
 Optional LLM tracing with the bundled Langfuse:
-`docker compose -f docker-compose.dev.yml --profile core --profile tracing up -d` → http://localhost:3030
+
+```bash
+docker compose -f docker-compose.dev.yml --profile core --profile tracing up -d   # → http://localhost:3030
+```
 
 </details>
 
@@ -116,7 +108,7 @@ A Python SDK, a `nveil` CLI, and an MCP server for agents (Claude Code, Cursor, 
 
 ## Contributing
 
-Contributions are welcome! The build-from-source setup above is all you need to get started. **[GitHub Discussions](https://github.com/nveil-ai/nveil/discussions)** and **[Issues](https://github.com/nveil-ai/nveil/issues)** are the place for questions, ideas, and bug reports.
+Contributions are welcome! The developer setup above is all you need to get started. **[GitHub Discussions](https://github.com/nveil-ai/nveil/discussions)** and **[Issues](https://github.com/nveil-ai/nveil/issues)** are the place for questions, ideas, and bug reports.
 
 Pull requests are accepted under the project's **[Contributor License Agreement](CLA.md)** — you sign it **once**, on your first PR, by posting a one-line comment (a bot walks you through it). The CLA is a **license grant, not an assignment**: you keep ownership of your contribution and your moral rights.
 
