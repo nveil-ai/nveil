@@ -27,7 +27,7 @@ shared HTTP client).
 
 | Component | Technology |
 |-----------|------------|
-| LLM providers | `google_genai`, `openai`, `anthropic`, `mistralai`, `ollama`, `llamacpp` — selected per request via SDK headers or `LLM_PROVIDER` env |
+| LLM providers | `google_genai`, `openai`, `anthropic`, `mistralai`, `ollama`, `llamacpp` — one provider, fixed server-side at startup from `.env` (no per-request override) |
 | Orchestration | LangGraph state machines, PostgreSQL checkpointer |
 | Constraint solving | Clingo ASP via DIVE (`dive.asp.ASPSolver`) |
 | Prompts | Langfuse (opt-in, self-hosted) with `prompt_templates.yaml` fallback |

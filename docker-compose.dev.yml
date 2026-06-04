@@ -1,0 +1,192 @@
+# SPDX-FileCopyrightText: 2026 NVEIL SAS
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+# ============================================================================
+#  NVEIL — Developer overlay
+# ============================================================================
+#  Applied EXPLICITLY on top of the base compose (never auto-merged):
+#     docker compose -f docker-compose.yaml -f docker-compose.dev.yml --profile core up
+#
+#  Adds developer-only bits the Community base never ships:
+#    • TEST mode (exposes /docs + debug routes) + auth test allowlist
+#    • the Langfuse LLM-tracing stack (optional, profile "tracing")
+#
+#  With LLM tracing (bundled Langfuse — UI http://localhost:3030,
+#  login dev@nveil.com / dev-password):
+#     docker compose -f docker-compose.yaml -f docker-compose.dev.yml \
+#       --profile core --profile tracing up
+#
+#  To use an EXISTING Langfuse instead of the bundled stack: set
+#  LANGFUSE_HOST / LANGFUSE_PUBLIC_KEY / LANGFUSE_SECRET_KEY in .env and DON'T
+#  pass --profile tracing.
+#
+#  NOTE: this file is a delta — run it WITH docker-compose.yaml (above), never
+#  alone (the server/ai entries here are overrides, not full definitions).
+# ============================================================================
+
+services:
+  # ── Dev overrides on the app services ───────────────────────────────────────
+  server:
+    environment:
+      TEST: "1"                          # exposes /docs + debug routes (dev only)
+      AUTH_TEST_EMAILS: ${AUTH_TEST_EMAILS:-}
+
+  ai:
+    # Reach the bundled Langfuse on Linux too (Docker Desktop provides it
+    # natively). Used only to reach Langfuse; harmless when tracing is off.
+    extra_hosts:
+    - "host.docker.internal:host-gateway"
+    environment:
+      LANGFUSE_TRACING: "${LANGFUSE_TRACING:-}"
+      LANGFUSE_HOST: "${LANGFUSE_HOST:-http://host.docker.internal:3030}"
+      LANGFUSE_PUBLIC_KEY: "${LANGFUSE_PUBLIC_KEY:-pk-lf-community-dev}"
+      LANGFUSE_SECRET_KEY: "${LANGFUSE_SECRET_KEY:-sk-lf-community-dev}"
+      LANGFUSE_PROMPT_LABEL: "${LANGFUSE_PROMPT_LABEL:-latest}"
+
+  # ── Langfuse (optional: LLM tracing + prompt management) ────────────────────
+  # All six services live under the "tracing" profile (off unless --profile
+  # tracing). The `ai` service reaches langfuse-web via the published port
+  # (host.docker.internal:3030). UI: http://localhost:3030 — dev@nveil.com /
+  # dev-password. See nveil/backend/docs/ai/tracing.md for the full guide.
+  langfuse-postgres:
+    image: postgres:17-alpine
+    profiles: ["tracing"]
+    environment:
+      POSTGRES_USER: ${LANGFUSE_DB_USER:-langfuse}
+      POSTGRES_PASSWORD: ${LANGFUSE_DB_PASSWORD:-langfuse}
+      POSTGRES_DB: langfuse
+    volumes:
+    - langfuse-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U langfuse"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  langfuse-clickhouse:
+    image: clickhouse/clickhouse-server
+    profiles: ["tracing"]
+    user: "101:101"
+    environment:
+      CLICKHOUSE_DB: default
+      CLICKHOUSE_USER: ${LANGFUSE_CLICKHOUSE_USER:-clickhouse}
+      CLICKHOUSE_PASSWORD: ${LANGFUSE_CLICKHOUSE_PASSWORD:-clickhouse}
+    volumes:
+    - langfuse-clickhouse-data:/var/lib/clickhouse
+    - langfuse-clickhouse-logs:/var/log/clickhouse-server
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://localhost:8123/ping ||
+        exit 1
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  langfuse-redis:
+    image: redis:7-alpine
+    profiles: ["tracing"]
+    command: --requirepass ${LANGFUSE_REDIS_PASSWORD:-myredissecret}
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 3s
+      timeout: 10s
+      retries: 10
+
+  langfuse-minio:
+    image: minio/minio
+    profiles: ["tracing"]
+    entrypoint: sh
+    command: -c 'mkdir -p /data/langfuse && minio server --address ":9000"
+      --console-address ":9001" /data'
+    environment:
+      MINIO_ROOT_USER: ${LANGFUSE_MINIO_USER:-minio}
+      MINIO_ROOT_PASSWORD: ${LANGFUSE_MINIO_PASSWORD:-miniosecret}
+    volumes:
+    - langfuse-minio-data:/data
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  langfuse-worker:
+    image: langfuse/langfuse-worker:3
+    profiles: ["tracing"]
+    restart: always
+    depends_on:
+      langfuse-postgres: {condition: service_healthy}
+      langfuse-clickhouse: {condition: service_healthy}
+      langfuse-redis: {condition: service_healthy}
+      langfuse-minio: {condition: service_healthy}
+    environment:
+      DATABASE_URL: "postgresql://${LANGFUSE_DB_USER:-langfuse}:${LANGFUSE_DB_PASSWORD:-langfuse}@langfuse-postgres:5432/langfuse"
+      SALT: ${LANGFUSE_SALT:-mysalt}
+      ENCRYPTION_KEY: ${LANGFUSE_ENCRYPTION_KEY:-a1b2c3d4e5f60718293a4b5c6d7e8f9012345678901234567890abcdef123456}
+      TELEMETRY_ENABLED: "false"
+      LANGFUSE_ENABLE_EXPERIMENTAL_FEATURES: "true"
+      CLICKHOUSE_URL: http://langfuse-clickhouse:8123
+      CLICKHOUSE_MIGRATION_URL: clickhouse://langfuse-clickhouse:9000
+      CLICKHOUSE_USER: ${LANGFUSE_CLICKHOUSE_USER:-clickhouse}
+      CLICKHOUSE_PASSWORD: ${LANGFUSE_CLICKHOUSE_PASSWORD:-clickhouse}
+      CLICKHOUSE_CLUSTER_ENABLED: "false"
+      REDIS_CONNECTION_STRING: "redis://default:${LANGFUSE_REDIS_PASSWORD:-myredissecret}@langfuse-redis:6379/0"
+      LANGFUSE_S3_EVENT_UPLOAD_BUCKET: langfuse
+      LANGFUSE_S3_EVENT_UPLOAD_REGION: auto
+      LANGFUSE_S3_EVENT_UPLOAD_ACCESS_KEY_ID: ${LANGFUSE_MINIO_USER:-minio}
+      LANGFUSE_S3_EVENT_UPLOAD_SECRET_ACCESS_KEY: ${LANGFUSE_MINIO_PASSWORD:-miniosecret}
+      LANGFUSE_S3_EVENT_UPLOAD_ENDPOINT: http://langfuse-minio:9000
+      LANGFUSE_S3_EVENT_UPLOAD_FORCE_PATH_STYLE: "true"
+      LANGFUSE_S3_EVENT_UPLOAD_PREFIX: events/
+      LANGFUSE_LOG_LEVEL: "${LANGFUSE_WEB_LOG_LEVEL:-warn}"
+
+  langfuse-web:
+    image: langfuse/langfuse:3
+    profiles: ["tracing"]
+    restart: always
+    depends_on:
+      langfuse-postgres: {condition: service_healthy}
+      langfuse-clickhouse: {condition: service_healthy}
+      langfuse-redis: {condition: service_healthy}
+      langfuse-minio: {condition: service_healthy}
+    ports:
+    - "3030:3000"
+    environment:
+      DATABASE_URL: "postgresql://${LANGFUSE_DB_USER:-langfuse}:${LANGFUSE_DB_PASSWORD:-langfuse}@langfuse-postgres:5432/langfuse"
+      SALT: ${LANGFUSE_SALT:-mysalt}
+      ENCRYPTION_KEY: ${LANGFUSE_ENCRYPTION_KEY:-a1b2c3d4e5f60718293a4b5c6d7e8f9012345678901234567890abcdef123456}
+      TELEMETRY_ENABLED: "false"
+      LANGFUSE_ENABLE_EXPERIMENTAL_FEATURES: "true"
+      CLICKHOUSE_URL: http://langfuse-clickhouse:8123
+      CLICKHOUSE_MIGRATION_URL: clickhouse://langfuse-clickhouse:9000
+      CLICKHOUSE_USER: ${LANGFUSE_CLICKHOUSE_USER:-clickhouse}
+      CLICKHOUSE_PASSWORD: ${LANGFUSE_CLICKHOUSE_PASSWORD:-clickhouse}
+      CLICKHOUSE_CLUSTER_ENABLED: "false"
+      REDIS_CONNECTION_STRING: "redis://default:${LANGFUSE_REDIS_PASSWORD:-myredissecret}@langfuse-redis:6379/0"
+      LANGFUSE_S3_EVENT_UPLOAD_BUCKET: langfuse
+      LANGFUSE_S3_EVENT_UPLOAD_REGION: auto
+      LANGFUSE_S3_EVENT_UPLOAD_ACCESS_KEY_ID: ${LANGFUSE_MINIO_USER:-minio}
+      LANGFUSE_S3_EVENT_UPLOAD_SECRET_ACCESS_KEY: ${LANGFUSE_MINIO_PASSWORD:-miniosecret}
+      LANGFUSE_S3_EVENT_UPLOAD_ENDPOINT: http://langfuse-minio:9000
+      LANGFUSE_S3_EVENT_UPLOAD_FORCE_PATH_STYLE: "true"
+      LANGFUSE_S3_EVENT_UPLOAD_PREFIX: events/
+      NEXTAUTH_URL: http://localhost:3030
+      NEXTAUTH_SECRET: ${LANGFUSE_NEXTAUTH_SECRET:-mysecret}
+      LANGFUSE_INIT_ORG_ID: nveil
+      LANGFUSE_INIT_ORG_NAME: Nveil
+      LANGFUSE_INIT_PROJECT_ID: ai
+      LANGFUSE_INIT_PROJECT_NAME: ai-service
+      LANGFUSE_INIT_PROJECT_PUBLIC_KEY: "${LANGFUSE_PUBLIC_KEY:-pk-lf-community-dev}"
+      LANGFUSE_INIT_PROJECT_SECRET_KEY: "${LANGFUSE_SECRET_KEY:-sk-lf-community-dev}"
+      LANGFUSE_INIT_USER_EMAIL: dev@nveil.com
+      LANGFUSE_INIT_USER_NAME: nveil
+      LANGFUSE_INIT_USER_PASSWORD: ${LANGFUSE_INIT_USER_PASSWORD:-dev-password}
+      LANGFUSE_LOG_LEVEL: "${LANGFUSE_WEB_LOG_LEVEL:-warn}"
+
+
+# ============================================================================
+#  Volumes (Langfuse stack)
+# ============================================================================
+volumes:
+  langfuse-postgres-data:
+  langfuse-clickhouse-data:
+  langfuse-clickhouse-logs:
+  langfuse-minio-data:

@@ -18,19 +18,19 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # --- Environment flags ---
+# LOCAL toggles local-dev shortcuts (e.g. debug error logs). Exported for
+# debug_errors. It no longer drives any path: the dev-container notion is gone
+# (code always lives at /nveil/backend in the image), so paths are absolute.
 LOCAL = os.getenv("LOCAL") == "1"
-
-# --- Base directory (dev container vs deployed) ---
-BASE_DIR = "/workspaces/app" if LOCAL else ""
 
 # --- VisuSpec XSD path (bundled inside the dive package) ---
 XSD_FILEPATH = str(get_xsd_path())
 
 # --- AI-service file paths ---
-FAQ_FILEPATH = f"{BASE_DIR}/nveil/backend/ai_service/faq_nveil.txt"
-PROMPT_TEMPLATES_PATH = f"{BASE_DIR}/nveil/backend/ai_service/llm_processing/prompt_templates.yaml"
+FAQ_FILEPATH = "/nveil/backend/ai_service/faq_nveil.txt"
+PROMPT_TEMPLATES_PATH = "/nveil/backend/ai_service/llm_processing/prompt_templates.yaml"
 TRANSFORMATION_FUNCTIONS_CATALOGUE_PATH = (
-    f"{BASE_DIR}/choregraph/src/choregraph/transformation_functions_catalogue.json"
+    "/choregraph/src/choregraph/transformation_functions_catalogue.json"
 )
 
 # --- Server connectivity ---
@@ -41,9 +41,9 @@ SERVER_PORT = 8000
 USE_YAML_SCHEMA = os.getenv("USE_YAML_SCHEMA", "1") == "1"
 
 # --- Debug output paths (auto-generated YAML schemas) ---
-VISUSPEC_YAML_DEBUG_PATH = f"{BASE_DIR}/nveil/backend/ai_service/llm_processing/visuspec_schema.debug.yaml"
-CHOREGRAPH_YAML_DEBUG_PATH = f"{BASE_DIR}/nveil/backend/ai_service/llm_processing/choregraph_schema.debug.yaml"
+VISUSPEC_YAML_DEBUG_PATH = "/nveil/backend/ai_service/llm_processing/visuspec_schema.debug.yaml"
+CHOREGRAPH_YAML_DEBUG_PATH = "/nveil/backend/ai_service/llm_processing/choregraph_schema.debug.yaml"
 
 # --- Debug error logs (append-mode, local only) ---
-VISUSPEC_ERRORS_DEBUG_PATH = f"{BASE_DIR}/nveil/backend/ai_service/llm_processing/visuspec_errors.debug.log"
-CHOREGRAPH_ERRORS_DEBUG_PATH = f"{BASE_DIR}/nveil/backend/ai_service/llm_processing/choregraph_errors.debug.log"
+VISUSPEC_ERRORS_DEBUG_PATH = "/nveil/backend/ai_service/llm_processing/visuspec_errors.debug.log"
+CHOREGRAPH_ERRORS_DEBUG_PATH = "/nveil/backend/ai_service/llm_processing/choregraph_errors.debug.log"

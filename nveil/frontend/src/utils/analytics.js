@@ -3,7 +3,8 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 // src/utils/analytics.js
-// All tracking is managed by Google Tag Manager (GTM-NNZ4RMHN).
+// All tracking is managed by Google Tag Manager (loaded from index.html only
+// when a VITE_GTM_ID is configured at build time — disabled in self-hosting).
 // This module only pushes semantic events to the dataLayer.
 // Pixel-specific code (GA4, Reddit, LinkedIn…) lives in GTM, not here.
 

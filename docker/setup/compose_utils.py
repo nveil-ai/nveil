@@ -33,7 +33,7 @@ ENV_KEYS = [
     "OLLAMA_BASE_URL", "OLLAMA_MODEL",
     "LLAMACPP_BASE_URL", "LLAMACPP_MODEL",
     "OPENAI_COMPAT_BASE_URL", "OPENAI_COMPAT_API_KEY", "OPENAI_COMPAT_MODEL",
-    "DIVE_DATA_PATH",
+    "DATA_PATH",
     *LANGFUSE_KEYS,
 ]
 
@@ -42,7 +42,7 @@ DEFAULTS = {
     "POSTGRES_DB": "nveil",
     "DATABASE_SCHEMA": "nveilseption",
     "ALGORITHM": "HS512",
-    "DIVE_DATA_PATH": "nveil-dive-data",
+    "DATA_PATH": "nveil-data",
 }
 
 

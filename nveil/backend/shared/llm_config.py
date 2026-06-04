@@ -70,8 +70,8 @@ LOCAL_API_KEY_SENTINEL: str = "local-provider-no-auth"
 # passes the smoke-test at startup. Adjust here — and only here — to
 # change the global preference. Commercial providers come first, then the
 # local OpenAI-compatible ones, and finally the generic OpenAI-compatible
-# endpoint (custom base_url) as a catch-all. Any provider here can also be
-# selected per-request through SDK X-Nveil-LLM-* headers regardless of order.
+# endpoint (custom base_url) as a catch-all. The selected provider is
+# server-wide and fixed at startup — there is no per-request override.
 PROVIDER_BOOT_ORDER: tuple[str, ...] = (
     "google_genai", "openai", "anthropic", "mistralai", "ollama", "llamacpp",
     "openai_compatible",

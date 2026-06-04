@@ -21,6 +21,15 @@ RUN python3 -m venv /opt/venv \
 
 ENV PATH="/opt/venv/bin:$PATH"
 ENV PYTHONUNBUFFERED=1
+# Runtime defaults baked into the image (formerly the docker-compose
+# x-backend-env anchor). Container/compose/K8s env still overrides these.
+# ENV + GCP are intentionally NOT set — their code defaults are already
+# "local"/"0"; only LOCAL=1 is a non-default (Community runs local-dev mode).
+ENV PYTHONWARNINGS="ignore:::requests"
+ENV KEDRO_LOGGING_CONFIG="/nveil/backend/tools/logger/logging_config.yaml"
+ENV WATCHFILES_FORCE_POLLING="true"
+ENV PYTHONPATH="/nveil/backend:/nveil/backend/tools/logger"
+ENV LOCAL="1"
 
 # ── File Service ────────────────────────────────────────────────────────────
 FROM base
@@ -49,6 +58,10 @@ RUN chmod +x /entrypoint.sh
 
 COPY ./nveil/backend/file_service/ /nveil/backend/file_service/
 COPY ./nveil/backend/shared/ /nveil/backend/shared/
+
+# Service-discovery defaults (formerly docker-compose env); overridable.
+ENV AI_HOST="ai"
+ENV AI_PORT="8100"
 
 EXPOSE 8200
 
