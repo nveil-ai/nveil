@@ -58,7 +58,7 @@ docker compose up setup            # then open http://localhost:3000
 docker compose up -d
 ```
 
-Then open **https://localhost:8000**. Full guide: **[docs.nveil.com](https://docs.nveil.com)**.
+Then open **https://localhost:8000**.
 
 <details>
 <summary><strong>🛠️ Developer setup — debug, LLM tracing, build the images yourself</strong></summary>
