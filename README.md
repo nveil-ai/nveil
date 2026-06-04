@@ -49,35 +49,42 @@ NVEIL runs on **Docker**. There are two ways to get it going.
 
 ### 🟢 Community setup — prebuilt images *(lightweight, recommended)*
 
-The fast path: pull prebuilt images, configure once, run. No build, no dev tooling.
+The fast path: download one Compose file, configure once, pull the images, run. No build, no source checkout, no dev tooling.
 
 ```bash
-# Coming with the public launch — a one-command setup with prebuilt images.
-# See https://docs.nveil.com/getting-started for the up-to-date instructions.
-```
+# 1. Download the Compose file — the only file you need.
+curl -O https://raw.githubusercontent.com/nveil-ai/nveil/main/docker-compose.yaml
 
-> 🚧 *Prebuilt images and the lightweight Compose file are being finalized — this section will carry the exact commands at launch.*
+# 2. Configure — a guided wizard writes your .env (DB passwords, secrets, LLM provider).
+docker compose up setup                 # then open http://localhost:3000
+
+# 3. Pull the prebuilt images and start.
+docker compose up -d
+
+# 4. Open the app.
+#    https://localhost:8000
+```
 
 ### 🛠️ Developer setup — build from source
 
-For contributing or running the full stack (build step, optional Langfuse tracing, tests):
+For contributing or running the full stack (builds from source, live reload, TEST mode, optional Langfuse tracing) — everything lives in `docker-compose.dev.yml`:
 
 ```bash
 git clone https://github.com/nveil-ai/nveil.git
 cd nveil
 
 # 1. Configure — a guided wizard writes your .env (DB passwords, secrets, LLM provider).
-docker compose up setup                 # then open http://localhost:3000
+docker compose -f docker-compose.dev.yml up setup      # then open http://localhost:3000
 
-# 2. Build & start the platform.
-docker compose up --build -d
+# 2. Build & start from source.
+docker compose -f docker-compose.dev.yml --profile core up --build -d
 
 # 3. Open the app.
 #    https://localhost:8000
 ```
 
-> **Optional — LLM tracing** with Langfuse (separate, opt-in):
-> `docker compose -p langfuse --profile tracing up -d` → http://localhost:3030
+> **Optional — LLM tracing** with the bundled Langfuse (opt-in):
+> `docker compose -f docker-compose.dev.yml --profile core --profile tracing up -d` → http://localhost:3030
 
 Full guide: **[docs.nveil.com](https://docs.nveil.com)**.
 

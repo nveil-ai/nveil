@@ -29,6 +29,9 @@ set -euo pipefail
 cd "$(dirname "$0")/.."   # repo root — the build context for every image
 
 REGISTRY="${REGISTRY:-ghcr.io/nveil-ai}"
+# Links the published packages to the GitHub repo (GHCR auto-links on push), so
+# the repo's Actions GITHUB_TOKEN can push and the package inherits its visibility.
+IMAGE_SOURCE="${IMAGE_SOURCE:-https://github.com/nveil-ai/nveil}"
 PLATFORM="${PLATFORM:-linux/amd64}"
 PUSH="${PUSH:-0}"
 VITE_GTM_ID="${VITE_GTM_ID:-}"
@@ -63,6 +66,7 @@ for entry in "${ALL_SERVICES[@]}"; do
     -f "$dockerfile" \
     -t "$ref:$VERSION" \
     -t "$ref:latest" \
+    --label "org.opencontainers.image.source=$IMAGE_SOURCE" \
     "${build_args[@]}" \
     .
 
