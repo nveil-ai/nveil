@@ -131,6 +131,14 @@ NVEIL is **dual-licensed**:
 - **Open source** — GNU **AGPL-3.0-or-later**: use, study, modify, and self-host freely. Note that AGPL §13 requires you to offer the corresponding source of any *modified* version you run as a network service. See [`LICENSE`](LICENSE).
 - **Commercial** — to embed NVEIL in a closed-source product, or run a modified hosted version without publishing your changes, a commercial license removes the copyleft obligations. See [`COMMERCIAL-LICENSE.md`](COMMERCIAL-LICENSE.md) — contact `pierre.jacquet@nveil.com`.
 
+## Contributors
+
+Thanks to everyone who helps make NVEIL better 💜
+
+<a href="https://github.com/nveil-ai/nveil/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=nveil-ai/nveil" alt="Contributors">
+</a>
+
 ---
 
 <p align="center">
