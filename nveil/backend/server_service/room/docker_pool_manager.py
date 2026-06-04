@@ -54,9 +54,14 @@ class DockerVizPoolManager:
             self._is_wsl2 = False
 
         self.viz_image = cfg.get("VIZ_IMAGE", "nveil_visualization:latest")
-        self.docker_network = cfg.get("DOCKER_NETWORK", "app_default")
+        self.docker_network = cfg.get("DOCKER_NETWORK", "nveil_default")
+        # Docker Desktop groups containers by com.docker.compose.project.
+        # Spawned viz containers must share the *running* compose project
+        # (derived from the default network <project>_default) rather than
+        # the project baked into the image at build time.
+        self.compose_project = self.docker_network.removesuffix("_default")
         self.server_host = cfg.get("SERVER_INTERNAL_HOST", "server")
-        self.dive_volume = cfg.get("DIVE_VOLUME", "app_nveil-dive-data")
+        self.dive_volume = cfg.get("DIVE_VOLUME", "nveil_nveil-data")
         self.cert_volume = cfg.get("CERT_VOLUME", "")
         self.cert_host_dir = cfg.get("CERT_HOST_DIR", "")
         self.repo_host_dir = cfg.get("REPO_HOST_DIR", "")
@@ -385,7 +390,9 @@ class DockerVizPoolManager:
                         devices=gpu_devices if use_gpu else None,
                     ),
                     networking_config=networking_config,
-                    labels={CONTAINER_LABEL: "true"},
+                    labels={CONTAINER_LABEL: "true",
+                            "com.docker.compose.project": self.compose_project,
+                            "com.docker.compose.service": "viz"},
                 )
                 self.client.api.start(ctr["Id"])
                 return ctr

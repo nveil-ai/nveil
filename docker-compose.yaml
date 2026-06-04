@@ -26,6 +26,9 @@
 # ============================================================================
 
 
+name: nveil
+
+
 # ── Shared anchor: LLM provider env (BYOK) ──────────────────────────────────
 # Referenced by `ai` (LLM processing) and `server` (which forwards the set to
 # the viz containers it spawns — choregraph LLM nodes pick the provider at
@@ -117,9 +120,9 @@ services:
 
       # Project-scoped Docker resource names the server needs to spawn viz
       # containers (derived from the compose project name; kept here).
-      DOCKER_NETWORK: "${COMPOSE_PROJECT_NAME:-nveil-community}_default"
-      CERT_VOLUME: "${COMPOSE_PROJECT_NAME:-nveil-community}_nveil-certs"
-      DIVE_VOLUME: "${COMPOSE_PROJECT_NAME:-nveil-community}_${DATA_PATH:-nveil-data}"
+      DOCKER_NETWORK: "${COMPOSE_PROJECT_NAME:-nveil}_default"
+      CERT_VOLUME: "${COMPOSE_PROJECT_NAME:-nveil}_nveil-certs"
+      DIVE_VOLUME: "${COMPOSE_PROJECT_NAME:-nveil}_${DATA_PATH:-nveil-data}"
     volumes:
     - /var/run/docker.sock:/var/run/docker.sock
     - ./nveil/backend:/nveil/backend
