@@ -5,7 +5,6 @@
 
 import asyncio
 import os
-from utils import get_secret
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from typing import Optional
@@ -891,9 +890,12 @@ class VizPoolManager:
                         "fieldRef": {"fieldPath": "status.podIP"}
                     }},
                     {"name": "POOL_ID", "value": pool_id},
-                    # TODO(team): gemini-only LLM key forwarded to viz (choregraph LLM
-                    # nodes) — arbitrary; unify the ai<->viz LLM env or drop LLM from viz.
-                    {"name": "GOOGLE_API_KEY", "value": get_secret("GOOGLE_API_KEY", "")},
+                    # No LLM provider key here on purpose: viz never calls an LLM.
+                    # The only choregraph LLM node (tidy_excel_data) runs server-side
+                    # at upload via ai_service /ai/preprocess_excel; link_to_room
+                    # refuses to link an Excel until its parquets exist, so the
+                    # pipeline viz executes only ever consumes already-tidied data.
+                    # Credentials stay confined to ai_service — do NOT add keys here.
                 ],
                 "ports": [
                     {"containerPort": 1024, "name": "cmd"},

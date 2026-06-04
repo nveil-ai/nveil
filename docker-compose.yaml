@@ -28,9 +28,11 @@ name: nveil
 
 
 # ── Shared anchor: LLM provider env (BYOK) ──────────────────────────────────
-# Referenced by `ai` (LLM processing) and `server` (which forwards the set to
-# the viz containers it spawns — choregraph LLM nodes pick the provider at
-# runtime). TODO(team): drop the viz forward once LLM is removed from viz.
+# Referenced ONLY by `ai`. Provider credentials are confined to the ai_service:
+# it owns every LLM call (chat, pipeline planning, Excel tidying via
+# /ai/preprocess_excel, CSV characterization via /ai/characterize_csv). Neither
+# `server`, `file`, nor the spawned viz containers run an LLM — do NOT add this
+# anchor to them.
 x-llm-env: &llm-env
   GOOGLE_API_KEY: ${GOOGLE_API_KEY:-}
   OPENAI_API_KEY: ${OPENAI_API_KEY:-}
@@ -111,10 +113,6 @@ services:
       DATABASE_URL: "postgresql+asyncpg://${POSTGRES_USER:-nveil}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-nveil}"
       SECRET_KEY: ${SECRET_KEY:-}
       ALGORITHM: ${ALGORITHM:-HS512}
-
-      # Full BYOK LLM set, forwarded to the viz containers the server spawns
-      # (choregraph LLM nodes pick the provider at runtime). See x-llm-env.
-      <<: *llm-env
 
       APP_ENCRYPTION_KEY: ${APP_ENCRYPTION_KEY:-}
 
