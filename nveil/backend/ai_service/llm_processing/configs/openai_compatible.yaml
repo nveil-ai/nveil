@@ -43,7 +43,3 @@ nodes:
 
   feedback:
     temperature: 0.7
-
-  csv_characterization:
-    inherits: minimal
-    temperature: 0

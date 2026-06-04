@@ -4,17 +4,6 @@
 # SPDX-FileContributor: Guillaume Franque
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
-csv_characterization:
-  type: chat
-  messages:
-  - role: system
-    content: |
-      You are an assistant helping to determine the structure of a CSV file. You will be provided with first lines of the file, and your task is to identify key characteristics such as the presence of a header, the column separator, and the record separator.
-      You will use the escape sequence with double backslash to describe the record separator.
-  - role: user
-    content: |
-      Here is the sample CSV content:
-      {{sample}}
 entrypoint_classification:
   type: chat
   messages:

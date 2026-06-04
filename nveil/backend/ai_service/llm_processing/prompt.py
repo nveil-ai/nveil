@@ -560,13 +560,6 @@ def _build_question_answer_block(user_question: dict) -> str:
     return core + additions
 
 
-class CSVCharacterization(Prompt):
-    LANGFUSE_NAME = "csv_characterization"
-
-    def prepare_vars(self, sample: str, **_) -> dict:
-        return {"sample": sample}
-
-
 class SampleCreation(Prompt):
     LANGFUSE_NAME = "sample_creation"
 

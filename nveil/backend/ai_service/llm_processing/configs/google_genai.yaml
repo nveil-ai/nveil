@@ -43,7 +43,3 @@ nodes:
     temperature: 0.7
     thinking_level: low
     include_thoughts: true
-
-  csv_characterization:
-    inherits: minimal
-    temperature: 0

@@ -46,7 +46,3 @@ nodes:
     thinking:
       type: enabled
       budget_tokens: 1024
-
-  csv_characterization:
-    inherits: minimal
-    temperature: 0
