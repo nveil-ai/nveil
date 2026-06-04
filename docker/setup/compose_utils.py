@@ -42,7 +42,7 @@ DEFAULTS = {
     "POSTGRES_DB": "nveil",
     "DATABASE_SCHEMA": "nveilseption",
     "ALGORITHM": "HS512",
-    "DATA_PATH": "nveil-dive-data",
+    "DATA_PATH": "nveil-data",
 }
 
 

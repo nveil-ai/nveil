@@ -223,7 +223,7 @@ def _render_provider(prov, values):
 
 
 def _page1_fields(values):
-    return _dive_field(values.get("DATA_PATH", "nveil-dive-data"))
+    return _dive_field(values.get("DATA_PATH", "nveil-data"))
 
 
 def _page2_fields(values):
@@ -957,7 +957,7 @@ function toggleVis(btn) {
 }
 
 function resetDivePath() {
-  document.getElementById('DATA_PATH').value = 'nveil-dive-data';
+  document.getElementById('DATA_PATH').value = 'nveil-data';
   validateField('DATA_PATH');
 }
 
