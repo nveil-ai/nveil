@@ -26,6 +26,24 @@
 # ============================================================================
 
 
+# ── Shared anchor: LLM provider env (BYOK) ──────────────────────────────────
+# Referenced by `ai` (LLM processing) and `server` (which forwards the set to
+# the viz containers it spawns — choregraph LLM nodes pick the provider at
+# runtime). TODO(team): drop the viz forward once LLM is removed from viz.
+x-llm-env: &llm-env
+  GOOGLE_API_KEY: ${GOOGLE_API_KEY:-}
+  OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+  ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+  MISTRAL_API_KEY: ${MISTRAL_API_KEY:-}
+  OLLAMA_BASE_URL: ${OLLAMA_BASE_URL:-}
+  OLLAMA_MODEL: ${OLLAMA_MODEL:-}
+  LLAMACPP_BASE_URL: ${LLAMACPP_BASE_URL:-}
+  LLAMACPP_MODEL: ${LLAMACPP_MODEL:-}
+  OPENAI_COMPAT_BASE_URL: ${OPENAI_COMPAT_BASE_URL:-}
+  OPENAI_COMPAT_API_KEY: ${OPENAI_COMPAT_API_KEY:-}
+  OPENAI_COMPAT_MODEL: ${OPENAI_COMPAT_MODEL:-}
+
+
 # ============================================================================
 #  Services
 # ============================================================================
@@ -88,11 +106,9 @@ services:
       SECRET_KEY: ${SECRET_KEY:-}
       ALGORITHM: ${ALGORITHM:-HS512}
 
-      # TODO(team): GOOGLE_API_KEY is forwarded to the viz containers because viz
-      # runs choregraph's LLM-assisted nodes. Forwarding only Gemini is arbitrary
-      # and not clean — unify the ai<->viz LLM env (no per-service duplication),
-      # or drop the LLM invocation from viz entirely.
-      GOOGLE_API_KEY: ${GOOGLE_API_KEY:-}
+      # Full BYOK LLM set, forwarded to the viz containers the server spawns
+      # (choregraph LLM nodes pick the provider at runtime). See x-llm-env.
+      <<: *llm-env
 
       APP_ENCRYPTION_KEY: ${APP_ENCRYPTION_KEY:-}
 
@@ -123,18 +139,7 @@ services:
       dockerfile: docker/ai/dockerfile
     profiles: ["core"]
     environment:
-      # ── LLM providers (BYOK) — mirror of `server`. ────────────────────
-      GOOGLE_API_KEY: ${GOOGLE_API_KEY:-}
-      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
-      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
-      MISTRAL_API_KEY: ${MISTRAL_API_KEY:-}
-      OLLAMA_BASE_URL: ${OLLAMA_BASE_URL:-}
-      OLLAMA_MODEL: ${OLLAMA_MODEL:-}
-      LLAMACPP_BASE_URL: ${LLAMACPP_BASE_URL:-}
-      LLAMACPP_MODEL: ${LLAMACPP_MODEL:-}
-      OPENAI_COMPAT_BASE_URL: ${OPENAI_COMPAT_BASE_URL:-}
-      OPENAI_COMPAT_API_KEY: ${OPENAI_COMPAT_API_KEY:-}
-      OPENAI_COMPAT_MODEL: ${OPENAI_COMPAT_MODEL:-}
+      <<: *llm-env
       STATE_DATABASE_URL: "postgresql+asyncpg://ai_user:${AI_DB_PASSWORD}@postgres:5432/state"
     volumes:
     - ./nveil/backend:/nveil/backend
