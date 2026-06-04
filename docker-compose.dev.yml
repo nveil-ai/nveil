@@ -1,47 +1,224 @@
 # SPDX-FileCopyrightText: 2026 NVEIL SAS
+# SPDX-FileContributor: Guillaume Franque
+# SPDX-FileContributor: Clément Baraille
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 # ============================================================================
-#  NVEIL — Developer overlay
+#  NVEIL — Developer edition (build from source)
 # ============================================================================
-#  Applied EXPLICITLY on top of the base compose (never auto-merged):
-#     docker compose -f docker-compose.yaml -f docker-compose.dev.yml --profile core up
 #
-#  Adds developer-only bits the Community base never ships:
-#    • TEST mode (exposes /docs + debug routes) + auth test allowlist
-#    • the Langfuse LLM-tracing stack (optional, profile "tracing")
+#  Standalone dev stack: builds every image from the local source and mounts
+#  ./nveil/backend for live reload. Use this when working ON Nveil — end users
+#  use docker-compose.yaml (prebuilt images from ghcr.io, no source).
 #
-#  With LLM tracing (bundled Langfuse — UI http://localhost:3030,
-#  login dev@nveil.com / dev-password):
-#     docker compose -f docker-compose.yaml -f docker-compose.dev.yml \
-#       --profile core --profile tracing up
+#  Quick start:
+#    docker compose -f docker-compose.dev.yml up setup            (configure → .env)
+#    docker compose -f docker-compose.dev.yml --profile core up --build -d
+#    Open https://localhost:8000
 #
-#  To use an EXISTING Langfuse instead of the bundled stack: set
-#  LANGFUSE_HOST / LANGFUSE_PUBLIC_KEY / LANGFUSE_SECRET_KEY in .env and DON'T
-#  pass --profile tracing.
+#  Adds over the shipped stack: TEST mode (/docs + debug routes), an auth test
+#  allowlist, and an optional bundled Langfuse LLM-tracing stack (--profile
+#  tracing, UI http://localhost:3030 — dev@nveil.com / dev-password). To use an
+#  existing Langfuse instead, set LANGFUSE_HOST/PUBLIC_KEY/SECRET_KEY in .env
+#  and skip --profile tracing.
 #
-#  NOTE: this file is a delta — run it WITH docker-compose.yaml (above), never
-#  alone (the server/ai entries here are overrides, not full definitions).
 # ============================================================================
 
+
+name: nveil
+
+
+# ── Shared anchor: LLM provider env (BYOK) ──────────────────────────────────
+# Referenced by `ai` (LLM processing) and `server` (which forwards the set to
+# the viz containers it spawns — choregraph LLM nodes pick the provider at
+# runtime). TODO(team): drop the viz forward once LLM is removed from viz.
+x-llm-env: &llm-env
+  GOOGLE_API_KEY: ${GOOGLE_API_KEY:-}
+  OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+  ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+  MISTRAL_API_KEY: ${MISTRAL_API_KEY:-}
+  OLLAMA_BASE_URL: ${OLLAMA_BASE_URL:-}
+  OLLAMA_MODEL: ${OLLAMA_MODEL:-}
+  LLAMACPP_BASE_URL: ${LLAMACPP_BASE_URL:-}
+  LLAMACPP_MODEL: ${LLAMACPP_MODEL:-}
+  OPENAI_COMPAT_BASE_URL: ${OPENAI_COMPAT_BASE_URL:-}
+  OPENAI_COMPAT_API_KEY: ${OPENAI_COMPAT_API_KEY:-}
+  OPENAI_COMPAT_MODEL: ${OPENAI_COMPAT_MODEL:-}
+
+
+# ============================================================================
+#  Services
+# ============================================================================
 services:
-  # ── Dev overrides on the app services ───────────────────────────────────────
-  server:
-    environment:
-      TEST: "1"                          # exposes /docs + debug routes (dev only)
-      AUTH_TEST_EMAILS: ${AUTH_TEST_EMAILS:-}
+  # ── TLS certificate init ──────────────────────────────────────────────────
+  # One-shot: generates a unique self-signed cert into the shared volume on
+  # first start. Inline (public alpine/openssl image), unique per install.
+  init-certs:
+    image: alpine/openssl
+    profiles: ["core"]
+    entrypoint: ["sh", "-c"]
+    command:
+    - |
+      if [ -f /certs/ma_cle_privee.key ] && [ -f /certs/mon_certificat.crt ]; then
+        echo "[init-certs] Certificates already exist — skipping."
+        exit 0
+      fi
+      echo "[init-certs] Generating self-signed TLS certificate..."
+      openssl req -x509 -newkey rsa:2048 -nodes \
+        -keyout /certs/ma_cle_privee.key \
+        -out /certs/mon_certificat.crt \
+        -days 3650 -subj "/CN=localhost" \
+        -addext "subjectAltName=DNS:localhost,DNS:server,DNS:ai,DNS:file,DNS:viz,DNS:*.viz-service.svc.cluster.local,IP:127.0.0.1" \
+        2>/dev/null
+      chmod 644 /certs/mon_certificat.crt
+      chmod 600 /certs/ma_cle_privee.key
+      echo "[init-certs] Done."
+    volumes:
+    - nveil-certs:/certs
 
+
+  # ── PostgreSQL ─────────────────────────────────────────────────────────────
+  # ai_user role + `state` database created on first init by the SQL injected
+  # via the `init-ai-db` config below (no host file, no extra container).
+  postgres:
+    image: postgres:17-alpine
+    profiles: ["core"]
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-nveil}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-}
+      POSTGRES_DB: ${POSTGRES_DB:-nveil}
+    volumes:
+    - postgres-data:/var/lib/postgresql/data
+    configs:
+    - source: init-ai-db
+      target: /docker-entrypoint-initdb.d/init-ai-db.sql
+    ports:
+    - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U nveil -d nveil"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+
+  # ── Server (API + frontend) ───────────────────────────────────────────────
+  server:
+    build:
+      context: .
+      dockerfile: docker/server/dockerfile
+    profiles: ["core"]
+    environment:
+      DATABASE_SCHEMA: ${DATABASE_SCHEMA:-nveilseption}
+      DATABASE_URL: "postgresql+asyncpg://${POSTGRES_USER:-nveil}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-nveil}"
+      SECRET_KEY: ${SECRET_KEY:-}
+      ALGORITHM: ${ALGORITHM:-HS512}
+
+      # Full BYOK LLM set, forwarded to the viz containers the server spawns
+      # (choregraph LLM nodes pick the provider at runtime). See x-llm-env.
+      <<: *llm-env
+
+      APP_ENCRYPTION_KEY: ${APP_ENCRYPTION_KEY:-}
+
+      # Project-scoped Docker resource names the server needs to spawn viz
+      # containers (derived from the compose project name; kept here).
+      DOCKER_NETWORK: "${COMPOSE_PROJECT_NAME:-nveil}_default"
+      CERT_VOLUME: "${COMPOSE_PROJECT_NAME:-nveil}_nveil-certs"
+      DIVE_VOLUME: "${COMPOSE_PROJECT_NAME:-nveil}_${DATA_PATH:-nveil-data}"
+
+      # ── Dev only ──────────────────────────────────────────────────────
+      TEST: "1"                          # exposes /docs + debug routes
+      AUTH_TEST_EMAILS: ${AUTH_TEST_EMAILS:-}
+    volumes:
+    - /var/run/docker.sock:/var/run/docker.sock
+    - ./nveil/backend:/nveil/backend
+    - "${DATA_PATH:-nveil-data}:/root/DIVE"
+    - nveil-certs:/certs:ro
+    ports:
+    - "8000:8000"
+    depends_on:
+      init-certs:
+        condition: service_completed_successfully
+      postgres:
+        condition: service_healthy
+
+
+  # ── AI Service ─────────────────────────────────────────────────────────────
   ai:
+    build:
+      context: .
+      dockerfile: docker/ai/dockerfile
+    profiles: ["core"]
     # Reach the bundled Langfuse on Linux too (Docker Desktop provides it
     # natively). Used only to reach Langfuse; harmless when tracing is off.
     extra_hosts:
     - "host.docker.internal:host-gateway"
     environment:
+      <<: *llm-env
+      STATE_DATABASE_URL: "postgresql+asyncpg://ai_user:${AI_DB_PASSWORD}@postgres:5432/state"
+
+      # ── Dev only: LLM tracing (inert unless LANGFUSE_TRACING=1) ────────
       LANGFUSE_TRACING: "${LANGFUSE_TRACING:-}"
       LANGFUSE_HOST: "${LANGFUSE_HOST:-http://host.docker.internal:3030}"
       LANGFUSE_PUBLIC_KEY: "${LANGFUSE_PUBLIC_KEY:-pk-lf-community-dev}"
       LANGFUSE_SECRET_KEY: "${LANGFUSE_SECRET_KEY:-sk-lf-community-dev}"
       LANGFUSE_PROMPT_LABEL: "${LANGFUSE_PROMPT_LABEL:-latest}"
+    volumes:
+    - ./nveil/backend:/nveil/backend
+    - "${DATA_PATH:-nveil-data}:/root/DIVE"
+    - nveil-certs:/certs:ro
+    ports:
+    - "8100:8100"
+    depends_on:
+      init-certs:
+        condition: service_completed_successfully
+      postgres:
+        condition: service_healthy
+
+
+  # ── File Service ───────────────────────────────────────────────────────────
+  file:
+    build:
+      context: .
+      dockerfile: docker/file/dockerfile
+    profiles: ["core"]
+    environment:
+      DATABASE_SCHEMA: ${DATABASE_SCHEMA:-nveilseption}
+      DATABASE_URL: "postgresql+asyncpg://${POSTGRES_USER:-nveil}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-nveil}"
+    volumes:
+    - ./nveil/backend:/nveil/backend
+    - "${DATA_PATH:-nveil-data}:/root/DIVE"
+    - nveil-certs:/certs:ro
+    ports:
+    - "8200:8200"
+    depends_on:
+      init-certs:
+        condition: service_completed_successfully
+      postgres:
+        condition: service_healthy
+
+
+  # ── Visualization ──────────────────────────────────────────────────────────
+  viz:
+    build:
+      context: .
+      dockerfile: docker/visualization/dockerfile
+    image: nveil_visualization:latest
+    profiles: ["core"]
+    deploy:
+      replicas: 0
+
+
+  # ── Setup Wizard ────────────────────────────────────────────────────────────
+  # Run separately:  docker compose -f docker-compose.dev.yml up setup
+  setup:
+    build:
+      context: .
+      dockerfile: docker/setup/Dockerfile
+    ports:
+    - "3000:3000"
+    volumes:
+    - .:/workspace
+
 
   # ── Langfuse (optional: LLM tracing + prompt management) ────────────────────
   # All six services live under the "tracing" profile (off unless --profile
@@ -183,10 +360,26 @@ services:
 
 
 # ============================================================================
-#  Volumes (Langfuse stack)
+#  Volumes
 # ============================================================================
 volumes:
+  postgres-data:
+  nveil-certs:
+  nveil-data:
   langfuse-postgres-data:
   langfuse-clickhouse-data:
   langfuse-clickhouse-logs:
   langfuse-minio-data:
+
+
+# ============================================================================
+#  Configs — inline content injected into containers (no host files)
+# ============================================================================
+configs:
+  # Runs once on first postgres init: creates the ai_user role and the `state`
+  # database used by the AI service.
+  init-ai-db:
+    content: |
+      CREATE USER ai_user WITH PASSWORD '${AI_DB_PASSWORD}';
+      CREATE DATABASE state OWNER ai_user;
+      GRANT ALL PRIVILEGES ON DATABASE state TO ai_user;

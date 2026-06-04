@@ -4,24 +4,22 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 # ============================================================================
-#  NVEIL Community Edition
+#  NVEIL Community Edition — prebuilt images (pull mode)
 # ============================================================================
 #
-#  The app stack lives under the "core" profile. The setup wizard writes
-#  COMPOSE_PROFILES=core to .env, so once configured a bare `docker compose up`
-#  defaults to the core stack (no --profile needed).
+#  This is the ONLY file a user needs. Nothing is built locally and no source
+#  is mounted: every service runs from a prebuilt image on ghcr.io/nveil-ai.
 #
 #  Quick start:
-#    docker compose up setup                       (configure at http://localhost:3000)
-#    docker compose up --build -d
+#    docker compose up setup     (configure → writes .env)
+#    docker compose pull         (fetch images)
+#    docker compose up -d
 #    Open https://localhost:8000
 #
-#  (Before .env exists, or to be explicit, prefix with --profile core.)
+#  Pin a different release with NVEIL_VERSION in .env (default below).
 #
-#  Developer extras (source mounts, debug mode, Langfuse LLM tracing) live in
-#  docker-compose.dev.yml — apply it explicitly on top of this file:
-#    docker compose -f docker-compose.yaml -f docker-compose.dev.yml --profile core up
-#    (add --profile tracing for the bundled Langfuse stack)
+#  Working ON Nveil? Use docker-compose.dev.yml instead (builds from source,
+#  live reload, TEST mode, optional Langfuse).
 #
 # ============================================================================
 
@@ -52,9 +50,9 @@ x-llm-env: &llm-env
 # ============================================================================
 services:
   # ── TLS certificate init ──────────────────────────────────────────────────
-  # Kept inline (NOT a mounted script): the Community edition ships ONLY this
-  # compose file + pulled images, so there is no host file to mount. TODO: bake
-  # cert-gen into a prebuilt image (pass 5) to slim this block.
+  # One-shot: generates a unique self-signed cert into the shared volume on
+  # first start. Inline (public alpine/openssl image) so the cert is never
+  # baked into a published image — each install gets its own private key.
   init-certs:
     image: alpine/openssl
     profiles: ["core"]
@@ -80,6 +78,9 @@ services:
 
 
   # ── PostgreSQL ─────────────────────────────────────────────────────────────
+  # The ai_user role + `state` database are created on first init by the SQL
+  # injected via the `init-ai-db` config below (no host file, no extra
+  # container) — the official image only bootstraps a single user/db from env.
   postgres:
     image: postgres:17-alpine
     profiles: ["core"]
@@ -87,10 +88,11 @@ services:
       POSTGRES_USER: ${POSTGRES_USER:-nveil}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-}
       POSTGRES_DB: ${POSTGRES_DB:-nveil}
-      AI_DB_PASSWORD: ${AI_DB_PASSWORD:-}
     volumes:
     - postgres-data:/var/lib/postgresql/data
-    - ./docker/postgres/init-ai-db.sh:/docker-entrypoint-initdb.d/init-ai-db.sh:ro
+    configs:
+    - source: init-ai-db
+      target: /docker-entrypoint-initdb.d/init-ai-db.sql
     ports:
     - "5432:5432"
     healthcheck:
@@ -102,9 +104,7 @@ services:
 
   # ── Server (API + frontend) ───────────────────────────────────────────────
   server:
-    build:
-      context: .
-      dockerfile: docker/server/dockerfile
+    image: ghcr.io/nveil-ai/nveil-server:${NVEIL_VERSION:-0.4.7}
     profiles: ["core"]
     environment:
       DATABASE_SCHEMA: ${DATABASE_SCHEMA:-nveilseption}
@@ -123,11 +123,11 @@ services:
       DOCKER_NETWORK: "${COMPOSE_PROJECT_NAME:-nveil}_default"
       CERT_VOLUME: "${COMPOSE_PROJECT_NAME:-nveil}_nveil-certs"
       DIVE_VOLUME: "${COMPOSE_PROJECT_NAME:-nveil}_${DATA_PATH:-nveil-data}"
+      # Image the pool manager spawns for viz (the pulled one, not the dev tag).
+      VIZ_IMAGE: ghcr.io/nveil-ai/nveil-viz:${NVEIL_VERSION:-0.4.7}
     volumes:
     - /var/run/docker.sock:/var/run/docker.sock
-    - ./nveil/backend:/nveil/backend
     - "${DATA_PATH:-nveil-data}:/root/DIVE"
-    - ./scripts:/scripts:ro
     - nveil-certs:/certs:ro
     ports:
     - "8000:8000"
@@ -140,17 +140,13 @@ services:
 
   # ── AI Service ─────────────────────────────────────────────────────────────
   ai:
-    build:
-      context: .
-      dockerfile: docker/ai/dockerfile
+    image: ghcr.io/nveil-ai/nveil-ai:${NVEIL_VERSION:-0.4.7}
     profiles: ["core"]
     environment:
       <<: *llm-env
       STATE_DATABASE_URL: "postgresql+asyncpg://ai_user:${AI_DB_PASSWORD}@postgres:5432/state"
     volumes:
-    - ./nveil/backend:/nveil/backend
     - "${DATA_PATH:-nveil-data}:/root/DIVE"
-    - ./scripts:/scripts:ro
     - nveil-certs:/certs:ro
     ports:
     - "8100:8100"
@@ -163,15 +159,12 @@ services:
 
   # ── File Service ───────────────────────────────────────────────────────────
   file:
-    build:
-      context: .
-      dockerfile: docker/file/dockerfile
+    image: ghcr.io/nveil-ai/nveil-file:${NVEIL_VERSION:-0.4.7}
     profiles: ["core"]
     environment:
       DATABASE_SCHEMA: ${DATABASE_SCHEMA:-nveilseption}
       DATABASE_URL: "postgresql+asyncpg://${POSTGRES_USER:-nveil}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-nveil}"
     volumes:
-    - ./nveil/backend:/nveil/backend
     - "${DATA_PATH:-nveil-data}:/root/DIVE"
     - nveil-certs:/certs:ro
     ports:
@@ -184,11 +177,10 @@ services:
 
 
   # ── Visualization ──────────────────────────────────────────────────────────
+  # Not a long-running service (replicas 0) — the server spawns viz containers
+  # on demand from VIZ_IMAGE. Declared so `docker compose pull` fetches it.
   viz:
-    build:
-      context: .
-      dockerfile: docker/visualization/dockerfile
-    image: nveil_visualization:latest
+    image: ghcr.io/nveil-ai/nveil-viz:${NVEIL_VERSION:-0.4.7}
     profiles: ["core"]
     deploy:
       replicas: 0
@@ -196,10 +188,10 @@ services:
 
   # ── Setup Wizard ────────────────────────────────────────────────────────────
   # Run separately:  docker compose up setup
+  # Baked code in the image; the mount is only so the wizard reads/writes the
+  # .env in the user's current directory.
   setup:
-    build:
-      context: .
-      dockerfile: docker/setup/Dockerfile
+    image: ghcr.io/nveil-ai/nveil-setup:${NVEIL_VERSION:-0.4.7}
     ports:
     - "3000:3000"
     volumes:
@@ -213,3 +205,16 @@ volumes:
   postgres-data:
   nveil-certs:
   nveil-data:
+
+
+# ============================================================================
+#  Configs — inline content injected into containers (no host files)
+# ============================================================================
+configs:
+  # Runs once on first postgres init: creates the ai_user role and the `state`
+  # database used by the AI service.
+  init-ai-db:
+    content: |
+      CREATE USER ai_user WITH PASSWORD '${AI_DB_PASSWORD}';
+      CREATE DATABASE state OWNER ai_user;
+      GRANT ALL PRIVILEGES ON DATABASE state TO ai_user;
