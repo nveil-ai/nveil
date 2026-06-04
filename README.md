@@ -16,6 +16,8 @@
   <a href="https://github.com/nveil-ai/nveil/releases"><img src="https://img.shields.io/github/v/release/nveil-ai/nveil?sort=semver" alt="Release"></a>
   <a href="https://github.com/nveil-ai/nveil/commits"><img src="https://img.shields.io/github/last-commit/nveil-ai/nveil" alt="Last commit"></a>
   <a href="https://github.com/nveil-ai/nveil/pulls"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen" alt="PRs welcome"></a>
+  <a href="https://github.com/nveil-ai/nveil/actions/workflows/build-images.yml"><img src="https://github.com/nveil-ai/nveil/actions/workflows/build-images.yml/badge.svg" alt="Build"></a>
+  <a href="https://discord.gg/3KdDwzT7rt"><img src="https://img.shields.io/badge/Discord-join-5865F2?logo=discord&logoColor=white" alt="Discord"></a>
   <a href="https://docs.nveil.com"><img src="https://img.shields.io/badge/docs-docs.nveil.com-blue" alt="Docs"></a>
 </p>
 
@@ -23,6 +25,7 @@
   <a href="#quick-start">Quick start</a> &bull;
   <a href="#why-nveil">Why NVEIL</a> &bull;
   <a href="#use-it-from-your-code">From code</a> &bull;
+  <a href="#community">Community</a> &bull;
   <a href="#contributing">Contributing</a> &bull;
   <a href="#license">License</a>
 </p>
@@ -106,9 +109,17 @@ pip install nveil
 
 A Python SDK, a `nveil` CLI, and an MCP server for agents (Claude Code, Cursor, …), all pointed at your NVEIL instance. See **[nveil-toolkit](https://github.com/nveil-ai/nveil-toolkit)**.
 
+## Community
+
+Questions, ideas, or want to show what you built? Join us:
+
+- 💬 **[Discord](https://discord.gg/3KdDwzT7rt)** — chat with the team and other users.
+- 🗣️ **[GitHub Discussions](https://github.com/nveil-ai/nveil/discussions)** — Q&A and proposals.
+- 🐛 **[Issues](https://github.com/nveil-ai/nveil/issues)** — bug reports and feature requests.
+
 ## Contributing
 
-Contributions are welcome! The developer setup above is all you need to get started. **[GitHub Discussions](https://github.com/nveil-ai/nveil/discussions)** and **[Issues](https://github.com/nveil-ai/nveil/issues)** are the place for questions, ideas, and bug reports.
+Contributions are welcome — the developer setup above is all you need to get started.
 
 Pull requests are accepted under the project's **[Contributor License Agreement](CLA.md)** — you sign it **once**, on your first PR, by posting a one-line comment (a bot walks you through it). The CLA is a **license grant, not an assignment**: you keep ownership of your contribution and your moral rights.
 
@@ -124,6 +135,14 @@ NVEIL is **dual-licensed**:
 
 - **Open source** — GNU **AGPL-3.0-or-later**: use, study, modify, and self-host freely. Note that AGPL §13 requires you to offer the corresponding source of any *modified* version you run as a network service. See [`LICENSE`](LICENSE).
 - **Commercial** — to embed NVEIL in a closed-source product, or run a modified hosted version without publishing your changes, a commercial license removes the copyleft obligations. See [`COMMERCIAL-LICENSE.md`](COMMERCIAL-LICENSE.md) — contact `pierre.jacquet@nveil.com`.
+
+## Contributors
+
+Thanks to everyone who helps make NVEIL better 💜
+
+<a href="https://github.com/nveil-ai/nveil/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=nveil-ai/nveil" alt="Contributors">
+</a>
 
 ---
 
