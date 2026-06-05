@@ -470,24 +470,34 @@ async def health_check():
 
 @ai_app.post("/ai/characterize_csv")
 async def characterize_csv_ai(request: Request):
-    """LLM-based CSV characterization fallback.
+    """LLM-based CSV characterization, delegated here by file_service.
 
-    Called by file_service when heuristic characterization fails.
-    Accepts a binary sample and returns {header, fieldSeparator, recordSeparator}.
+    file_service offloads the CSV LLM step to this endpoint (see file_service's
+    ``characterize_csv_via_ai``) so provider credentials stay confined to the
+    ai_service — the same pattern as Excel tidying via ``/ai/preprocess_excel``.
+
+    Runs choregraph's single CSV LLM function (``_llm_characterize_csv``).
+    Accepts a binary CSV sample and returns the dict shape choregraph's
+    ``characterize_csv`` expects: ``{header, fieldSeparator, recordSeparator,
+    skipLines, modified}``.
     """
     body = await request.body()
-    llm_cfg = get_llm_config()
+    sample_lines = body.decode("utf-8", errors="replace").splitlines(keepends=True)
     try:
-        from viz_file_utils.characterization import ai_characterisation
-        result = ai_characterisation(body, llm_config=llm_cfg)
-        return {
-            "header": result.header,
-            "fieldSeparator": result.fieldSeparator,
-            "recordSeparator": result.recordSeparator,
-        }
+        from choregraph.loaders import _llm_characterize_csv
+        result = _llm_characterize_csv(sample_lines)
+        if result is not None:
+            return result
+        logger().logp(WARNING, "AI CSV characterization returned no result — using defaults")
     except Exception as e:
         logger().logp(ERROR, f"AI CSV characterization failed: {e}")
-        return {"header": True, "fieldSeparator": ",", "recordSeparator": "\\n"}
+    return {
+        "header": True,
+        "fieldSeparator": ",",
+        "recordSeparator": "\n",
+        "skipLines": 0,
+        "modified": False,
+    }
 
 
 @ai_app.post("/ai/preprocess_excel")

@@ -31,7 +31,7 @@ from llm_processing.graphs.workflow_postprocess_nodes import (
     ColorPaletteBreak, ColorPaletteConfig, FeedbackStructure,
     SelectionOption, SelectionPromptModel,
 )
-from viz_file_utils.characterization import CSVFileStruct
+from choregraph.loaders import LLMCsvCharacterization
 
 
 class _Node(OutputNodesMixin):
@@ -118,8 +118,8 @@ ALL_RESPONSE_SCHEMAS = [
     SelectionPromptModel, FeedbackStructure,
     # workflow_request_classify
     LLMResponseClassification, ListLLMResponseClassification,
-    # viz_file_utils.characterization
-    CSVFileStruct,
+    # choregraph CSV characterization (single CSV LLM schema)
+    LLMCsvCharacterization,
 ]
 
 # JSON Schema keywords that OpenAI strict mode rejects (cannot be compiled

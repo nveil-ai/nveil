@@ -1,49 +1,7 @@
 # SPDX-FileCopyrightText: 2026 NVEIL SAS
-# SPDX-FileContributor: Pierre Jacquet
 # SPDX-License-Identifier: AGPL-3.0-or-later
-
-site_name: NVEIL Documentation
-site_description: "NVEIL — Scientific data visualization and analysis platform"
-site_url: ""
-
-theme:
-  name: material
-  palette:
-    - media: "(prefers-color-scheme: light)"
-      scheme: default
-      primary: indigo
-      accent: teal
-      toggle:
-        icon: material/brightness-7
-        name: Switch to dark mode
-    - media: "(prefers-color-scheme: dark)"
-      scheme: slate
-      primary: indigo
-      accent: teal
-      toggle:
-        icon: material/brightness-4
-        name: Switch to light mode
-  features:
-    - search.suggest
-    - content.code.copy
-    - toc.follow
-  icon:
-    repo: fontawesome/brands/github
-
-markdown_extensions:
-  - admonition
-  - pymdownx.details
-  - pymdownx.superfences:
-      custom_fences:
-        - name: mermaid
-          class: mermaid
-          format: !!python/name:pymdownx.superfences.fence_code_format
-  - attr_list
-  - md_in_html
-  - pymdownx.emoji:
-      emoji_index: !!python/name:material.extensions.emoji.twemoji
-      emoji_generator: !!python/name:material.extensions.emoji.to_svg
-  - toc:
-      permalink: true
-
-copyright: "Copyright &copy; 2025 NVEIL — MIT License"
+site_name: NVEIL Platform
+nav:
+  - Overview: index.md
+  - Self-hosting: self-hosting.md
+  - From your code: from-code.md

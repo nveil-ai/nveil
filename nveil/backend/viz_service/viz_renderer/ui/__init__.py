@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2026 NVEIL SAS
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # UI layout builders — lazy imports to avoid loading Trame widgets at module level.
 # viz_context.py only needs ui.icons, not the full layout module.
 

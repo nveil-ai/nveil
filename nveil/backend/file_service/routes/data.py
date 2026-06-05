@@ -273,6 +273,40 @@ async def _preprocess_excel(
         await fm.update_processing_status(user_file_id, status, companion_files or None)
 
 
+def characterize_csv_via_ai(sample_lines: list[str]) -> dict | None:
+    """CSV LLM characterization, delegated to the ai_service.
+
+    Registered as choregraph's CSV LLM delegate (see file_server lifespan) so
+    that ``characterize_csv`` — which runs in-process here during
+    ``build_choregraph_inputs`` — offloads its LLM step to
+    ``/ai/characterize_csv``, exactly like Excel tidying is offloaded to
+    ``/ai/preprocess_excel``. Provider credentials therefore live only on the
+    ai_service; file_service stays credential-free.
+
+    Synchronous on purpose: ``characterize_csv`` runs inline inside the
+    (already blocking) ``build_choregraph_inputs``, and the detected separator
+    is needed immediately to write ``choregraph.xml`` — so the call cannot be
+    deferred to a background task the way Excel preprocessing is.
+
+    Returns the dict shape ``characterize_csv`` expects, or ``None`` on any
+    failure (the caller then keeps the heuristic / safe-default values).
+    """
+    sample = "".join(sample_lines[:50]).encode("utf-8", errors="replace")
+    url = f"https://{AI_HOST}:{AI_PORT}/ai/characterize_csv"
+    try:
+        with httpx.Client(verify=True, timeout=60.0) as client:
+            resp = client.post(url, content=sample)
+            resp.raise_for_status()
+            data = resp.json()
+    except Exception as e:
+        log.warning(f"CSV characterization via ai_service failed: {e}")
+        return None
+
+    if not data or not data.get("fieldSeparator"):
+        return None
+    return data
+
+
 async def _preprocess_connector(
     owner_id: str, file_id: str, user_file_id: str, connector: str,
     sequence_time_mode: str | None = None,

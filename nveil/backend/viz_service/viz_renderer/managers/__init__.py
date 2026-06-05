@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2026 NVEIL SAS
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # Lazy imports to avoid loading heavy deps at module level.
 
 

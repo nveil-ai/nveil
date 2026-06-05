@@ -1,0 +1,43 @@
+# SPDX-FileCopyrightText: 2026 NVEIL SAS
+# SPDX-License-Identifier: AGPL-3.0-or-later
+site_name: Backend
+nav:
+  - Overview: index.md
+  - Ai:
+      - Index: ai/index.md
+      - Llm Manager: ai/llm-manager.md
+      - Prompts: ai/prompts.md
+      - Routes: ai/routes.md
+      - Tracing: ai/tracing.md
+      - Workflows: ai/workflows.md
+  - Architecture:
+      - Index: architecture/index.md
+      - Authentication: architecture/authentication.md
+      - Database: architecture/database.md
+      - Service Map: architecture/service-map.md
+      - Workspace: architecture/workspace.md
+  - Config:
+      - Index: config/index.md
+      - Deployment: config/deployment.md
+      - Env Vars: config/env-vars.md
+  - File:
+      - Index: file/index.md
+      - File Manager: file/file-manager.md
+      - Routes: file/routes.md
+  - Server:
+      - Index: server/index.md
+      - Models: server/models.md
+      - Rooms: server/rooms.md
+      - Routes: server/routes.md
+      - Services: server/services.md
+      - Websocket: server/websocket.md
+  - Shared:
+      - Index: shared/index.md
+      - Logger: shared/logger.md
+      - Security: shared/security.md
+      - Service Client: shared/service-client.md
+      - Workspace: shared/workspace.md
+  - Viz:
+      - Index: viz/index.md
+      - Backends: viz/backends.md
+      - Viz Context: viz/viz-context.md

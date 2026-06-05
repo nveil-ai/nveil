@@ -1,0 +1,59 @@
+# SPDX-FileCopyrightText: 2026 NVEIL SAS
+# SPDX-FileContributor: Pierre Jacquet
+# SPDX-License-Identifier: AGPL-3.0-or-later
+name: Build & push images
+
+# Org-level publish: the workflow runs in nveil-ai/nveil and uses the automatic
+# GITHUB_TOKEN (no personal PAT) to push to ghcr.io/nveil-ai. Free on the public
+# repo. Wraps .github/build-images.sh so local and CI builds stay identical.
+
+on:
+  workflow_dispatch:        # manual: builds the images, does NOT push (dry run)
+  push:
+    tags: ["v*"]            # tag v0.4.7 → build + push :0.4.7 and :latest
+
+permissions:
+  contents: read
+  packages: write           # push to GHCR (org packages linked to this repo)
+
+jobs:
+  build-push:
+    name: Build & push (amd64) → ghcr.io/${{ github.repository_owner }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify tag matches VERSION
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          tag="${GITHUB_REF_NAME#v}"
+          file="$(tr -d '[:space:]' < VERSION)"
+          if [ "$tag" != "$file" ]; then
+            echo "::error::Tag ${GITHUB_REF_NAME} (${tag}) does not match VERSION file (${file})"
+            exit 1
+          fi
+
+      # The viz image (VTK) is ~5 GB — reclaim space the hosted runner wastes on
+      # toolchains we don't need, so the build doesn't run out of disk.
+      - name: Free disk space
+        run: |
+          sudo rm -rf /usr/share/dotnet /opt/ghc /usr/local/lib/android \
+                      /opt/hostedtoolcache/CodeQL /usr/local/share/boost
+          sudo docker image prune -af || true
+          df -h /
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Build everything; push only on a version tag (dry run on manual dispatch).
+      # build-images.sh reads VERSION and tags :<version> + :latest, amd64,
+      # server tracking-free (empty VITE_GTM_ID).
+      - name: Build & push
+        env:
+          REGISTRY: ghcr.io/${{ github.repository_owner }}
+          PUSH: ${{ startsWith(github.ref, 'refs/tags/v') && '1' || '0' }}
+        run: bash .github/build-images.sh

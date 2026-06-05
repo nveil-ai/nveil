@@ -12,7 +12,6 @@ from typing import Dict, Optional
 
 import docker
 import httpx
-from utils import get_secret
 from logger import ERROR, INFO, SUCCESS, WARNING, logger
 from . import viz_pool_config as cfg
 
@@ -305,10 +304,12 @@ class DockerVizPoolManager:
             "POOL_ID": pool_id,
             "GCP": "0",
             "TEST": "0",
-            # TODO(team): viz runs choregraph LLM-assisted nodes, so it needs the
-            # CONFIGURED LLM provider key. Forwarding only GOOGLE_API_KEY is
-            # arbitrary — unify the ai<->viz LLM env (no duplication) or drop LLM from viz.
-            "GOOGLE_API_KEY": get_secret("GOOGLE_API_KEY", ""),
+            # No LLM provider key here on purpose: viz never calls an LLM. The
+            # only choregraph LLM node (tidy_excel_data) runs server-side at
+            # upload via ai_service /ai/preprocess_excel; link_to_room refuses
+            # to link an Excel until its parquets exist, so the pipeline viz
+            # executes only ever consumes already-tidied data. Credentials stay
+            # confined to ai_service — do NOT forward provider keys here.
             "SSL_KEYFILE": "/certs/ma_cle_privee.key",
             "SSL_CERTFILE": "/certs/mon_certificat.crt",
         }

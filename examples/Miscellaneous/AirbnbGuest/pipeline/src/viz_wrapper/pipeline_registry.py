@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2026 NVEIL SAS
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 """Auto-generated Kedro pipeline registry. DO NOT EDIT MANUALLY."""
 from functools import partial, update_wrapper
 from kedro.pipeline import Pipeline, node

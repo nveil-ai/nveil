@@ -61,6 +61,13 @@ async def lifespan(app: FastAPI):
     from routes.data import set_httpx_client
     set_httpx_client(httpx_client)
 
+    # Route choregraph's CSV LLM characterization step to the ai_service
+    # (mirrors Excel tidying via /ai/preprocess_excel) so provider credentials
+    # stay confined to the ai_service and never need to live in file_service.
+    from choregraph.loaders import set_csv_llm_delegate
+    from routes.data import characterize_csv_via_ai
+    set_csv_llm_delegate(characterize_csv_via_ai)
+
     logger().logp(INFO, "File Service started on port 8200")
     yield
 
