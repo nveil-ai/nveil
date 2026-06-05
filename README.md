@@ -32,7 +32,7 @@
 
 **NVEIL is the fast, conversational way to explore, process, and visualize data — any kind, any domain.** Point it at your data, say what you want in plain language, and NVEIL prepares it and turns it into interactive, production-ready visualizations. No plotting code, no dashboards to wire by hand.
 
-This is the **Community Edition** — the complete platform, free and open under the AGPL, that you self-host. **Don't want to run your own server?** The same platform is available hosted at **[nveil.com](https://nveil.com)** — a free tier plus paid plans, nothing to install.
+This is the **Community Edition**: the complete platform, free and open under the AGPL, that you self-host. **Don't want to run your own server?** The same platform is available hosted at **[nveil.com](https://nveil.com)**, with a free tier plus paid plans, nothing to install.
 
 <p align="center">
   <img src=".github/assets/hero.png" alt="NVEIL — conversational data exploration with an interactive 3D surface visualization" width="900">
