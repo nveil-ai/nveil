@@ -3,12 +3,14 @@
 #
 # NVEIL Platform documentation — built standalone (its own theme) and served at
 # docs.nveil.com/nveil/ by the nveil-docs portal. Combines the self-host guide
-# (docs/) with the backend and frontend developer docs via the monorepo plugin.
+# (pages/) with the backend and frontend developer docs via the monorepo plugin.
+# Kept under docs/ to keep the repository root clean; build with:
+#   mkdocs build -f docs/mkdocs.yml
 
 site_name: NVEIL Platform
 site_url: https://docs.nveil.com/nveil/
 site_description: Self-host and build on the NVEIL data exploration & visualization platform.
-docs_dir: docs
+docs_dir: pages
 
 theme:
   name: material
@@ -59,7 +61,8 @@ markdown_extensions:
       permalink: true
 
 nav:
+  - "← NVEIL Docs": https://docs.nveil.com/
   - Overview: index.md
   - Self-hosting: self-hosting.md
-  - Backend: '!include ./nveil/backend/mkdocs.yml'
-  - Frontend: '!include ./nveil/frontend/docs/mkdocs.yml'
+  - Backend: '!include ../nveil/backend/mkdocs.yml'
+  - Frontend: '!include ../nveil/frontend/docs/mkdocs.yml'
