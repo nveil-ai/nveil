@@ -40,6 +40,9 @@ theme:
 
 repo_url: https://github.com/nveil-ai/nveil
 
+extra_css:
+  - assets/extra.css
+
 plugins:
   - search
   - monorepo
