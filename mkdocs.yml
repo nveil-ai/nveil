@@ -1,0 +1,66 @@
+# SPDX-FileCopyrightText: 2026 NVEIL SAS
+# SPDX-License-Identifier: AGPL-3.0-or-later
+#
+# NVEIL Platform documentation — built standalone (its own theme) and served at
+# docs.nveil.com/nveil/ by the nveil-docs portal. Combines the self-host guide
+# (docs/) with the backend and frontend developer docs via the monorepo plugin.
+
+site_name: NVEIL Platform
+site_url: https://docs.nveil.com/nveil/
+site_description: Self-host and build on the NVEIL data exploration & visualization platform.
+docs_dir: docs
+
+theme:
+  name: material
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: teal
+      toggle: { icon: material/brightness-7, name: Switch to dark mode }
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: teal
+      toggle: { icon: material/brightness-4, name: Switch to light mode }
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - navigation.indexes
+    - content.code.copy
+    - search.suggest
+    - toc.follow
+  icon:
+    repo: fontawesome/brands/github
+
+repo_url: https://github.com/nveil-ai/nveil
+
+plugins:
+  - search
+  - monorepo
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - pymdownx.details
+  - pymdownx.highlight
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - toc:
+      permalink: true
+
+nav:
+  - Overview: index.md
+  - Self-hosting: self-hosting.md
+  - From your code: from-code.md
+  - Backend: '!include ./nveil/backend/mkdocs.yml'
+  - Frontend: '!include ./nveil/frontend/docs/mkdocs.yml'
