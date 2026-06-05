@@ -7,7 +7,7 @@
 # Kept under docs/ to keep the repository root clean; build with:
 #   mkdocs build -f docs/mkdocs.yml
 
-site_name: NVEIL Self-Host
+site_name: Self-Host
 site_url: https://docs.nveil.com/nveil/
 site_description: Self-host and build on the NVEIL data exploration & visualization platform.
 docs_dir: pages
