@@ -61,6 +61,5 @@ markdown_extensions:
 nav:
   - Overview: index.md
   - Self-hosting: self-hosting.md
-  - From your code: from-code.md
   - Backend: '!include ./nveil/backend/mkdocs.yml'
   - Frontend: '!include ./nveil/frontend/docs/mkdocs.yml'

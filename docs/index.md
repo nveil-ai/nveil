@@ -7,9 +7,6 @@ NVEIL is an AI platform for exploring, processing, and visualizing data — thro
 - **[Self-hosting →](self-hosting.md)** — install and run the Community Edition with Docker, in a few minutes.
 - **Hosted** — [app.nveil.com](https://app.nveil.com): freemium, nothing to install.
 
-## Build on it
-
-- **[From your code →](from-code.md)** — drive NVEIL with the Toolkit (Python SDK, CLI, MCP server).
 
 ## Under the hood
 
