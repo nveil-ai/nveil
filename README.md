@@ -15,8 +15,6 @@
   <a href="https://github.com/nveil-ai/nveil/network/members"><img src="https://img.shields.io/github/forks/nveil-ai/nveil?style=flat" alt="Forks"></a>
   <a href="https://github.com/nveil-ai/nveil/releases"><img src="https://img.shields.io/github/v/release/nveil-ai/nveil?sort=semver" alt="Release"></a>
   <a href="https://github.com/nveil-ai/nveil/commits"><img src="https://img.shields.io/github/last-commit/nveil-ai/nveil" alt="Last commit"></a>
-  <a href="https://github.com/nveil-ai/nveil/pulls"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen" alt="PRs welcome"></a>
-  <a href="https://github.com/nveil-ai/nveil/actions/workflows/build-images.yml"><img src="https://github.com/nveil-ai/nveil/actions/workflows/build-images.yml/badge.svg" alt="Build"></a>
   <a href="https://discord.gg/3KdDwzT7rt"><img src="https://img.shields.io/badge/Discord-join-5865F2?logo=discord&logoColor=white" alt="Discord"></a>
   <a href="https://docs.nveil.com"><img src="https://img.shields.io/badge/docs-docs.nveil.com-blue" alt="Docs"></a>
 </p>
