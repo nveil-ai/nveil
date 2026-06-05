@@ -116,20 +116,20 @@ Questions, ideas, or want to show what you built? Join us:
 
 Contributions are welcome — the developer setup above is all you need to get started.
 
-Pull requests are accepted under the project's **[Contributor License Agreement](CLA.md)** — you sign it **once**, on your first PR, by posting a one-line comment (a bot walks you through it). The CLA is a **license grant, not an assignment**: you keep ownership of your contribution and your moral rights.
+Pull requests are accepted under the project's **[Contributor License Agreement](licensing/CLA.md)** — you sign it **once**, on your first PR, by posting a one-line comment (a bot walks you through it). The CLA is a **license grant, not an assignment**: you keep ownership of your contribution and your moral rights.
 
 If NVEIL is useful to you, a ⭐ helps others discover it.
 
 ## Security
 
-Found a vulnerability? Please report it **privately** — see **[SECURITY.md](SECURITY.md)**. Don't open a public issue for security reports.
+Found a vulnerability? Please report it **privately** — see **[SECURITY.md](.github/SECURITY.md)**. Don't open a public issue for security reports.
 
 ## License
 
 NVEIL is **dual-licensed**:
 
 - **Open source** — GNU **AGPL-3.0-or-later**: use, study, modify, and self-host freely. Note that AGPL §13 requires you to offer the corresponding source of any *modified* version you run as a network service. See [`LICENSE`](LICENSE).
-- **Commercial** — to embed NVEIL in a closed-source product, or run a modified hosted version without publishing your changes, a commercial license removes the copyleft obligations. See [`COMMERCIAL-LICENSE.md`](COMMERCIAL-LICENSE.md) — contact `pierre.jacquet@nveil.com`.
+- **Commercial** — to embed NVEIL in a closed-source product, or run a modified hosted version without publishing your changes, a commercial license removes the copyleft obligations. See [`COMMERCIAL-LICENSE.md`](licensing/COMMERCIAL-LICENSE.md) — contact `pierre.jacquet@nveil.com`.
 
 ## Contributors
 
