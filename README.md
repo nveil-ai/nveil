@@ -37,7 +37,7 @@
 This is the **Community Edition** — the complete platform, free and open under the AGPL, that you self-host. **Don't want to run your own server?** The same platform is available hosted at **[nveil.com](https://nveil.com)** — a free tier plus paid plans, nothing to install.
 
 <p align="center">
-  <img src="assets/hero.png" alt="NVEIL — conversational data exploration with an interactive 3D surface visualization" width="900">
+  <img src=".github/assets/hero.png" alt="NVEIL — conversational data exploration with an interactive 3D surface visualization" width="900">
 </p>
 
 <p align="center">
