@@ -18,5 +18,5 @@ uvicorn==0.46.0
 natsort==8.4.0
 Pillow==12.2.0
 vtk==9.6.1
-nveil-dive
-choregraph
+nveil-dive[extra]
+choregraph[extra,server, dicom]
