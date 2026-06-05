@@ -15,8 +15,6 @@ SPDX-License-Identifier: AGPL-3.0-or-later
   <!-- DNS prefetch for external resources -->
   <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
   <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
-  <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
-  <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin />
 
   <!-- Preconnect to external resources -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -36,84 +34,9 @@ SPDX-License-Identifier: AGPL-3.0-or-later
   }
   </script>
 
-  <!-- GTM Consent Mode v2 — defaults MUST be set BEFORE GTM loads (GDPR) -->
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    // EEA + UK + CH: denied by default (GDPR — opt-in required)
-    gtag('consent', 'default', {
-      ad_storage:         'denied',
-      ad_user_data:       'denied',
-      ad_personalization: 'denied',
-      analytics_storage:  'denied',
-      wait_for_update:    500,
-      region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR',
-               'DE','GR','HU','IE','IT','LV','LT','LU','MT','NL',
-               'PL','PT','RO','SK','SI','ES','SE','IS','LI','NO',
-               'GB','CH']
-    });
-    // Rest of world: granted by default
-    gtag('consent', 'default', {
-      ad_storage:         'granted',
-      ad_user_data:       'granted',
-      ad_personalization: 'granted',
-      analytics_storage:  'granted'
-    });
-    // Restore consent for returning visitors who already accepted
-    (function(){
-      var c = document.cookie.match('(^|;)\\s*cookieConsent=([^;]+)');
-      if (c && c[2] === 'true') {
-        gtag('consent', 'update', {
-          ad_storage:         'granted',
-          ad_user_data:       'granted',
-          ad_personalization: 'granted',
-          analytics_storage:  'granted'
-        });
-      }
-    })();
-  </script>
-
-  <!-- Google Tag Manager — deferred until browser idle.
-       Consent Mode v2 defaults (above) run synchronously so consent state
-       is set before any tag fires. The actual gtm.js + GA + Reddit pixel
-       + other tags are delayed to requestIdleCallback so they don't compete
-       with React mount on the critical path. Saves ~200-300 ms of main-thread
-       CPU during FCP/LCP. Tracking behavior is unchanged — dataLayer queues
-       events while GTM loads, and they flush in order once it's ready. -->
-  <script>
-    (function(w,d,s,l,i){
-      // The GTM container ID is injected at build time from VITE_GTM_ID. When
-      // it is not set — e.g. the self-hosted Community Edition — GTM never
-      // loads and no analytics/network request is made.
-      if (!i || i.charAt(0) === '%') return;
-      function loadGTM(){
-        w[l]=w[l]||[];
-        w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});
-        var f=d.getElementsByTagName(s)[0],
-            j=d.createElement(s),
-            dl=l!='dataLayer'?'&l='+l:'';
-        j.async=true;
-        j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;
-        f.parentNode.insertBefore(j,f);
-      }
-      if ('requestIdleCallback' in w) {
-        // timeout ensures GTM loads within 4s even if the main thread
-        // never reaches sustained idle (rare but possible with heavy apps).
-        w.requestIdleCallback(loadGTM, { timeout: 4000 });
-      } else {
-        // Safari <18 doesn't have requestIdleCallback — fall back to load
-        // event + small delay to push past the critical rendering window.
-        w.addEventListener('load', function(){ w.setTimeout(loadGTM, 1500); });
-      }
-    })(window,document,'script','dataLayer','%VITE_GTM_ID%');
-  </script>
-  <!-- End Google Tag Manager -->
-
   <title>NVEIL</title>
   <!-- Full SEO meta tags (description, OG, Twitter) are managed by react-helmet-async via SEO.jsx -->
   <!-- Helmet replaces the <title> above once React hydrates -->
-
-  <meta name="google-site-verification" content="JW5BZAG9i0nl9LX9e2yDCVznn_fhS8hTxcgAcmzsMa8" />
 
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="/icons/nveil-192.png" />

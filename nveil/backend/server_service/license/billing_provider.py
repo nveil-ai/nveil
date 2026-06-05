@@ -3,10 +3,19 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 from abc import ABC, abstractmethod
-from typing import Optional
+from typing import Optional, TypedDict
 
 from fastapi import HTTPException, Request
 from fastapi.routing import APIRouter
+
+
+class SubscriptionInfo(TypedDict):
+    """Provider-agnostic subscription data returned by ``fetch_subscription``."""
+    subscription_id: str
+    customer_id: str
+    product_name: str
+    current_period_start: float
+    current_period_end: float
 
 
 class BillingProvider(ABC):
@@ -29,6 +38,9 @@ class BillingProvider(ABC):
     async def sync_license(self, user_id: str) -> Optional[dict]: ...
 
     @abstractmethod
+    async def fetch_subscription(self, email: str) -> Optional[SubscriptionInfo]: ...
+
+    @abstractmethod
     async def on_account_deleted(self, user_email: str) -> None: ...
 
     @abstractmethod
@@ -48,6 +60,9 @@ class NoOpBilling(BillingProvider):
         return []
 
     async def sync_license(self, user_id: str) -> Optional[dict]:
+        return None
+
+    async def fetch_subscription(self, email: str) -> Optional[SubscriptionInfo]:
         return None
 
     async def on_account_deleted(self, user_email: str) -> None:

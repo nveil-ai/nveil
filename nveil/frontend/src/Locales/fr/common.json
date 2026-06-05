@@ -535,7 +535,7 @@
     "errorLoading": "Impossible de charger les offres. Veuillez réessayer.",
     "retry": "Réessayer",
     "trust": {
-      "stripe": "Paiements sécurisés Stripe",
+      "securePayments": "Paiements sécurisés",
       "encrypted": "Données chiffrées au repos",
       "cancelAnytime": "Résiliez à tout moment",
       "localCurrency": "Converti dans votre devise au paiement"

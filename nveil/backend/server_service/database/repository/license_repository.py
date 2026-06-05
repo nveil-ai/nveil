@@ -23,7 +23,7 @@ class LicenseRepository(BaseRepository[License]):
         return list(result.scalars().all())
 
     async def get_by_customer_id(self, customer_id: str) -> List[License]:
-        """Get all licenses for a given Stripe customer"""
+        """Get all licenses for a given billing customer."""
         result = await self.session.execute(
             select(License)
             .where(License.customer_id == customer_id)
@@ -31,8 +31,8 @@ class LicenseRepository(BaseRepository[License]):
         return list(result.scalars().all())
 
     async def get_by_subscription_id(self, subscription_id: str) -> Optional[License]:
-        """Get license by Stripe subscription ID.
-        
+        """Get license by external subscription ID.
+
         Returns the most recent active license if multiple exist (handles duplicates gracefully).
         """
         result = await self.session.execute(

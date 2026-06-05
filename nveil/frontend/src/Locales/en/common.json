@@ -542,7 +542,7 @@
     "errorLoading": "Unable to load plans. Please try again.",
     "retry": "Retry",
     "trust": {
-      "stripe": "Stripe Secure Payments",
+      "securePayments": "Secure Payments",
       "encrypted": "Data encrypted at rest",
       "cancelAnytime": "Cancel anytime",
       "localCurrency": "Converted to your currency at checkout"

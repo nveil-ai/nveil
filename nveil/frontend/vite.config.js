@@ -39,7 +39,7 @@ export default defineConfig({
   viteCompression({ algorithm: 'gzip' }),
   viteCompression({ algorithm: 'brotliCompress' }),
   Sitemap({
-    hostname: 'https://app.nveil.com',
+    hostname: 'https://localhost',
     dynamicRoutes: ['/explore', '/feedback'],
     robots: [
       { userAgent: '*', allow: '/', disallow: ['/viz/', '/server/', '/cdn-cgi/', '/room/', '/dashboard/'] },

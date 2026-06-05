@@ -5,10 +5,9 @@
 from __future__ import annotations
 
 from datetime import datetime, timezone
-from typing import TYPE_CHECKING, List, Optional, Union
+from typing import List, Optional, Union
 
-if TYPE_CHECKING:
-    from nveilplugin.billing.subscription import Subscription
+from license.billing_provider import SubscriptionInfo, billing_provider
 
 from ..models.license import License
 from ..models.license_seat import LicenseSeat, LicenseSeatRole
@@ -212,7 +211,7 @@ class LicenseService(BaseService):
         return await self.license_repo.get_active_licenses(owner_id)
 
     async def get_license_by_subscription(self, subscription_id: str) -> Optional[License]:
-        """Get license by Stripe subscription ID"""
+        """Get license by external subscription ID."""
         return await self.license_repo.get_by_subscription_id(subscription_id)
 
     async def activate_license(self, license_id: str) -> bool:
@@ -273,29 +272,25 @@ class LicenseService(BaseService):
         return max(0, license_obj.max_seats - current_count)
 
     @staticmethod
-    async def fetch_stripe_sub_for_user_email(email: Optional[str]) -> Optional[Subscription]:
-        """Fetch a user's active Stripe subscription by email, with no DB session held."""
+    async def fetch_external_subscription(email: Optional[str]) -> Optional[SubscriptionInfo]:
+        """Fetch a user's active subscription from the billing provider."""
         if not email:
             return None
-        try:
-            from nveilplugin.billing.subscription import Subscription
-        except ImportError:
-            return None
-        return await Subscription.get_by_email(email)
+        return await billing_provider.fetch_subscription(email)
 
     async def get_license_info_for_user(self, user_id: str) -> dict:
         """Get license information for a given user, prioritizes Pro over Free.
 
-        Convenience wrapper that performs the Stripe lookup itself. Hot routes
-        should call ``fetch_stripe_sub_for_user_email`` outside any DB session
+        Convenience wrapper that performs the billing lookup itself. Hot routes
+        should call ``fetch_external_subscription`` outside any DB session
         and then call ``get_license_info_for_user_with_sub``.
         """
         user = await self.user_repo.get_by_id(user_id)
-        stripe_sub = await self.fetch_stripe_sub_for_user_email(user.email if user else None)
-        return await self.get_license_info_for_user_with_sub(user_id, stripe_sub)
+        external_sub = await self.fetch_external_subscription(user.email if user else None)
+        return await self.get_license_info_for_user_with_sub(user_id, external_sub)
 
-    async def get_license_info_for_user_with_sub(self, user_id: str, stripe_sub: Optional[Subscription]) -> dict:
-        """Get license information given a pre-fetched Stripe subscription (or None)."""
+    async def get_license_info_for_user_with_sub(self, user_id: str, external_sub: Optional[SubscriptionInfo]) -> dict:
+        """Get license information given a pre-fetched external subscription (or None)."""
         user = await self.user_repo.get_by_id(user_id)
         active_license = None
         license_modified = False  # Track if we made changes
@@ -309,24 +304,21 @@ class LicenseService(BaseService):
                 license_modified = True
 
         if user and user.email:
-            if stripe_sub:
-                # User has an active Stripe subscription
-                existing_license = await self.license_repo.get_by_subscription_id(stripe_sub.subscription_id)
-                
+            if external_sub:
+                existing_license = await self.license_repo.get_by_subscription_id(external_sub["subscription_id"])
+
                 if not existing_license or not existing_license.is_active:
-                    # Create or reactivate Nveil AI Pro license
                     active_license = await self.create_license(
-                        license_name=stripe_sub.product_name,
+                        license_name=external_sub["product_name"],
                         owner_id=user_id,
-                        customer_id=stripe_sub.customer_id,
-                        subscription_id=stripe_sub.subscription_id,
+                        customer_id=external_sub["customer_id"],
+                        subscription_id=external_sub["subscription_id"],
                         max_seats=1,
-                        start_at=datetime.fromtimestamp(stripe_sub.current_period_start),
-                        end_at=datetime.fromtimestamp(stripe_sub.current_period_end),
+                        start_at=datetime.fromtimestamp(external_sub["current_period_start"]),
+                        end_at=datetime.fromtimestamp(external_sub["current_period_end"]),
                         is_active=True
                     )
                     license_modified = True
-                    # Assign the operator seat if not already assigned
                     existing_seat = await self.license_seat_repo.get_by_user_and_license(user_id, active_license.id)
                     if not existing_seat:
                         await self.license_seat_repo.create(
@@ -337,16 +329,14 @@ class LicenseService(BaseService):
                         await self.session.commit()
                 else:
                     active_license = existing_license
-                    # Vérifier si les dates sont à jour
-                    stripe_end = datetime.fromtimestamp(stripe_sub.current_period_end)
-                    if existing_license.end_at != stripe_end:
+                    sub_end = datetime.fromtimestamp(external_sub["current_period_end"])
+                    if existing_license.end_at != sub_end:
                         await self.license_repo.update_by_id(
                             existing_license.id,
-                            end_at=stripe_end,
-                            start_at=datetime.fromtimestamp(stripe_sub.current_period_start)
+                            end_at=sub_end,
+                            start_at=datetime.fromtimestamp(external_sub["current_period_start"])
                         )
                         license_modified = True
-                    # Safety: Ensure they have a seat on this existing license
                     existing_seat = await self.license_seat_repo.get_by_user_and_license(user_id, active_license.id)
                     if not existing_seat:
                         await self.license_seat_repo.create(

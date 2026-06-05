@@ -158,7 +158,7 @@ def enhance_specifications_xml(
         save_to_file(vs, backup_path)
         solver = ASPSolver()
         asp_success, asp_log = solver.asp_call(
-            vs, path, debug_mode=True, extra_facts=dynamic_asp_facts,
+            vs, path, debug_mode=False, extra_facts=dynamic_asp_facts,
             logger_fn=lambda level, msg: logger().logp(level, msg),
         )
         log += asp_log
