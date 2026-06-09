@@ -40,10 +40,6 @@ SERVER_PORT = 8000
 # --- Feature flags ---
 USE_YAML_SCHEMA = os.getenv("USE_YAML_SCHEMA", "1") == "1"
 
-# --- Debug output paths (auto-generated YAML schemas) ---
-VISUSPEC_YAML_DEBUG_PATH = "/nveil/backend/ai_service/llm_processing/visuspec_schema.debug.yaml"
-CHOREGRAPH_YAML_DEBUG_PATH = "/nveil/backend/ai_service/llm_processing/choregraph_schema.debug.yaml"
-
 # --- Debug error logs (append-mode, local only) ---
 VISUSPEC_ERRORS_DEBUG_PATH = "/nveil/backend/ai_service/llm_processing/visuspec_errors.debug.log"
 CHOREGRAPH_ERRORS_DEBUG_PATH = "/nveil/backend/ai_service/llm_processing/choregraph_errors.debug.log"

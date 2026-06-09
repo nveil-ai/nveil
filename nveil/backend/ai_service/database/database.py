@@ -14,13 +14,12 @@ from sqlalchemy.pool import AsyncAdaptedQueuePool
 
 
 class DatabaseManager:
-	# Déclaration des variables
 	url: Optional[str] = None
 	pool_size: Optional[int] = None
 	max_overflow: Optional[int] = None
 	pool_pre_ping: Optional[bool] = None
 	echo: Optional[bool] = None
-	# Singleton interne
+	# Internal singleton instance
 	_instance: Optional["DatabaseManager"] = None
 
 	def __new__(cls, *args, **kwargs):

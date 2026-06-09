@@ -98,7 +98,7 @@ async def lifespan(app: FastAPI):
     """
     Manages the startup and shutdown lifecycle of the AI service.
     """
-    logger().logp(INFO, "🚀 AI Service is starting...")
+    logger().logp(INFO, "AI Service is starting...")
     Prompt.load_templates()
 
     # Seed Langfuse with any missing yaml prompts (best-effort, non-blocking).
@@ -161,7 +161,7 @@ async def lifespan(app: FastAPI):
 
     yield
     # SHUTDOWN
-    logger().logp(INFO, "🛑 AI Service is shutting down...")
+    logger().logp(INFO, "AI Service is shutting down...")
     if httpx_client:
         await httpx_client.aclose()
     await close_checkpointer()
@@ -476,16 +476,25 @@ async def characterize_csv_ai(request: Request):
     ``characterize_csv_via_ai``) so provider credentials stay confined to the
     ai_service — the same pattern as Excel tidying via ``/ai/preprocess_excel``.
 
-    Runs choregraph's single CSV LLM function (``_llm_characterize_csv``).
-    Accepts a binary CSV sample and returns the dict shape choregraph's
-    ``characterize_csv`` expects: ``{header, fieldSeparator, recordSeparator,
-    skipLines, modified}``.
+    Runs choregraph's single CSV LLM function (``_llm_characterize_csv``),
+    passing the server's boot-selected provider config so choregraph does not
+    re-resolve the provider — the same pattern as Excel tidying via
+    ``/ai/preprocess_excel``. Accepts a binary CSV sample and returns the dict
+    shape choregraph's ``characterize_csv`` expects: ``{header, fieldSeparator,
+    recordSeparator, skipLines, modified}``.
     """
     body = await request.body()
     sample_lines = body.decode("utf-8", errors="replace").splitlines(keepends=True)
+    llm_cfg = get_llm_config()
     try:
         from choregraph.loaders import _llm_characterize_csv
-        result = _llm_characterize_csv(sample_lines)
+        result = _llm_characterize_csv(
+            sample_lines,
+            provider=llm_cfg.provider,
+            api_key=llm_cfg.api_key,
+            base_url=llm_cfg.base_url,
+            model_override=llm_cfg.model_override,
+        )
         if result is not None:
             return result
         logger().logp(WARNING, "AI CSV characterization returned no result — using defaults")
